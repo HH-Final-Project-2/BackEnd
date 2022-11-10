@@ -27,6 +27,7 @@ public class Validation {
         if(hasNullDtoField(signupRequestDto)){
             throw new CustomException(ErrorCode.NULL_INPUT_ERROR);
         }
+        //2~5자 이내 , 한글
         if (!isValidUsername(signupRequestDto.getUsername())) {
             throw new CustomException(ErrorCode.SIGNUP_USERNAME_FORM_ERROR);
         }
@@ -78,7 +79,7 @@ public class Validation {
     }
 
     public boolean isValidUsername(String username) {
-        //nickname : 2~5자 이내 , 한글
+        //2~5자 이내 , 한글
         String pattern = "^[가-힣]{2,5}$";
         return Pattern.matches(pattern, username);
     }

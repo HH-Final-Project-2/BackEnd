@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.sparta.finalpj.exception.ErrorCode.UNAUTHORIZED;
+
 @Component
 public class AuthenticationEntryPointException implements AuthenticationEntryPoint {
 
@@ -19,11 +21,13 @@ public class AuthenticationEntryPointException implements AuthenticationEntryPoi
         // 유효한 자격증명을 제공하지 않고 접근하려 할때 401
         //response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().println(
-                new ObjectMapper().writeValueAsString(
-                        ResponseDto.fail("BAD_REQUEST", "로그인이 필요합니다.")
-                )
-        );
+//        response.getWriter().println(
+//                new ObjectMapper().writeValueAsString(
+////                        ResponseDto.fail("BAD_REQUEST", "로그인이 필요합니다.")
+//                        ResponseDto.fail(UNAUTHORIZED)
+//
+//                )
+//        );
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
     }

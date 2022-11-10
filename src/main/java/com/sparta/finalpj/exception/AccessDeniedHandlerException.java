@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+
 @Component
 public class AccessDeniedHandlerException implements AccessDeniedHandler {
 
@@ -19,11 +20,12 @@ public class AccessDeniedHandlerException implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
         response.setContentType("application/json;charset-UTF-8");
-        response.getWriter().println(
-                new ObjectMapper().writeValueAsString(
-                        ResponseDto.fail("BAD_REQUEST","로그인이 필요합니다")
-                )
-        );
+//        response.getWriter().println(
+//                new ObjectMapper().writeValueAsString(
+////                        throw new CustomException(ErrorCode.UNAUTHORIZED);
+//                        ResponseDto.fail()
+//                )
+//        );
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
     }
 }

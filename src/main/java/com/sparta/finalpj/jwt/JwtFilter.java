@@ -28,6 +28,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import static com.sparta.finalpj.exception.ErrorCode.INVALID_TOKEN;
+import static com.sparta.finalpj.exception.ErrorCode.UNAUTHORIZED;
+
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -54,7 +57,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // 1) HttpServletRequest request 에서 Header(jwtToken)을 획득한다.
         String jwt = resolveToken(request);
 
-        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) { // jwtToken 에 값이 있고, 토큰 유형성 검증을 통과했을때..
+        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) { // jwtToken 에 값이 있고, 토큰 유효성 검증을 통과했을때..
             Claims claims;
             try {
                 claims = Jwts.parserBuilder().setSigningKey(key).build().
@@ -65,11 +68,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
             if (claims.getExpiration().toInstant().toEpochMilli() < Instant.now().toEpochMilli()) {
                 response.setContentType("application/json;charset=UTF-8");
-                response.getWriter().println(
-                        new ObjectMapper().writeValueAsString(
-                                ResponseDto.fail("BAD_REQUEST", "Token이 유효하지 않습니다.")
-                        )
-                );
+//                response.getWriter().println(
+//                        new ObjectMapper().writeValueAsString(
+////                                ResponseDto.fail("BAD_REQUEST", "Token이 유효하지 않습니다.")
+//                                ResponseDto.fail(INVALID_TOKEN)
+//                                )
+//                );
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
 

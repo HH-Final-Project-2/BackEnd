@@ -1,6 +1,7 @@
 package com.sparta.finalpj.exception;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -18,7 +19,8 @@ public enum ErrorCode {
 
     TOKEN_IS_EXPIRED(HttpStatus.BAD_REQUEST.value(), "M007", "만료된 액세스 토큰 입니다."),
     REFRESH_TOKEN_IS_EXPIRED(HttpStatus.BAD_REQUEST.value(), "M008", "만료된 리프레시 토큰 입니다."),
-    INVALID_TOKEN(HttpStatus.BAD_REQUEST.value(), "M009", "유효하지 않은 토큰 입니다. 토큰을 삭제합니다"),
+    INVALID_TOKEN_DELETE(HttpStatus.BAD_REQUEST.value(), "M009", "유효하지 않은 토큰 입니다. 토큰을 삭제합니다"),
+    INVALID_TOKEN(HttpStatus.BAD_REQUEST.value(), "M009", "유효하지 않은 토큰 입니다."),
     DUPLICATED_EMAIL(HttpStatus.BAD_REQUEST.value(),"M010","이미 사용되고 있는 이메일입니다."),
     DUPLICATED_NICKNAME(HttpStatus.BAD_REQUEST.value(),"M011","이미 사용되고 있는 닉네임입니다."),
     INVALID_MEMBER_INFO(HttpStatus.BAD_REQUEST.value(),"M012" ,"잘못된 사용자 정보입니다."),
@@ -49,4 +51,6 @@ public enum ErrorCode {
     private final String message;
 
 
+//    public static Object builder() {
+//    }
 }

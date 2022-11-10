@@ -134,7 +134,7 @@ public class MemberService {
 //
 //        if (now > accessTokenExpire) {     //액세스 토큰 만료여부 검사
 ////            tokenProvider.deleteRefreshToken(requestingMember);//만료되었으면 리프레시삭제
-////            throw new CustomException(ErrorCode.INVALID_TOKEN);}
+////            throw new CustomException(ErrorCode.INVALID_TOKEN_DELETE);}
 //            RefreshToken refreshTokenConfirm = refreshTokenRepository.findByMember(requestingMember).orElse(null);
 //            if (refreshTokenConfirm == null) {
 //                throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
