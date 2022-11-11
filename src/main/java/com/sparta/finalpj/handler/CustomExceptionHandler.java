@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class CustomExceptionHandler {
-  private ErrorCode errorCode;
-  private CustomException customException;
+//  private ErrorCode errorCode;
+//  private CustomException customException;
 
 
 //  @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -42,8 +42,5 @@ public class CustomExceptionHandler {
                    customResponseBody
       );
 }
-//  private int httpStatus;
-//  private String code;
-//  private String message;
 
 }

@@ -1,5 +1,7 @@
 package com.sparta.finalpj.jwt;
 
+import com.sparta.finalpj.exception.CustomResponseBody;
+import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.service.UserDetailsServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -28,16 +30,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import static com.sparta.finalpj.exception.ErrorCode.INVALID_TOKEN;
-import static com.sparta.finalpj.exception.ErrorCode.UNAUTHORIZED;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    public static String AUTHORIZATION_HEADER = "Authorization";
-    public static String BEARER_PREFIX = "Bearer ";
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String BEARER_PREFIX = "Bearer ";
 
-    public static String AUTHORITIES_KEY = "auth";
+    public static final String AUTHORITIES_KEY = "auth";
 
     private final String SECRET_KEY;
 
@@ -54,12 +54,13 @@ public class JwtFilter extends OncePerRequestFilter {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         Key key = Keys.hmacShaKeyFor(keyBytes);
 
-        // 1) HttpServletRequest request 에서 Header(jwtToken)을 획득한다.
+        // HttpServletRequest request 에서 Header(jwtToken)을 획득
         String jwt = resolveToken(request);
-
-        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) { // jwtToken 에 값이 있고, 토큰 유효성 검증을 통과했을때..
+        // jwtToken 에 값이 있고, 토큰 유효성 검증을 통과했을때..
+        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
             Claims claims;
             try {
+                // 토큰 payload 읽어오기
                 claims = Jwts.parserBuilder().setSigningKey(key).build().
                         parseClaimsJws(jwt).getBody();
             } catch (ExpiredJwtException e) {
@@ -68,25 +69,26 @@ public class JwtFilter extends OncePerRequestFilter {
 
             if (claims.getExpiration().toInstant().toEpochMilli() < Instant.now().toEpochMilli()) {
                 response.setContentType("application/json;charset=UTF-8");
-//                response.getWriter().println(
-//                        new ObjectMapper().writeValueAsString(
-////                                ResponseDto.fail("BAD_REQUEST", "Token이 유효하지 않습니다.")
-//                                ResponseDto.fail(INVALID_TOKEN)
-//                                )
-//                );
+                response.getWriter().println(
+                        new ObjectMapper().writeValueAsString(
+//                                ResponseDto.fail("BAD_REQUEST", "Token이 유효하지 않습니다.")
+                                ResponseDto.fail(new CustomResponseBody(ErrorCode.INVALID_TOKEN))
+                                )
+                );
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
-
+            // 토큰의 Email 추출
             String subject = claims.getSubject();
             Collection<? extends GrantedAuthority> authorities =
                     Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
-
+            // loadUserByUsername 매서드에 매개변수로 Email을 보내서, Member 객체 가져오기
             UserDetails principal = userDetailsService.loadUserByUsername(subject);
-
-            Authentication authentication = new UsernamePasswordAuthenticationToken(principal, jwt, authorities); // jwtToken 으로 부터 Authentication 객체 얻어오기
-            SecurityContextHolder.getContext().setAuthentication(authentication); // 받아온 Authentication 객체 SecurityContextHolder 에 저장
+            // 액세스 토큰으로부터 Authentication 객체 얻어오기
+            Authentication authentication = new UsernamePasswordAuthenticationToken(principal, jwt, authorities);
+            // 받아온 Authentication 객체 SecurityContextHolder 에 저장
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
         }
 
@@ -99,7 +101,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER); // Client 에서 accessToken 을 받아 올때 Authorization
         // 접두사 분리
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {// 값이 있고 && 앞 철자가 Bearer 일때 true
-            return bearerToken.substring(7);// "Bearer " + 토큰 정보에서 "Bearer " 를 땜
+            return bearerToken.substring(7);// <"Bearer " + 토큰 정보> 에서 "Bearer " 를 떼어냄
         }
         return null;
     }

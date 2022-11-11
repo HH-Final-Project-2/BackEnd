@@ -16,6 +16,7 @@ public enum ErrorCode {
 
     ACCESS_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND.value(),"M005","액세스 토큰이 없습니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND.value(),"M006","리프레시 토큰이 없습니다."),
+    REFRESH_TOKEN_NOT_FOUND_IN_SERVER(HttpStatus.NOT_FOUND.value(),"M006","서버에 존재하지 않는 리프레시 토큰입니다."),
 
     TOKEN_IS_EXPIRED(HttpStatus.BAD_REQUEST.value(), "M007", "만료된 액세스 토큰 입니다."),
     REFRESH_TOKEN_IS_EXPIRED(HttpStatus.BAD_REQUEST.value(), "M008", "만료된 리프레시 토큰 입니다."),

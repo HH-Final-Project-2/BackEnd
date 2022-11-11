@@ -12,13 +12,13 @@ public class ResponseDto<T> {
     private T data;
 //    private Error error;
 //    private ErrorCode errorCode;
-    private CustomResponseBody customResponseBody;
+    private CustomResponseBody error;
 
     public static <T> ResponseDto<T> success(T data) {
         return new ResponseDto<>(true, data, null);
     }
-    public static <T> ResponseDto<T> fail(CustomResponseBody customResponseBody) {
-        return new ResponseDto<>(false, null, customResponseBody);
+    public static <T> ResponseDto<T> fail(CustomResponseBody error) {
+        return new ResponseDto<>(false, null, error);
     }
 //    public static <T> ResponseDto<T> fail(Integer httpStatus, String code, String message) {
 //        return new ResponseDto<>(false, null, new ErrorCode(httpStatus,code,message));

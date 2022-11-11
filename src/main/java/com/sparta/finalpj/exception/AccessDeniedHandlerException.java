@@ -20,12 +20,12 @@ public class AccessDeniedHandlerException implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
         response.setContentType("application/json;charset-UTF-8");
-//        response.getWriter().println(
-//                new ObjectMapper().writeValueAsString(
-////                        throw new CustomException(ErrorCode.UNAUTHORIZED);
-//                        ResponseDto.fail()
-//                )
-//        );
+        response.getWriter().println(
+                new ObjectMapper().writeValueAsString(
+//                        ResponseDto.fail("BAD_REQUEST", "로그인이 필요합니다.")
+                        ResponseDto.fail(new CustomResponseBody(ErrorCode.UNAUTHORIZED))
+                )
+        );
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
     }
 }

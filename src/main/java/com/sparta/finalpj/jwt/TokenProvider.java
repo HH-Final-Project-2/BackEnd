@@ -48,27 +48,30 @@ public class TokenProvider {
         long now = (new Date().getTime());
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
 
-        // jwt secret accessToken 생성
+        // accessToken 생성
         String accessToken = Jwts.builder()
+                // Id, 이메일, 만료시간 토큰에 담기
+                .setId(member.getId().toString())
                 .setSubject(member.getEmail())
-                .claim(AUTHORITIES_KEY, ROLE_MEMBER.toString())
-                .setExpiration(accessTokenExpiresIn)
+                .claim(AUTHORITIES_KEY, ROLE_MEMBER.toString()) //auth,role설정
+                .setExpiration(accessTokenExpiresIn) // 만료시간 토큰에 담기
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-        // jwt secret refreshToken 생성
+        // refreshToken 생성
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
+                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))  // 만료시간 토큰에 담기
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-
+        //저장할 refreshToken 객체 build
         RefreshToken refreshTokenObject = RefreshToken.builder()
                 .id(member.getId())
                 .member(member)
                 .value(refreshToken)
                 .build();
 
+        //DB에 저장
         refreshTokenRepository.save(refreshTokenObject);
 
         return TokenDto.builder()
@@ -141,6 +144,7 @@ public class TokenProvider {
         long now = (new Date().getTime());
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = Jwts.builder()
+                .setId(member.getId().toString())
                 .setSubject(member.getEmail())
                 .claim(AUTHORITIES_KEY, ROLE_MEMBER.toString())
                 .setExpiration(accessTokenExpiresIn)
