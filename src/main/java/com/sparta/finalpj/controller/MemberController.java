@@ -1,6 +1,7 @@
 package com.sparta.finalpj.controller;
 
 
+import com.sparta.finalpj.configuration.SwaggerAnnotation;
 import com.sparta.finalpj.controller.request.member.EmailCheckRequestDto;
 import com.sparta.finalpj.controller.request.member.LoginRequestDto;
 import com.sparta.finalpj.controller.request.member.SignupRequestDto;
@@ -41,12 +42,14 @@ public class MemberController {
     }
 
     //로그아웃
+    @SwaggerAnnotation
     @PostMapping("/members/logout")
     public ResponseDto<?> logout(HttpServletRequest request) {
         return memberService.logoutMember(request);
     }
 
     //회원탈퇴
+    @SwaggerAnnotation
     @DeleteMapping("/members/withdraw")
     public ResponseDto<?> withdraw(HttpServletRequest request) {
         return memberService.withdrawMember(request);
