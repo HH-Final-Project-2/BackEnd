@@ -23,31 +23,31 @@ public class MemberController {
     private final MemberService memberService;
 
     //회원가입
-    @PostMapping("/member/signup")
+    @PostMapping("/members/signup")
     public ResponseDto<?> signupMember(@RequestBody SignupRequestDto requestDto) {
         return memberService.signupMember(requestDto);
     }
 
     //이메일체크
-    @PostMapping("/member/check")
+    @PostMapping("/members/check")
     public ResponseDto<?> emailDubCheck(@RequestBody EmailCheckRequestDto requestDto) {
         return memberService.emailCheck(requestDto);
     }
 
     //로그인
-    @PostMapping("/member/login")
+    @PostMapping("/members/login")
     public ResponseDto<?> loginMember(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
         return memberService.loginMember(requestDto,response);
     }
 
     //로그아웃
-    @PostMapping("/auth/member/logout")
+    @PostMapping("/members/logout")
     public ResponseDto<?> logout(HttpServletRequest request) {
         return memberService.logoutMember(request);
     }
 
     //회원탈퇴
-    @DeleteMapping("/auth/member/withdraw")
+    @DeleteMapping("/members/withdraw")
     public ResponseDto<?> withdraw(HttpServletRequest request) {
         return memberService.withdrawMember(request);
     }
