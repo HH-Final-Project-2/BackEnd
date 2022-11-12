@@ -2,6 +2,7 @@ package com.sparta.finalpj.service;
 
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.domain.*;
+import com.sparta.finalpj.jwt.UserDetailsImpl;
 import com.sparta.finalpj.repository.CommentHeartRepository;
 //import com.sparta.finalpj.repository.CommentRepository;
 import com.sparta.finalpj.repository.PostHeartRepository;

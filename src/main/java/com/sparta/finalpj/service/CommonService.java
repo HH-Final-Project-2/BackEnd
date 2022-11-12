@@ -5,6 +5,8 @@ import com.sparta.finalpj.domain.Comment;
 import com.sparta.finalpj.domain.CommentHeart;
 import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.domain.Post;
+import com.sparta.finalpj.exception.CustomException;
+import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,13 +20,11 @@ public class CommonService {
     private final TokenProvider tokenProvider;
     public ResponseDto<?> loginCheck(HttpServletRequest request) {
         if (null == request.getHeader("Refresh-Token")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
         }
 
         if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
+            throw new CustomException(ErrorCode.ACCESS_TOKEN_NOT_FOUND);
         }
         return null;
     }

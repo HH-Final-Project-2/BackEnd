@@ -11,6 +11,8 @@ public enum ErrorCode {
     //MEMBER
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "M001", "해당 유저를 찾을 수 없습니다."),
     EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND.value(),"M002","해당 이메일을 찾을 수 없습니다."),
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND.value(),"M002","해당 게시글을 찾을 수 없습니다."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND.value(),"M002","해당 댓글을 찾을 수 없습니다."),
     PASSWORD_NOT_CORRECT(HttpStatus.BAD_REQUEST.value(),"M003","비밀번호가 틀렸습니다."),
     NOT_AUTHOR(HttpStatus.BAD_REQUEST.value(), "M004", "작성자가 아닙니다."),
 
@@ -43,6 +45,7 @@ public enum ErrorCode {
     SIGNUP_NICKNAME_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M022", "nickname 형식을 맞춰주세요"),
     SIGNUP_PASSWORD_CHECK_ERROR(HttpStatus.BAD_REQUEST.value(), "M023", "password 와 passwordCheck 가 다릅니다"),
     SIGNUP_PASSWORD_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M024", "password 형식을 맞춰주세요"),
+    AWS_S3_UPLOAD_FAIL(HttpStatus.BAD_REQUEST.value(), "M024", "S3 사진 업로드 실패"),
     NOT_FOUND_CARD(HttpStatus.BAD_REQUEST.value(), "M025", "존재하지 않는 명함입니다.")
 
     ;
