@@ -74,12 +74,12 @@ public class MemberService {
     //============ 로그인 기능
     @Transactional
     public ResponseDto<?> loginMember(LoginRequestDto requestDto, HttpServletResponse response) {
-        //해당 member email로 조회
-        Member member = validation.getPresentEmail(requestDto.getEmail());
         //해당 이메일이 있는지 조회
         if (!memberRepository.existsByEmail(requestDto.getEmail())) {
             throw new CustomException(ErrorCode.EMAIL_NOT_FOUND);
         }
+        //해당 member email로 조회
+        Member member = validation.getPresentEmail(requestDto.getEmail());
         if (!member.validatePassword(passwordEncoder, requestDto.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_NOT_CORRECT);
         }
