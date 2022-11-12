@@ -1,0 +1,264 @@
+package com.sparta.finalpj.service;
+
+import com.sparta.finalpj.controller.request.PostRequestDto;
+import com.sparta.finalpj.controller.response.CommentResponseDto;
+import com.sparta.finalpj.controller.response.PostResponseDto;
+import com.sparta.finalpj.controller.response.ResponseDto;
+import com.sparta.finalpj.domain.*;
+import com.sparta.finalpj.exception.ErrorCode;
+import com.sparta.finalpj.handler.CustomException;
+import com.sparta.finalpj.jwt.TokenProvider;
+import com.sparta.finalpj.repository.CommentHeartRepository;
+import com.sparta.finalpj.repository.CommentRepository;
+import com.sparta.finalpj.repository.PostHeartRepository;
+import com.sparta.finalpj.repository.PostRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.annotation.ReadOnlyProperty;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+public class PostService {
+
+  private final PostRepository postRepository;
+  private final CommentRepository commentRepository;
+  private final PostHeartRepository postHeartRepository;
+
+  private final CommentHeartRepository commentHeartRepository;
+  private final FileS3Service fileS3Service;
+  private final TokenProvider tokenProvider;
+
+
+  //===============게시글 작성=============
+  @Transactional
+  public ResponseDto<?> createPost(PostRequestDto requestDto, MultipartFile image,
+                                   HttpServletRequest request) {
+
+    Member member = validateMember(request);
+    if (null == member) {
+      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+    }
+
+    //===이미지 파일 처리===
+    String imageUrl = "";
+
+    try {
+      imageUrl = fileS3Service.uploadFile(image);
+    } catch (IOException e) {
+      CustomException.toResponse(new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL));
+    }
+
+    Post post = Post.builder()
+            .title(requestDto.getTitle())
+            .content(requestDto.getContent())
+//          .job(requestDto.getjob())
+            .member(member)
+            .image(imageUrl)
+            .hit(0)
+//            .thumbnail(thumbnailUrl)
+            .build();
+    postRepository.save(post);
+    return ResponseDto.success(
+            PostResponseDto.builder()
+                    .id(post.getId())
+                    .title(post.getTitle())
+                    .author(post.getMember().getNickname())
+//                  .job(post.getjob())
+                    .content(post.getContent())
+//                    .image(post.getImage())
+                    .postHeartCnt(0L)
+                    .commentCnt(0L)
+                    .hit(post.getHit())
+                    .createdAt(post.getCreatedAt())
+                    .modifiedAt(post.getModifiedAt())
+                    .build()
+    );
+  }
+
+  //게시글 상세 조회
+  @Transactional(readOnly = false)
+  public ResponseDto<?> getPost(Long postingId) {
+    Post post = isPresentPost(postingId);
+    if (null == post) {
+      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+    }
+    List<Comment> commentList = commentRepository.findAllByPost(post);
+    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+
+    // 댓글 갯수 조회
+    Long commentCnt = commentRepository.countByPost(post);
+
+    // 해당 게시글에 대한 댓글 List
+    for (Comment comment : commentList) {
+      long commentHeartCnt = commentHeartRepository.findAllByComment(comment).size();
+      commentResponseDtoList.add(
+              CommentResponseDto.builder()
+                      .id(comment.getId())
+                      .author(comment.getMember().getNickname())
+                      .content(comment.getContent())
+                      .CommentHeartCnt(commentHeartCnt)
+                      .createdAt(comment.getCreatedAt())
+                      .modifiedAt(comment.getModifiedAt())
+                      .build()
+      );
+    }
+
+    List<PostHeart> postHeartCnt=postHeartRepository.findByPost(post);
+    PostResponseDto postDetailList = PostResponseDto.builder()
+            .id(post.getId())
+            .title(post.getTitle())
+            .author(post.getMember().getNickname())
+//          .job(post.getjob())
+            .content(post.getContent())
+//            .image(post.getImage())
+            .commentResponseDtoList(commentResponseDtoList)
+            .postHeartCnt((long) postHeartCnt.size())
+            .hit(updateHit(postingId))
+            .hit(post.getHit()+1) // 조회수
+            .commentCnt(commentCnt) // 댓글 갯수
+            .createdAt(post.getCreatedAt())
+            .modifiedAt(post.getModifiedAt())
+            .build();
+
+    return ResponseDto.success(postDetailList);
+  }
+  //=====조회수 증가 =====
+  @Transactional
+  public int updateHit(Long postId) {
+    return postRepository.updateHit(postId);
+  }
+
+  //=======게시글 전체 조회========
+  @Transactional(readOnly = true)
+  public ResponseDto<?> getAllPost() {
+    List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
+    List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
+    for (Post post : postList) {
+      long comment = commentRepository.countAllByPost(post);
+      long postHeartCnt = postHeartRepository.findAllByPost(post).size();
+      postListResponseDtoList.add(
+              PostResponseDto.builder()
+                      .id(post.getId())
+                      .title(post.getTitle())
+//                      .thumbnail(post.getThumbnail())
+                      .content(post.getContent())
+                      .author(post.getMember().getNickname())
+                      .postHeartCnt(postHeartCnt) //게시글 좋아요
+                      .commentCnt(comment) // 댓글 갯수
+                      .hit(post.getHit()) //조회수
+                      .createdAt(post.getCreatedAt())
+                      .modifiedAt(post.getModifiedAt())
+                      .build()
+      );
+    }
+
+    return ResponseDto.success(postListResponseDtoList);
+  }
+
+  //=========게시글 수정==========
+  @Transactional
+  public ResponseDto<?> updatePost(Long id, PostRequestDto requestDto, MultipartFile image, HttpServletRequest request) {
+
+    Member member = validateMember(request);
+    if (null == member) {
+      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+    }
+    Post post = isPresentPost(id);
+    if (null == post) {
+      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+    }
+    if (post.validateMember(member)) {
+      return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
+    }
+
+    // 이미지 파일 처리
+    String imageUrl = "";
+
+    try {
+      imageUrl = fileS3Service.uploadFile(image);
+    } catch (IOException e) {
+      CustomException.toResponse(new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL));
+    }
+
+//    String thumbnailUrl = "";
+
+//    try {
+//      thumbnailUrl = fileS3Service.uploadFile(thumbnail);
+//    } catch (IOException e) {
+//      CustomException.toResponse(new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL));
+//    }
+
+    post.update(requestDto, imageUrl);
+    return ResponseDto.success(
+            PostResponseDto.builder()
+                    .id(post.getId())
+                    .title(post.getTitle())
+//                    .commentResponseDtoList(commentResponseDtoList)
+                    .author(post.getMember().getNickname())
+//                    .job(post.getjob())
+                    .content(post.getContent())
+//                    .image(post.getImage())
+                    .createdAt(post.getCreatedAt())
+                    .modifiedAt(post.getModifiedAt())
+                    .build()
+    );
+  }
+
+  @Transactional
+  public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
+//    if (null == request.getHeader("Refresh-Token")) {
+//      return ResponseDto.fail("MEMBER_NOT_FOUND",
+//          "로그인이 필요합니다.");
+//    }
+//
+//    if (null == request.getHeader("Authorization")) {
+//      return ResponseDto.fail("MEMBER_NOT_FOUND",
+//          "로그인이 필요합니다.");
+//    }
+
+    Member member = validateMember(request);
+    if (null == member) {
+      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+    }
+
+    Post post = isPresentPost(id);
+    if (null == post) {
+      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+    }
+
+    if (post.validateMember(member)) {
+      return ResponseDto.fail("BAD_REQUEST", "작성자만 삭제할 수 있습니다.");
+    }
+
+    postRepository.delete(post);
+    return ResponseDto.success("delete success");
+  }
+
+  @Transactional(readOnly = true)
+  public int commentHeartCnt(Comment comment) {
+    List<CommentHeart> commentLikeList = commentHeartRepository.findAllByComment(comment);
+    return commentLikeList.size();
+  }
+
+  @Transactional(readOnly = true)
+  public Post isPresentPost(Long id) {
+    Optional<Post> optionalPost = postRepository.findById(id);
+    return optionalPost.orElse(null);
+  }
+
+  @Transactional
+  public Member validateMember(HttpServletRequest request) {
+    if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+      return null;
+    }
+    return tokenProvider.getMemberFromAuthentication();
+  }
+}
