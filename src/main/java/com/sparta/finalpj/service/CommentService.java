@@ -6,6 +6,8 @@ import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.domain.Comment;
 import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.domain.Post;
+import com.sparta.finalpj.exception.CustomException;
+import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.jwt.TokenProvider;
 import com.sparta.finalpj.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,23 +31,21 @@ public class CommentService {
   @Transactional
   public ResponseDto<?> createComment(Long postingId, CommentRequestDto requestDto, HttpServletRequest request) {
     if (null == request.getHeader("Refresh-Token")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
-          "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
     }
 
     if (null == request.getHeader("Authorization")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
-          "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.ACCESS_TOKEN_NOT_FOUND);
     }
 
     Member member = validateMember(request);
     if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+      throw new CustomException(ErrorCode.INVALID_TOKEN);
     }
 
     Post post = postService.isPresentPost(postingId);
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+      throw new CustomException(ErrorCode.POST_NOT_FOUND);
     }
 
     Comment comment = Comment.builder()
@@ -69,7 +69,7 @@ public class CommentService {
   public ResponseDto<?> getAllCommentsByPost(Long postId) {
     Post post = postService.isPresentPost(postId);
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+      throw new CustomException(ErrorCode.POST_NOT_FOUND);
     }
     List<Comment> commentList = commentRepository.findAllByPost(post);
     List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
@@ -92,32 +92,30 @@ public class CommentService {
   @Transactional
   public ResponseDto<?> updateComment(Long postingId, Long commentId, CommentRequestDto requestDto, HttpServletRequest request) {
     if (null == request.getHeader("Refresh-Token")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
-          "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
     }
 
     if (null == request.getHeader("Authorization")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
-          "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.ACCESS_TOKEN_NOT_FOUND);
     }
 
     Member member = validateMember(request);
     if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+      throw new CustomException(ErrorCode.INVALID_TOKEN);
     }
 
     Post post = postService.isPresentPost(postingId);
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+      throw new CustomException(ErrorCode.POST_NOT_FOUND);
     }
 
     Comment comment = isPresentComment(commentId);
     if (null == comment) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 댓글 id 입니다.");
+      throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
     }
 
     if (comment.validateMember(member)) {
-      return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
+      throw new CustomException(ErrorCode.NOT_AUTHOR);
     }
 
     comment.update(requestDto);
@@ -136,32 +134,30 @@ public class CommentService {
   @Transactional
   public ResponseDto<?> deleteComment(Long postingId, Long commentId, HttpServletRequest request) {
     if (null == request.getHeader("Refresh-Token")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
-          "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
     }
 
     if (null == request.getHeader("Authorization")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
-          "로그인이 필요합니다.");
+      throw new CustomException(ErrorCode.ACCESS_TOKEN_NOT_FOUND);
     }
 
     Member member = validateMember(request);
     if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+      throw new CustomException(ErrorCode.INVALID_TOKEN);
     }
 
     Post post = postService.isPresentPost(postingId);
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+      throw new CustomException(ErrorCode.POST_NOT_FOUND);
     }
 
     Comment comment = isPresentComment(commentId);
     if (null == comment) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 댓글 id 입니다.");
+      throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
     }
 
     if (comment.validateMember(member)) {
-      return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
+      throw new CustomException(ErrorCode.NOT_AUTHOR);
     }
 
     commentRepository.delete(comment);

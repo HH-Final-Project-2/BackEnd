@@ -5,15 +5,14 @@ import com.sparta.finalpj.controller.response.CommentResponseDto;
 import com.sparta.finalpj.controller.response.PostResponseDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.domain.*;
+import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
-import com.sparta.finalpj.handler.CustomException;
 import com.sparta.finalpj.jwt.TokenProvider;
 import com.sparta.finalpj.repository.CommentHeartRepository;
 import com.sparta.finalpj.repository.CommentRepository;
 import com.sparta.finalpj.repository.PostHeartRepository;
 import com.sparta.finalpj.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,7 +43,7 @@ public class PostService {
 
     Member member = validateMember(request);
     if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+      throw new CustomException(ErrorCode.INVALID_TOKEN);
     }
 
     //===이미지 파일 처리===
@@ -53,7 +52,7 @@ public class PostService {
     try {
       imageUrl = fileS3Service.uploadFile(image);
     } catch (IOException e) {
-      CustomException.toResponse(new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL));
+      throw new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL);
     }
 
     Post post = Post.builder()
@@ -88,7 +87,7 @@ public class PostService {
   public ResponseDto<?> getPost(Long postingId) {
     Post post = isPresentPost(postingId);
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+      throw new CustomException(ErrorCode.POST_NOT_FOUND);
     }
     List<Comment> commentList = commentRepository.findAllByPost(post);
     List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
@@ -169,14 +168,14 @@ public class PostService {
 
     Member member = validateMember(request);
     if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+      throw new CustomException(ErrorCode.INVALID_TOKEN);
     }
     Post post = isPresentPost(id);
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+      throw new CustomException(ErrorCode.POST_NOT_FOUND);
     }
     if (post.validateMember(member)) {
-      return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
+      throw new CustomException(ErrorCode.NOT_AUTHOR);
     }
 
     // 이미지 파일 처리
@@ -185,7 +184,7 @@ public class PostService {
     try {
       imageUrl = fileS3Service.uploadFile(image);
     } catch (IOException e) {
-      CustomException.toResponse(new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL));
+      throw new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL);
     }
 
 //    String thumbnailUrl = "";
@@ -226,16 +225,16 @@ public class PostService {
 
     Member member = validateMember(request);
     if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+      throw new CustomException(ErrorCode.INVALID_TOKEN);
     }
 
     Post post = isPresentPost(id);
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+      throw new CustomException(ErrorCode.POST_NOT_FOUND);
     }
 
     if (post.validateMember(member)) {
-      return ResponseDto.fail("BAD_REQUEST", "작성자만 삭제할 수 있습니다.");
+      throw new CustomException(ErrorCode.NOT_AUTHOR);
     }
 
     postRepository.delete(post);
