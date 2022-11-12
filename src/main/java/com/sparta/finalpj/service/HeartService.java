@@ -4,14 +4,11 @@ import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.domain.*;
 import com.sparta.finalpj.jwt.UserDetailsImpl;
 import com.sparta.finalpj.repository.CommentHeartRepository;
-//import com.sparta.finalpj.repository.CommentRepository;
 import com.sparta.finalpj.repository.PostHeartRepository;
 import com.sparta.finalpj.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Service
@@ -21,7 +18,6 @@ public class HeartService {
     private final CommentHeartRepository commentHeartRepository;
     private final PostService postService;
     private final CommentService commentService;
-    private final PostRepository postRepository;
 
     public ResponseDto<?> postHeartUp (Long id , UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();

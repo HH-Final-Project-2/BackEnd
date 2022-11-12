@@ -1,7 +1,7 @@
 package com.sparta.finalpj.controller;
 
 import com.sparta.finalpj.controller.response.ResponseDto;
-import com.sparta.finalpj.domain.UserDetailsImpl;
+import com.sparta.finalpj.jwt.UserDetailsImpl;
 import com.sparta.finalpj.service.HeartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
