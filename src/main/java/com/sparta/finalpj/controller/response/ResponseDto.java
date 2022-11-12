@@ -1,7 +1,6 @@
-package com.sparta.finalpj.jwt;
+package com.sparta.finalpj.controller.response;
 
 import com.sparta.finalpj.exception.CustomResponseBody;
-import com.sparta.finalpj.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -5,6 +5,7 @@ package com.sparta.finalpj.service;
 import com.sparta.finalpj.controller.request.member.EmailCheckRequestDto;
 import com.sparta.finalpj.controller.request.member.LoginRequestDto;
 import com.sparta.finalpj.controller.request.member.SignupRequestDto;
+import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.controller.response.member.SignupResponseDto;
 import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.exception.CustomException;

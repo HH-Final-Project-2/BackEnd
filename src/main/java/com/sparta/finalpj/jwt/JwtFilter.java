@@ -1,5 +1,6 @@
 package com.sparta.finalpj.jwt;
 
+import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.exception.CustomResponseBody;
 import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.service.UserDetailsServiceImpl;

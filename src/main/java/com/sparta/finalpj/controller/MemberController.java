@@ -5,7 +5,7 @@ import com.sparta.finalpj.configuration.SwaggerAnnotation;
 import com.sparta.finalpj.controller.request.member.EmailCheckRequestDto;
 import com.sparta.finalpj.controller.request.member.LoginRequestDto;
 import com.sparta.finalpj.controller.request.member.SignupRequestDto;
-import com.sparta.finalpj.jwt.ResponseDto;
+import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

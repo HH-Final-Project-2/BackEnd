@@ -2,8 +2,7 @@ package com.sparta.finalpj.handler;
 
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.CustomResponseBody;
-import com.sparta.finalpj.exception.ErrorCode;
-import com.sparta.finalpj.jwt.ResponseDto;
+import com.sparta.finalpj.controller.response.ResponseDto;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

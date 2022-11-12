@@ -1,7 +1,7 @@
 package com.sparta.finalpj.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.finalpj.jwt.ResponseDto;
+import com.sparta.finalpj.controller.response.ResponseDto;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;

@@ -42,7 +42,8 @@ public enum ErrorCode {
     SIGNUP_MEMBER_ID_DUPLICATE_ERROR(HttpStatus.BAD_REQUEST.value(), "M021", "memberId 가 중복됩니다"),
     SIGNUP_NICKNAME_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M022", "nickname 형식을 맞춰주세요"),
     SIGNUP_PASSWORD_CHECK_ERROR(HttpStatus.BAD_REQUEST.value(), "M023", "password 와 passwordCheck 가 다릅니다"),
-    SIGNUP_PASSWORD_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M024", "password 형식을 맞춰주세요")
+    SIGNUP_PASSWORD_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M024", "password 형식을 맞춰주세요"),
+    NOT_FOUND_CARD(HttpStatus.BAD_REQUEST.value(), "M025", "존재하지 않는 명함입니다.")
 
     ;
 
