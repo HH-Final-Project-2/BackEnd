@@ -20,6 +20,12 @@ public class CardImage extends Timestamped {
   @Column(nullable = false)
   private String cardImg;
 
+  @Column(nullable = false)
+  private String cardName;
+
+  @Column(nullable = false)
+  private String cardUrl;
+
   @JoinColumn(name = "memberId", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private Member member;
