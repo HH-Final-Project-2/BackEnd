@@ -1,9 +1,11 @@
 package com.sparta.finalpj.service;
 
 import com.google.cloud.vision.v1.*;
+import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.controller.response.ocr.OcrResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,29 +14,20 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class OcrService {
+    private final GoogleCloudUploadService googleCloudUploadService;
+    public ResponseDto<?> detectTextGcs(MultipartFile cardImg) throws IOException {
+        googleCloudUploadService.upload(cardImg);
 
-//    public ResponseDto<?> detectText(MultipartFile cardImg) throws IOException {
-//
-//        String cardImgUrl = "";
-//
-//        try {
-//            cardImgUrl = s3Service.upload(cardImg);
-//        } catch (IOException e) {
-////            CustomException.toResponse(new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL));
-//            return ResponseDto.fail("S3 error", "S3 에러");
-//        }
-//
-//        // TODO(developer): filePath 수정 필요
-////        String filePath = "D:/git/final/input.png";
-//
-//        return detectText(cardImgUrl);
-//    }
+        // TODO(developer): Replace these variables before running the sample.
+        String filePath = "gs://bobo_file_bucket/" + cardImg.getOriginalFilename();
+        return detectTextGcs(filePath);
+    }
 
-    // Detects text in the specified image.
-    public OcrResponseDto detectText(String imageUrl) throws IOException {
+    // Detects text in the specified remote image on Google Cloud Storage.
+    public ResponseDto<?> detectTextGcs(String gcsPath) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
-        ImageSource imgSource = ImageSource.newBuilder().setGcsImageUri(imageUrl).build();
+        ImageSource imgSource = ImageSource.newBuilder().setGcsImageUri(gcsPath).build();
         Image img = Image.newBuilder().setSource(imgSource).build();
         Feature feat = Feature.newBuilder().setType(Feature.Type.TEXT_DETECTION).build();
         AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
@@ -46,7 +39,6 @@ public class OcrService {
         try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
             List<AnnotateImageResponse> responses = response.getResponsesList();
-
             ArrayList<Object> originList = new ArrayList<>();
 
             // 명함 OCR 데이터 담는 변수
@@ -120,7 +112,7 @@ public class OcrService {
                     .tel(tel)
                     .fax(fax)
                     .build();
-            return ocrList;
+            return ResponseDto.success(ocrList);
         }
     }
 }
