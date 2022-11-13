@@ -2,6 +2,8 @@ package com.sparta.finalpj.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.sparta.finalpj.exception.CustomException;
+import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.exception.FileConvertException;
 import com.sparta.finalpj.exception.RemoveFileException;
 import com.sparta.finalpj.shared.MutipartToFileConverter;
@@ -36,6 +38,7 @@ public class FileS3Service {
 
         File licenseFile = mutipartToFileConverter.convert(images)
                 .orElseThrow(FileConvertException::new);
+
 
         String now = Instant
                 .now().atZone(ZoneId.of("Asia/Seoul")).toString()
