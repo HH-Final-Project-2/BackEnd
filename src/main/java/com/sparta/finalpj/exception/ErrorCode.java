@@ -46,8 +46,11 @@ public enum ErrorCode {
     SIGNUP_PASSWORD_CHECK_ERROR(HttpStatus.BAD_REQUEST.value(), "M023", "password 와 passwordCheck 가 다릅니다"),
     SIGNUP_PASSWORD_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M024", "password 형식을 맞춰주세요"),
     AWS_S3_UPLOAD_FAIL(HttpStatus.BAD_REQUEST.value(), "M024", "S3 사진 업로드 실패"),
-    NOT_FOUND_CARD(HttpStatus.BAD_REQUEST.value(), "M025", "존재하지 않는 명함입니다.")
+    NOT_FOUND_CARD(HttpStatus.BAD_REQUEST.value(), "M025", "존재하지 않는 명함입니다."),
 
+    EMPTY(HttpStatus.BAD_REQUEST.value(), "M027", "multipart 파일이 비어있습니다."),
+    CONVERT_FAIL(HttpStatus.BAD_REQUEST.value(), "M026", "multipart을 파일로 변환하지 못하였습니다."),
+    REMOVE_FAIL(HttpStatus.BAD_REQUEST.value(), "M027", "파일 제거를 실패하였습니다.")
     ;
 
 
