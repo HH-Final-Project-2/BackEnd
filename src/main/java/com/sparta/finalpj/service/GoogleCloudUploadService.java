@@ -9,10 +9,12 @@ import java.io.IOException;
 
 @Component
 public class GoogleCloudUploadService {
-    // get service by env var GOOGLE_APPLICATION_CREDENTIALS. Json file generated in API & Services -> Service account key
-    private static Storage storage = StorageOptions.getDefaultInstance().getService();
+
     @Value("${cloud.gcp.storage.bucket.name}")
     String bucketName;
+
+    // get service by env var GOOGLE_APPLICATION_CREDENTIALS. Json file generated in API & Services -> Service account key
+    private static Storage storage = StorageOptions.getDefaultInstance().getService();
 
     public String upload(MultipartFile file) {
         try {
