@@ -55,6 +55,6 @@ jobs:
           envs: GITHUB_SHA
           script: |
             docker pull yusung/businus:latest
-            docker stop retro-final
-            docker rm retro-final
-            docker run -d --rm --name retro-final -p 80:8080 yusung/businus
+            docker stop businus
+            docker rm businus
+            docker run -d --rm --name businus -p 80:8080 yusung/businus
