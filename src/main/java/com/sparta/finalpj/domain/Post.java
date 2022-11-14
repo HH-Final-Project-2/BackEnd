@@ -29,8 +29,8 @@ public class Post extends Timestamped {
   @Column(nullable = true)
   private String image;
 
-//  @Column(nullable = false)
-//  private job job;
+  @Column(nullable = false)
+  private String jobGroup;
 
 //  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 //  private List<Comment> comments;

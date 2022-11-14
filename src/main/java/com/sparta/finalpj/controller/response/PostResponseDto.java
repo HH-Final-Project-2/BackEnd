@@ -16,9 +16,9 @@ public class PostResponseDto {
   private Long id;
   private String title;
   private String author;
-//  private String job;
+  private String jobGroup; // 관심 직군
   private String content;
-//  private String image;
+  private String image;
   private List<CommentResponseDto> commentResponseDtoList;
   private Long commentCnt; // 댓글 갯수
   private Long postHeartCnt; // 게시글 좋아요 갯수

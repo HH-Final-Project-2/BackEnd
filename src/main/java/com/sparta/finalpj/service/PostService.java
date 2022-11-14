@@ -30,7 +30,6 @@ public class PostService {
   private final PostRepository postRepository;
   private final CommentRepository commentRepository;
   private final PostHeartRepository postHeartRepository;
-
   private final CommentHeartRepository commentHeartRepository;
   private final FileS3Service fileS3Service;
   private final TokenProvider tokenProvider;
@@ -58,7 +57,7 @@ public class PostService {
     Post post = Post.builder()
             .title(requestDto.getTitle())
             .content(requestDto.getContent())
-//          .job(requestDto.getjob())
+            .jobGroup(requestDto.getJobGroup())
             .member(member)
             .image(imageUrl)
             .hit(0)
@@ -70,9 +69,9 @@ public class PostService {
                     .id(post.getId())
                     .title(post.getTitle())
                     .author(post.getMember().getNickname())
-//                  .job(post.getjob())
+                    .jobGroup(post.getJobGroup())
                     .content(post.getContent())
-//                    .image(post.getImage())
+                    .image(post.getImage())
                     .postHeartCnt(0L)
                     .commentCnt(0L)
                     .hit(post.getHit())
@@ -103,6 +102,7 @@ public class PostService {
                       .id(comment.getId())
                       .author(comment.getMember().getNickname())
                       .content(comment.getContent())
+                      .jobGroup(comment.getJobGroup())
                       .CommentHeartCnt(commentHeartCnt)
                       .createdAt(comment.getCreatedAt())
                       .modifiedAt(comment.getModifiedAt())
@@ -115,7 +115,7 @@ public class PostService {
             .id(post.getId())
             .title(post.getTitle())
             .author(post.getMember().getNickname())
-//          .job(post.getjob())
+            .jobGroup(post.getJobGroup())
             .content(post.getContent())
 //            .image(post.getImage())
             .commentResponseDtoList(commentResponseDtoList)
@@ -150,6 +150,7 @@ public class PostService {
 //                      .thumbnail(post.getThumbnail())
                       .content(post.getContent())
                       .author(post.getMember().getNickname())
+                      .jobGroup(post.getJobGroup())
                       .postHeartCnt(postHeartCnt) //게시글 좋아요
                       .commentCnt(comment) // 댓글 갯수
                       .hit(post.getHit()) //조회수
@@ -186,7 +187,6 @@ public class PostService {
     } catch (IOException e) {
       throw new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL);
     }
-
 //    String thumbnailUrl = "";
 
 //    try {
@@ -194,6 +194,8 @@ public class PostService {
 //    } catch (IOException e) {
 //      CustomException.toResponse(new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL));
 //    }
+    List<PostHeart> postHeartCnt = postHeartRepository.findByPost(post);
+    Long commentCnt = commentRepository.countByPost(post);
 
     post.update(requestDto, imageUrl);
     return ResponseDto.success(
@@ -202,9 +204,12 @@ public class PostService {
                     .title(post.getTitle())
 //                    .commentResponseDtoList(commentResponseDtoList)
                     .author(post.getMember().getNickname())
-//                    .job(post.getjob())
+                    .jobGroup(post.getJobGroup())
                     .content(post.getContent())
-//                    .image(post.getImage())
+                    .image(post.getImage())
+                    .postHeartCnt((long) postHeartCnt.size())
+                    .commentCnt(commentCnt)
+                    .hit(post.getHit())
                     .createdAt(post.getCreatedAt())
                     .modifiedAt(post.getModifiedAt())
                     .build()
