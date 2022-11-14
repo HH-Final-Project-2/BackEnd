@@ -4,6 +4,7 @@ import com.google.cloud.vision.v1.*;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.controller.response.ocr.OcrResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,12 +15,17 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class OcrService {
+
+    @Value("${cloud.gcp.storage.bucket.filePath}")
+    String bucketFilePath;
+
     private final GoogleCloudUploadService googleCloudUploadService;
+
     public ResponseDto<?> detectTextGcs(MultipartFile cardImg) throws IOException {
         googleCloudUploadService.upload(cardImg);
 
         // TODO(developer): Replace these variables before running the sample.
-        String filePath = "gs://bobo_file_bucket/" + cardImg.getOriginalFilename();
+        String filePath = bucketFilePath + cardImg.getOriginalFilename();
         return detectTextGcs(filePath);
     }
 
@@ -61,45 +67,42 @@ public class OcrService {
 
                 }
             }
-//            System.out.println("@@@@@@@@@@@ " + originList.get(0));
+            //
             String[] txt = originList.get(0).toString().split("\\n");
-//            System.out.println("=====================");
-//            System.out.println(txt[0]);
 
             for (int i = 0; i < txt.length; i++) {
-                //System.out.println(i+"번째 : " + txt[i]);
                 // 휴대폰 번호 (M)
                 if (txt[i].contains("-") && txt[i].contains("M")) {
-                    phoneNum = txt[i].replace("M", " ").trim();
-                    System.out.println("===========phone=========");
+                    phoneNum = txt[i].substring(txt[i].indexOf("M"), txt[i].indexOf("M")+15).replace("M", " ").trim();
+                    System.out.println("===========phone1=========");
                     System.out.println(phoneNum);
 
-                    if (txt[i].contains("-") || txt[i].contains("M")) {
-                        phoneNum = txt[i].replace("M", " ").trim();
-                    }
+                } else if (txt[i].contains("-") && txt[i].contains("010") || txt[i].contains("82")) {
+                    System.out.println("===========phone2=========");
+                    phoneNum = txt[i].trim();
                 }
+
                 // companyTel (T)
                 if (txt[i].contains("-") && txt[i].contains("T")) {
-                    tel = txt[i].replace("T", " ").trim();
-                    System.out.println("==========companyTel==========");
+                    tel =  txt[i].substring(txt[i].indexOf("T"), txt[i].indexOf("T")+15).replace("T", " ").trim();
+                    System.out.println("==========companyTel1==========");
                     System.out.println(tel);
-
-                    if (txt[i].contains("-") || txt[i].contains("T")) {
-                        tel = txt[i].replace("T", " ").trim();
-                    }
                 }
+
                 // fax (F)
                 if (txt[i].contains("-") && txt[i].contains("F")) {
                     fax = txt[i].replace("F", " ").trim();
-                    System.out.println("==========fax==========");
+                    System.out.println("==========fax1==========");
                     System.out.println(fax);
+
                     if (txt[i].contains("-") || txt[i].contains("F")) {
                         fax = txt[i].replace("F", " ").trim();
+                        System.out.println("==========fax2==========");
                     }
                 }
                 // 이메일
                 if (txt[i].contains("@")) {
-                    System.out.println("---------email---------");
+                    System.out.println("==========email1==========");
                     System.out.println(email);
                     email = txt[i];
                 }

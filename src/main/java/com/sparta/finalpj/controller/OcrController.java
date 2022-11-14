@@ -20,7 +20,7 @@ public class OcrController {
     private final OcrService ocrService;
 
     //Todo HttpServletRequest 추가하기
-    @PostMapping(value = "/member/ocrtest", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/scan/cards", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseDto<?> orcTest(@RequestPart(value = "cardImg", required = false) MultipartFile cardImg) throws IOException {
 
         return ocrService.detectTextGcs(cardImg);
