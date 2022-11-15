@@ -2,11 +2,11 @@ package com.sparta.finalpj.service;
 
 import com.google.cloud.vision.v1.*;
 import com.sparta.finalpj.controller.request.card.CardRequestDto;
+import com.sparta.finalpj.controller.request.card.MyCardRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
-import com.sparta.finalpj.controller.response.ocr.OcrResponseDto;
-import com.sparta.finalpj.domain.Card;
 import com.sparta.finalpj.domain.CardImage;
 import com.sparta.finalpj.domain.Member;
+import com.sparta.finalpj.domain.PageType;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.repository.CardImageRepository;
@@ -30,11 +30,10 @@ public class OcrService {
     String bucketFilePath;
 
     private final CommonService commonService;
-    private final CardService cardService;
     private final GoogleCloudUploadService googleCloudUploadService;
     private final CardImageRepository cardImageRepository;
 
-    public ResponseDto<?> detectTextGcs(MultipartFile cardImg, HttpServletRequest request) throws IOException {
+    public ResponseDto<?> readFileInfo(MultipartFile cardImg, HttpServletRequest request, PageType page) throws IOException {
         // 1. 로그인 확인
         commonService.loginCheck(request);
 
@@ -52,11 +51,11 @@ public class OcrService {
         String filePath = bucketFilePath + fileName;
 
         // 4.OCR
-        return detectTextGcs(filePath, fileName, member);
+        return detectTextGcs(filePath, fileName, member, page);
     }
 
     // Google 클라우드 저장소의 지정된 원격 이미지에서 텍스트를 검색
-    public ResponseDto<?> detectTextGcs(String gcsPath, String fileName, Member member) throws IOException {
+    public ResponseDto<?> detectTextGcs(String gcsPath, String fileName, Member member, PageType page) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
         ImageSource imgSource = ImageSource.newBuilder().setGcsImageUri(gcsPath).build();
@@ -150,13 +149,22 @@ public class OcrService {
             cardImageRepository.save(cardImage);
 
             // 2. 클라이언트에게 던져줄 정보
-            CardRequestDto cardRequestDto = CardRequestDto.builder()
+            if(page.equals("own") || page.equals("other")) {
+                CardRequestDto cardRequestDto = CardRequestDto.builder()
+                        .email(email)
+                        .phoneNum(phoneNum)
+                        .tel(tel)
+                        .fax(fax)
+                        .build();
+                return ResponseDto.success(cardRequestDto);
+            }
+            MyCardRequestDto myCardRequestDto = MyCardRequestDto.builder()
                     .email(email)
                     .phoneNum(phoneNum)
                     .tel(tel)
                     .fax(fax)
                     .build();
-            return ResponseDto.success(cardRequestDto);
+            return ResponseDto.success(myCardRequestDto);
         }
     }
 }

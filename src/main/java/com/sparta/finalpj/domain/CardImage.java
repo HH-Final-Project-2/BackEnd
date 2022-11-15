@@ -31,8 +31,16 @@ public class CardImage extends Timestamped {
   @OneToOne(fetch = FetchType.LAZY)
   private Card card;
 
-  public void update(Card cardId) {
+  @JoinColumn(name = "myCardId")
+  @OneToOne(fetch = FetchType.LAZY)
+  private MyCard myCard;
+
+  public void updateCard(Card cardId) {
     this.card = cardId;
+  }
+
+  public void updateMyCard(MyCard myCardId) {
+    this.myCard = myCardId;
   }
 
 }

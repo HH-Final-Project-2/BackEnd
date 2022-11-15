@@ -61,7 +61,7 @@ public class CardService {
                 // 명함 이미지 정보가 있을 경우 cardId를 업데이트
                 CardImage cardImage = isPresentCardImg(member);
                 if (cardImage != null && cardImage.getMember() != null && cardImage.getCard() == null) {
-                    cardImage.update(card);
+                    cardImage.updateCard(card);
                 }
 
             } catch (IllegalArgumentException e) {
@@ -88,7 +88,7 @@ public class CardService {
                 // 명함 이미지 정보가 있을 경우 cardId를 업데이트
                 CardImage cardImage = isPresentCardImg(member);
                 if (cardImage != null && cardImage.getMember() != null && cardImage.getCard() == null) {
-                    cardImage.update(card);
+                    cardImage.updateCard(card);
                 }
 
             } catch (NullPointerException e) {
