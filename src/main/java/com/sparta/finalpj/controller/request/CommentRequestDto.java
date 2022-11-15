@@ -11,5 +11,5 @@ public class CommentRequestDto {
   private Long postId;
   private String content;
   private String nickname;
-//  private String job;
+//  private String jobGroup;
 }

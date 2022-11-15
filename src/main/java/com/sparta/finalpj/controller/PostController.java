@@ -26,15 +26,6 @@ public class PostController {
 //          )
 //  })
 
-//  @GetMapping("/posting/read/{postingId}")
-//  public String read(@PathVariable Long id, Model model) {
-//    PostResponseDto dto = postService.findById(id);
-//    postService.updateHitCnt(id); // views ++
-//    model.addAttribute("posts", dto);
-//
-//    return "posts-read";
-//  }
-
   //게시글 작성 (파일 업로드 포함)
   @PostMapping(value = "/posting",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json")
   public ResponseDto<?> createPost(@RequestPart(value = "postDto") PostRequestDto requestDto,
@@ -76,4 +67,11 @@ public class PostController {
       HttpServletRequest request) {
     return postService.deletePost(postingId, request);
   }
+
+  //========게시글 검색==========
+//  @ResponseBody
+//  @GetMapping("/posting/search")
+//  public ResponseEntity<PrivateResponseBody> search(@RequestParam(value = "keyword") String keyword){
+//    return postService.searchPosts(keyword);
+//  }
 }

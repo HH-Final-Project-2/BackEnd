@@ -49,10 +49,10 @@ public class CommentService {
     }
 
     Comment comment = Comment.builder()
-        .member(member)
-        .post(post)
-        .content(requestDto.getContent())
-        .build();
+          .member(member)
+          .post(post)
+          .content(requestDto.getContent())
+          .build();
     commentRepository.save(comment);
     return ResponseDto.success(
         CommentResponseDto.builder()
@@ -65,28 +65,28 @@ public class CommentService {
     );
   }
 
-  @Transactional(readOnly = true)
-  public ResponseDto<?> getAllCommentsByPost(Long postId) {
-    Post post = postService.isPresentPost(postId);
-    if (null == post) {
-      throw new CustomException(ErrorCode.POST_NOT_FOUND);
-    }
-    List<Comment> commentList = commentRepository.findAllByPost(post);
-    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-
-    for (Comment comment : commentList) {
-      commentResponseDtoList.add(
-          CommentResponseDto.builder()
-              .id(comment.getId())
-              .author(comment.getMember().getNickname())
-              .content(comment.getContent())
-              .createdAt(comment.getCreatedAt())
-              .modifiedAt(comment.getModifiedAt())
-              .build()
-      );
-    }
-    return ResponseDto.success(commentResponseDtoList);
-  }
+//  @Transactional(readOnly = true)
+//  public ResponseDto<?> getAllCommentsByPost(Long postId) {
+//    Post post = postService.isPresentPost(postId);
+//    if (null == post) {
+//      throw new CustomException(ErrorCode.POST_NOT_FOUND);
+//    }
+//    List<Comment> commentList = commentRepository.findAllByPost(post);
+//    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+//
+//    for (Comment comment : commentList) {
+//      commentResponseDtoList.add(
+//          CommentResponseDto.builder()
+//              .id(comment.getId())
+//              .author(comment.getMember().getNickname())
+//              .content(comment.getContent())
+//              .createdAt(comment.getCreatedAt())
+//              .modifiedAt(comment.getModifiedAt())
+//              .build()
+//      );
+//    }
+//    return ResponseDto.success(commentResponseDtoList);
+//  }
 
   //댓글 수정
   @Transactional
