@@ -34,13 +34,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
         WebMvcConfigurer.super.addResourceHandlers(registry);
     }
 
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true) ;
         configuration.addAllowedOriginPattern("*");
-        configuration.addAllowedOrigin("배포주소적기"); // 배포 시
+        configuration.addAllowedOrigin("배포주소"); // 배포 시
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
@@ -51,5 +50,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 }
