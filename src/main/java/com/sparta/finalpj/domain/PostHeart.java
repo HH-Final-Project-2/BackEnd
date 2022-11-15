@@ -26,7 +26,4 @@ public class PostHeart {
     @JoinColumn(name="postId")
     private Post post;
 
-//    @ManyToOne
-//    @JoinColumn(name="commentId")
-//    private Comment comment;
 }

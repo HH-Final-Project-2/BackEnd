@@ -29,8 +29,8 @@ public class Post extends Timestamped {
   @Column(nullable = true)
   private String image;
 
-//  @Column(nullable = false)
-//  private job job;
+  @Column(nullable = false)
+  private String jobGroup;
 
 //  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 //  private List<Comment> comments;
@@ -48,7 +48,7 @@ public class Post extends Timestamped {
 
   public void update(PostRequestDto postRequestDto, String image) {
     this.title = postRequestDto.getTitle();
-//    this.job = postRequestDto.getjob();
+    this.jobGroup = postRequestDto.getJobGroup();
     this.content = postRequestDto.getContent();
     this.image=image;
 //    this.thumbnail=thumbnail;
