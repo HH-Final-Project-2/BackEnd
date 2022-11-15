@@ -41,7 +41,7 @@ public class CardController {
         return cardService.getDetailCard(cardId, request);
     }
 
-    // 자사&타사 명함 상세조회
+    // 자사&타사 명함 전체조회
     @GetMapping(value = "/businessCards")
     public ResponseDto<?> getAllCardsList(@RequestParam("companyType") CompanyType companyType, HttpServletRequest request) {
         return cardService.getAllCardsList(companyType, request);
