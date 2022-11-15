@@ -50,9 +50,11 @@ public enum ErrorCode {
 
     EMPTY(HttpStatus.BAD_REQUEST.value(), "M027", "multipart 파일이 비어있습니다."),
     CONVERT_FAIL(HttpStatus.BAD_REQUEST.value(), "M026", "multipart을 파일로 변환하지 못하였습니다."),
-    REMOVE_FAIL(HttpStatus.BAD_REQUEST.value(), "M027", "파일 제거를 실패하였습니다.")
+    REMOVE_FAIL(HttpStatus.BAD_REQUEST.value(), "M027", "파일 제거를 실패하였습니다."),
+    UPLOAD_FAIL_TO_GOOGLE(HttpStatus.BAD_REQUEST.value(), "M028", "Google Cloud에 파일을 업로드하지 못했습니다."),
+    CARDINFO_UPDATE_FAIL(HttpStatus.BAD_REQUEST.value(), "M029", "명함정보 등록을 실패했습니다."),
+    NOT_FOUND_CARDINFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M030", "명함정보 등록을 실패했습니다.")
     ;
-
 
     private final int httpStatus;
     private final String code;

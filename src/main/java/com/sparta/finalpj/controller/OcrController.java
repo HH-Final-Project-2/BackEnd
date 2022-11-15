@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @RequiredArgsConstructor
@@ -21,8 +22,8 @@ public class OcrController {
 
     //Todo HttpServletRequest 추가하기
     @PostMapping(value = "/scan/cards", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseDto<?> orcTest(@RequestPart(value = "cardImg", required = false) MultipartFile cardImg) throws IOException {
+    public ResponseDto<?> orcTest(@RequestPart(value = "cardImg", required = false) MultipartFile cardImg,  HttpServletRequest request) throws IOException {
 
-        return ocrService.detectTextGcs(cardImg);
+        return ocrService.detectTextGcs(cardImg, request);
     }
 }

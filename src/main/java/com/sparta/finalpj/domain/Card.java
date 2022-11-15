@@ -52,9 +52,12 @@ public class Card extends Timestamped {
   @Enumerated(EnumType.STRING)
   private CompanyType companyType;
 
-  @JoinColumn(name = "member_id", nullable = false)
+  @JoinColumn(name = "memberId", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private Member member;
+
+  @OneToOne(mappedBy = "card", cascade = CascadeType.REMOVE, orphanRemoval = true)
+  private CardImage cardImage;
 
   public void update(CardRequestDto cardRequestDto) {
     this.cardName = cardRequestDto.getCardName();

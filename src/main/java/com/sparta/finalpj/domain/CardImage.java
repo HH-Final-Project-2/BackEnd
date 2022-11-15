@@ -17,21 +17,22 @@ public class CardImage extends Timestamped {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false)
-  private String cardImg;
+  @Column
+  private String cardImgName;
 
   @Column(nullable = false)
-  private String cardName;
-
-  @Column(nullable = false)
-  private String cardUrl;
+  private String cardImgUrl;
 
   @JoinColumn(name = "memberId", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private Member member;
 
-  @JoinColumn(name = "cardId", nullable = false)
+  @JoinColumn(name = "cardId")
   @OneToOne(fetch = FetchType.LAZY)
   private Card card;
+
+  public void update(Card cardId) {
+    this.card = cardId;
+  }
 
 }
