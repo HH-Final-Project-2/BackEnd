@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "fix/post" ]
+    branches: [ "" ]
 #   pull_request:
 #     branches: [ "dev" ]
 
