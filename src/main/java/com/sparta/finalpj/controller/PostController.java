@@ -28,15 +28,6 @@ public class PostController {
 //          )
 //  })
 
-//  @GetMapping("/posting/read/{postingId}")
-//  public String read(@PathVariable Long id, Model model) {
-//    PostResponseDto dto = postService.findById(id);
-//    postService.updateHitCnt(id); // views ++
-//    model.addAttribute("posts", dto);
-//
-//    return "posts-read";
-//  }
-
   //게시글 작성 (파일 업로드 포함)
   @SwaggerAnnotation
   @PostMapping(value = "/posting",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json")
@@ -89,3 +80,4 @@ public class PostController {
 //    return postService.searchPosts(keyword);
 //  }
 }
+

@@ -15,7 +15,4 @@ public interface PostHeartRepository extends JpaRepository<PostHeart, Long> {
 //    Optional<PostHeart> findByPost(Post post);
     List<PostHeart> findAllByPost(Post post);
 
-
-
-//    List<PostHeart> findAllByMember(Member member);
 }

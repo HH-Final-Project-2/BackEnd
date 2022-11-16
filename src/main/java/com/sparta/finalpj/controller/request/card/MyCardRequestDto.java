@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CardRequestDto {
+public class MyCardRequestDto {
 
   private String cardName;
   private String engName;
@@ -22,5 +22,4 @@ public class CardRequestDto {
   private String companyAddress;
   private String tel;
   private String fax;
-  private CompanyType companyType;
 }

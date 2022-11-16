@@ -1,4 +1,4 @@
-package com.sparta.finalpj.controller.request.card;
+package com.sparta.finalpj.controller.response.card;
 
 import com.sparta.finalpj.domain.CompanyType;
 import lombok.AllArgsConstructor;
@@ -6,12 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
+import java.time.LocalDateTime;
+
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CardRequestDto {
-
+public class MyCardResponseDto {
+  private Long id; //cardId
   private String cardName;
   private String engName;
   private String email;
@@ -22,5 +24,6 @@ public class CardRequestDto {
   private String companyAddress;
   private String tel;
   private String fax;
-  private CompanyType companyType;
+  private LocalDateTime createdAt;
+  private LocalDateTime modifiedAt;
 }

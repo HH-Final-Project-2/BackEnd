@@ -1,6 +1,7 @@
 package com.sparta.finalpj.domain;
 
 import com.sparta.finalpj.controller.request.card.CardRequestDto;
+import com.sparta.finalpj.controller.request.card.MyCardRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Card extends Timestamped {
+public class MyCard extends Timestamped {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -48,27 +49,24 @@ public class Card extends Timestamped {
   @Column
   private String fax;
 
-  @Column(nullable = false)
-  @Enumerated(EnumType.STRING)
-  private CompanyType companyType;
-
   @JoinColumn(name = "memberId", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private Member member;
 
-  @OneToOne(mappedBy = "card", cascade = CascadeType.REMOVE, orphanRemoval = true)
-  private CardImage cardImage;
+  @OneToOne(mappedBy = "myCard", cascade = CascadeType.REMOVE, orphanRemoval = true)
+  private CardImage myCardImage;
 
-  public void update(CardRequestDto cardRequestDto) {
-    this.cardName = cardRequestDto.getCardName();
-    this.engName = cardRequestDto.getEngName();
-    this.email = cardRequestDto.getEmail();
-    this.company = cardRequestDto.getCompany();
-    this.phoneNum = cardRequestDto.getPhoneNum();
-    this.department = cardRequestDto.getDepartment();
-    this.position = cardRequestDto.getPosition();
-    this.companyAddress = cardRequestDto.getCompanyAddress();
-    this.tel = cardRequestDto.getTel();
-    this.fax = cardRequestDto.getFax();
+
+  public void update(MyCardRequestDto myCardRequestDto) {
+    this.cardName = myCardRequestDto.getCardName();
+    this.engName = myCardRequestDto.getEngName();
+    this.email = myCardRequestDto.getEmail();
+    this.company = myCardRequestDto.getCompany();
+    this.phoneNum = myCardRequestDto.getPhoneNum();
+    this.department = myCardRequestDto.getDepartment();
+    this.position = myCardRequestDto.getPosition();
+    this.companyAddress = myCardRequestDto.getCompanyAddress();
+    this.tel = myCardRequestDto.getTel();
+    this.fax = myCardRequestDto.getFax();
   }
 }
