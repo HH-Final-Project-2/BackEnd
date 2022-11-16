@@ -15,7 +15,7 @@ public class CommentResponseDto {
   private Long id;
   private String content;
   private String author;
-  private String jobGroup;
+//  private String jobGroup;
   private Long CommentHeartCnt; // 좋아요 갯수
   private LocalDateTime createdAt;
   private LocalDateTime modifiedAt;

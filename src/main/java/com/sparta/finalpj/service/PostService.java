@@ -103,7 +103,6 @@ public class PostService {
                       .id(comment.getId())
                       .author(comment.getMember().getNickname())
                       .content(comment.getContent())
-                      .jobGroup(comment.getJobGroup())
                       .CommentHeartCnt(commentHeartCnt)
                       .createdAt(comment.getCreatedAt())
                       .modifiedAt(comment.getModifiedAt())
