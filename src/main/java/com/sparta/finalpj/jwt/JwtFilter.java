@@ -34,6 +34,10 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
+    // Filter 나 GenericFilterBean 이라는 스프링 확장 필터에서
+    // 서블릿 실행 시 요청이 들어오면 다시 필터부터 동작이 되는데
+    // OncePerRequestFilter 를 사용하면 사용자 요청 한번에 필터를 딱 한번만 돈다.
+    // @Override doFilterInternal 를 구현해야한다.
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
