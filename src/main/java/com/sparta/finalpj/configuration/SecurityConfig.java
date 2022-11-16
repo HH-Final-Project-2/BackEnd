@@ -4,11 +4,14 @@ import com.sparta.finalpj.jwt.JwtFilter;
 import com.sparta.finalpj.jwt.TokenProvider;
 import com.sparta.finalpj.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -22,11 +25,17 @@ import java.util.Arrays;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final String SECRET_KEY;
+    @Value("${jwt.secret}")
+    String SECRET_KEY;
 
     private final TokenProvider tokenProvider;
     private final UserDetailsServiceImpl userDetailsService;
+
+    // 암호화 알고리즘 빈 등록
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 
     // corsConfigurationSource 포트 설정
     @Bean
@@ -34,6 +43,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         // origin
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.addAllowedOrigin("http://localhost:3000");
         // method
         configuration.setAllowedMethods(Arrays.asList("*"));
         // header
@@ -41,7 +51,7 @@ public class SecurityConfig {
 
         configuration.setAllowCredentials(true);
 
-        configuration.setExposedHeaders(Arrays.asList("Authorization", "RefreshToken" , "Access_Control-Allow-Origin"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Refresh-Token" , "Access_Control-Allow-Origin"));
 
         // Todo :: Security Config -> 허용할 포트만 열어두기!!
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
