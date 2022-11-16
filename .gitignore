@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 
 application.properties
+ocr-api-testpj-c2345877fb97.json
 
 ### STS ###
 .apt_generated

@@ -1,10 +1,7 @@
 package com.sparta.finalpj.domain;
 
 import com.sparta.finalpj.controller.request.PostRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,6 +10,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Entity
 public class Post extends Timestamped {
 

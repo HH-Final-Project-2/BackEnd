@@ -1,11 +1,13 @@
 package com.sparta.finalpj.controller;
 
+import com.sparta.finalpj.configuration.SwaggerAnnotation;
 import com.sparta.finalpj.controller.request.PostRequestDto;
 import com.sparta.finalpj.controller.response.PostResponseDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +29,7 @@ public class PostController {
 //  })
 
   //게시글 작성 (파일 업로드 포함)
+  @SwaggerAnnotation
   @PostMapping(value = "/posting",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json")
   public ResponseDto<?> createPost(@RequestPart(value = "postDto") PostRequestDto requestDto,
                                    @RequestParam(value = "image", required = false) MultipartFile image,
@@ -52,6 +55,7 @@ public class PostController {
 //  }
 
   //게시글 수정
+  @SwaggerAnnotation
   @PutMapping(value = "/posting/{postingId}",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json")
   public ResponseDto<?> updatePost(@PathVariable Long postingId,
                                    @RequestPart(value = "postDto") PostRequestDto requestDto,
@@ -62,6 +66,7 @@ public class PostController {
   }
 
   //게시글 삭제
+  @SwaggerAnnotation
   @DeleteMapping(value = "/posting/{postingId}")
   public ResponseDto<?> deletePost(@PathVariable Long postingId,
       HttpServletRequest request) {
@@ -75,3 +80,4 @@ public class PostController {
 //    return postService.searchPosts(keyword);
 //  }
 }
+

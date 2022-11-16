@@ -8,6 +8,7 @@ import com.sparta.finalpj.domain.*;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.jwt.TokenProvider;
+import com.sparta.finalpj.jwt.UserDetailsImpl;
 import com.sparta.finalpj.repository.CommentHeartRepository;
 import com.sparta.finalpj.repository.CommentRepository;
 import com.sparta.finalpj.repository.PostHeartRepository;
@@ -30,7 +31,6 @@ public class PostService {
   private final PostRepository postRepository;
   private final CommentRepository commentRepository;
   private final PostHeartRepository postHeartRepository;
-
   private final CommentHeartRepository commentHeartRepository;
   private final FileS3Service fileS3Service;
   private final TokenProvider tokenProvider;
@@ -188,7 +188,6 @@ public class PostService {
     } catch (IOException e) {
       throw new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL);
     }
-
 //    String thumbnailUrl = "";
 
 //    try {
