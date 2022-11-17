@@ -1,6 +1,7 @@
 package com.sparta.finalpj.controller;
 
 import com.sparta.finalpj.controller.response.ResponseDto;
+import com.sparta.finalpj.domain.PageType;
 import com.sparta.finalpj.service.OcrService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -16,9 +17,10 @@ import java.io.IOException;
 public class OcrController {
     private final OcrService ocrService;
 
-    @PostMapping(value = "/scan/cards", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseDto<?> scanCard(@RequestPart(value = "cardImg", required = false) MultipartFile cardImg, HttpServletRequest request) throws IOException {
+    //Todo HttpServletRequest 추가하기
+    @PostMapping(value = "/{page}/scan/cards", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseDto<?> orcTest(@PathVariable("page") PageType page, @RequestPart(value = "cardImg", required = false) MultipartFile cardImg, HttpServletRequest request) throws IOException {
 
-        return ocrService.readFileInfo(cardImg, request);
+        return ocrService.readFileInfo(cardImg, request, page);
     }
 }

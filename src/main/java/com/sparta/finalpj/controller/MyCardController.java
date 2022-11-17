@@ -1,7 +1,9 @@
 package com.sparta.finalpj.controller;
 
+import com.sparta.finalpj.controller.request.card.CardRequestDto;
 import com.sparta.finalpj.controller.request.card.MyCardRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
+import com.sparta.finalpj.domain.CompanyType;
 import com.sparta.finalpj.service.MyCardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

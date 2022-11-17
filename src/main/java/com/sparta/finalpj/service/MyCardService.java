@@ -9,7 +9,6 @@ import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.repository.CardImageRepository;
 import com.sparta.finalpj.repository.MyCardRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class MyCardService {
     private final CommonService commonService;
@@ -54,9 +52,10 @@ public class MyCardService {
                     .build();
             myCardRepository.save(myCard);
 
+
             // 명함 이미지 정보가 있을 경우 cardId를 업데이트
             CardImage cardImage = isPresentCardImg(member);
-            if (cardImage != null && cardImage.getMember() != null && cardImage.getMyCard() == null && cardImage.getCard() == null) {
+            if (cardImage != null && cardImage.getMember() != null && cardImage.getMyCard() == null) {
                 cardImage.updateMyCard(myCard);
             }
 
@@ -84,24 +83,7 @@ public class MyCardService {
             throw new CustomException(ErrorCode.NOT_FOUND_CARD);
         }
         myCard.update(requestDto);
-
-        MyCardResponseDto myCardUpdateList = MyCardResponseDto.builder()
-                .id(myCard.getId())
-                .cardName(myCard.getCardName())
-                .engName(myCard.getEngName())
-                .email(myCard.getEmail())
-                .phoneNum(myCard.getPhoneNum())
-                .company(myCard.getCompany())
-                .department(myCard.getDepartment())
-                .position(myCard.getPosition())
-                .companyAddress(myCard.getCompanyAddress())
-                .tel(myCard.getTel())
-                .fax(myCard.getFax())
-                .createdAt(myCard.getCreatedAt())
-                .modifiedAt(myCard.getModifiedAt())
-                .build();
-
-        return ResponseDto.success(myCardUpdateList);
+        return ResponseDto.success("수정 완료");
     }
 
     // 내명함 삭제
@@ -186,7 +168,7 @@ public class MyCardService {
                 .email(myCard.getEmail())
                 .phoneNum(myCard.getPhoneNum())
                 .company(myCard.getCompany())
-                .department(myCard.getDepartment())
+                .department(myCard.getCompany())
                 .position(myCard.getPosition())
                 .companyAddress(myCard.getCompanyAddress())
                 .tel(myCard.getTel())

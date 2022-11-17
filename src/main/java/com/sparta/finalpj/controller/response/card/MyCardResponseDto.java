@@ -1,5 +1,6 @@
 package com.sparta.finalpj.controller.response.card;
 
+import com.sparta.finalpj.domain.CompanyType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

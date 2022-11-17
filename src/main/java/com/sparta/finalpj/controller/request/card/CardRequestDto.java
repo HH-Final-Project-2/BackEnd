@@ -1,5 +1,6 @@
 package com.sparta.finalpj.controller.request.card;
 
+import com.sparta.finalpj.domain.CompanyType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,5 +22,5 @@ public class CardRequestDto {
   private String companyAddress;
   private String tel;
   private String fax;
-  private String companyType;
+  private CompanyType companyType;
 }

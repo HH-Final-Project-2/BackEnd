@@ -1,10 +1,12 @@
 package com.sparta.finalpj.service;
 
 import com.google.cloud.vision.v1.*;
+import com.sparta.finalpj.controller.request.card.CardRequestDto;
+import com.sparta.finalpj.controller.request.card.MyCardRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
-import com.sparta.finalpj.controller.response.ocr.OcrResponseDto;
 import com.sparta.finalpj.domain.CardImage;
 import com.sparta.finalpj.domain.Member;
+import com.sparta.finalpj.domain.PageType;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.repository.CardImageRepository;
@@ -31,7 +33,7 @@ public class OcrService {
     private final GoogleCloudUploadService googleCloudUploadService;
     private final CardImageRepository cardImageRepository;
 
-    public ResponseDto<?> readFileInfo(MultipartFile cardImg, HttpServletRequest request) throws IOException {
+    public ResponseDto<?> readFileInfo(MultipartFile cardImg, HttpServletRequest request, PageType page) throws IOException {
         // 1. 로그인 확인
         commonService.loginCheck(request);
 
@@ -49,11 +51,11 @@ public class OcrService {
         String filePath = bucketFilePath + fileName;
 
         // 4.OCR
-        return detectTextGcs(filePath, fileName, member);
+        return detectTextGcs(filePath, fileName, member, page);
     }
 
-    // Google 클라우드 저장소의 지정된 원격 이미지에서 텍스트를 추출
-    public ResponseDto<?> detectTextGcs(String gcsPath, String fileName, Member member) throws IOException {
+    // Google 클라우드 저장소의 지정된 원격 이미지에서 텍스트를 검색
+    public ResponseDto<?> detectTextGcs(String gcsPath, String fileName, Member member, PageType page) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
         ImageSource imgSource = ImageSource.newBuilder().setGcsImageUri(gcsPath).build();
@@ -73,8 +75,15 @@ public class OcrService {
             // OCR로 추출된 데이터를 담을 List
             ArrayList<Object> originList = new ArrayList<>();
 
+            // 명함 데이터 담는 변수
+            String email = ""; // 이메일
+            String phoneNum = ""; // 폰번호
+            String tel = ""; // 회사 번호
+            String fax = ""; // 팩스
+
             for (AnnotateImageResponse res : responses) {
                 if (res.hasError()) {
+                    log.error("Error: %s%n", res.getError().getMessage());
                     System.out.format("Error: %s%n", res.getError().getMessage());
                     throw new IllegalArgumentException("실패");
                 }
@@ -85,22 +94,15 @@ public class OcrService {
                     originList.add(annotation.getDescription());
                 }
             }
-
             // 배열의 0번째 값에 모든 데이터들이 text형식으로 담긴다
             String[] txt = originList.get(0).toString().split("\\n");
-
-            // 명함 데이터 담는 변수
-            String email = ""; // 이메일
-            String phoneNum = ""; // 폰번호
-            String tel = ""; // 회사 번호
-            String fax = ""; // 팩스
 
             // TODO: 필요한 형식 더 추가하기
             // parsing 
             for (int i = 0; i < txt.length; i++) {
                 // 휴대폰 번호 (M)
                 if (txt[i].contains("-") && txt[i].contains("M")) {
-                    phoneNum = txt[i].substring(txt[i].indexOf("M"), txt[i].indexOf("M")+14).replace("M", " ").trim();
+                    phoneNum = txt[i].substring(txt[i].indexOf("M"), txt[i].indexOf("M")+15).replace("M", " ").trim();
                     log.info("===========phone1=========");
                     log.debug(phoneNum);
                     System.out.println("===========phone1=========");
@@ -113,7 +115,7 @@ public class OcrService {
 
                 // companyTel (T)
                 if (txt[i].contains("-") && txt[i].contains("T")) {
-                    tel =  txt[i].substring(txt[i].indexOf("T"), txt[i].indexOf("T")+14).replace("T", " ").trim();
+                    tel =  txt[i].substring(txt[i].indexOf("T"), txt[i].indexOf("T")+15).replace("T", " ").trim();
                     System.out.println("==========companyTel1==========");
                     System.out.println(tel);
                 }
@@ -147,14 +149,22 @@ public class OcrService {
             cardImageRepository.save(cardImage);
 
             // 2. 클라이언트에게 던져줄 정보
-            OcrResponseDto ocrResponseDto = OcrResponseDto.builder()
+            if(page.equals("own") || page.equals("other")) {
+                CardRequestDto cardRequestDto = CardRequestDto.builder()
+                        .email(email)
+                        .phoneNum(phoneNum)
+                        .tel(tel)
+                        .fax(fax)
+                        .build();
+                return ResponseDto.success(cardRequestDto);
+            }
+            MyCardRequestDto myCardRequestDto = MyCardRequestDto.builder()
                     .email(email)
                     .phoneNum(phoneNum)
                     .tel(tel)
                     .fax(fax)
-                    .imgUrl(gcsPath)
                     .build();
-            return ResponseDto.success(ocrResponseDto);
+            return ResponseDto.success(myCardRequestDto);
         }
     }
 }

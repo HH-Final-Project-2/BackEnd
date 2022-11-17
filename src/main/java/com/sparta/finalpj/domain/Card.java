@@ -49,7 +49,8 @@ public class Card extends Timestamped {
   private String fax;
 
   @Column(nullable = false)
-  private String companyType;
+  @Enumerated(EnumType.STRING)
+  private CompanyType companyType;
 
   @JoinColumn(name = "memberId", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)

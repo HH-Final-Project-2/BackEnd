@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 public class OcrResponseDto {
   private String email;
   private String phoneNum;
+//  private String company;
+//  private String companyAddress;
   private String tel;
   private String fax;
-  private String imgUrl;
 }
