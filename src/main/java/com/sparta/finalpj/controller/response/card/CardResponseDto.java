@@ -1,6 +1,5 @@
 package com.sparta.finalpj.controller.response.card;
 
-import com.sparta.finalpj.domain.CompanyType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +23,7 @@ public class CardResponseDto {
   private String companyAddress;
   private String tel;
   private String fax;
-  private CompanyType companyType;
+  private String companyType;
   private LocalDateTime createdAt;
   private LocalDateTime modifiedAt;
 }
