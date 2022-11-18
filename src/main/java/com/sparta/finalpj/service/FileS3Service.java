@@ -33,8 +33,8 @@ public class FileS3Service {
     public String uploadFile(MultipartFile images
     ) throws IOException {
 
-        File licenseFile = mutipartToFileConverter.convert(images)
-                .orElseThrow(FileConvertException::new);
+//        File licenseFile = mutipartToFileConverter.convert(images)
+//                .orElseThrow(FileConvertException::new);
 
 
         String now = Instant
@@ -53,7 +53,7 @@ public class FileS3Service {
 
         //PutObjectRequest는 Aws S3 버킷에 업로드할 객체 메타 데이터와 파일 데이터로 이루어져있다.
         amazonS3.putObject(BUCKET, fileName, images.getInputStream(),objMeta);
-        removeNewFile(licenseFile);
+//        removeNewFile(licenseFile);
 
         return amazonS3.getUrl(BUCKET, fileName).toString();
 
