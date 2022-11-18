@@ -2,11 +2,8 @@ package com.sparta.finalpj.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.sparta.finalpj.exception.CustomException;
-import com.sparta.finalpj.exception.ErrorCode;
-import com.sparta.finalpj.exception.FileConvertException;
 import com.sparta.finalpj.exception.RemoveFileException;
-import com.sparta.finalpj.shared.MutipartToFileConverter;
+//import com.sparta.finalpj.shared.MutipartToFileConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +28,7 @@ public class FileS3Service {
     @Value("${aws.s3.path.url}")
     private String BUCKET_PATH;
     private final AmazonS3 amazonS3;
-    private final MutipartToFileConverter mutipartToFileConverter;
+//    private final MutipartToFileConverter mutipartToFileConverter;
 
     public String uploadFile(MultipartFile images
     ) throws IOException {
@@ -62,11 +59,11 @@ public class FileS3Service {
 
     }
 
-    public void removeNewFile(File targetFile) {
-        if (!targetFile.delete()) {
-            throw new RemoveFileException();
-        }
-    }
+//    public void removeNewFile(File targetFile) {
+//        if (!targetFile.delete()) {
+//            throw new RemoveFileException();
+//        }
+//    }
 
 }
 

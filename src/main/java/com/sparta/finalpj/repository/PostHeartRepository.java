@@ -1,6 +1,5 @@
 package com.sparta.finalpj.repository;
 
-import com.sparta.finalpj.domain.Comment;
 import com.sparta.finalpj.domain.PostHeart;
 import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.domain.Post;
@@ -12,7 +11,7 @@ import java.util.Optional;
 public interface PostHeartRepository extends JpaRepository<PostHeart, Long> {
     Optional<PostHeart> findByMemberAndPost(Member member, Post post);
     List<PostHeart> findByPost(Post post);
-//    Optional<PostHeart> findByPost(Post post);
+    Long countByPost(Post post);
     List<PostHeart> findAllByPost(Post post);
 
 }
