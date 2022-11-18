@@ -1,7 +1,6 @@
 package com.sparta.finalpj.repository;
 
 import com.sparta.finalpj.domain.Post;
-import org.hibernate.sql.Insert;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +19,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 //@Query("update Post p set p.hit = p.hit + 1 where p.id = :postId") int updateHit(Long postId);
   @Query("update Post q set q.hit = q.hit + 1 where q.id = :id")
   int updateHit(@Param("id") Long id);
+
+  @Query(value = "SELECT p FROM Post p WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword% OR p.jobGroup LIKE %:keyword% ORDER BY p.createdAt desc", nativeQuery = true)
+  List <Post> search(@Param("keyword") String keyword);
 }

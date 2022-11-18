@@ -8,7 +8,6 @@ import com.sparta.finalpj.domain.*;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.jwt.TokenProvider;
-import com.sparta.finalpj.jwt.UserDetailsImpl;
 import com.sparta.finalpj.repository.CommentHeartRepository;
 import com.sparta.finalpj.repository.CommentRepository;
 import com.sparta.finalpj.repository.PostHeartRepository;
@@ -36,7 +35,7 @@ public class PostService {
   private final TokenProvider tokenProvider;
 
 
-  //===============게시글 작성=============
+  //===============게시글 작성================
   @Transactional
   public ResponseDto<?> createPost(PostRequestDto requestDto, MultipartFile image,
                                    HttpServletRequest request) {
@@ -82,7 +81,7 @@ public class PostService {
     );
   }
 
-  //게시글 상세 조회
+  //=============게시글 상세 조회=============
   @Transactional(readOnly = false)
   public ResponseDto<?> getPost(Long postingId) {
     Post post = isPresentPost(postingId);
@@ -130,13 +129,14 @@ public class PostService {
 
     return ResponseDto.success(postDetailList);
   }
+
   //=====조회수 증가 =====
   @Transactional
   public int updateHit(Long postId) {
     return postRepository.updateHit(postId);
   }
 
-  //=======게시글 전체 조회========
+  //==============게시글 전체 조회================
   @Transactional(readOnly = true)
   public ResponseDto<?> getAllPost() {
     List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
@@ -148,7 +148,7 @@ public class PostService {
               PostResponseDto.builder()
                       .id(post.getId())
                       .title(post.getTitle())
-//                      .thumbnail(post.getThumbnail())
+                      .image(post.getImage())
                       .content(post.getContent())
                       .author(post.getMember().getNickname())
                       .jobGroup(post.getJobGroup())
@@ -160,11 +160,40 @@ public class PostService {
                       .build()
       );
     }
-
     return ResponseDto.success(postListResponseDtoList);
   }
 
-  //=========게시글 수정==========
+  //=================게시글 검색=================
+  @Transactional
+    public ResponseDto<?> searchPost(String keyword) {
+    List<Post> postList = postRepository.search(keyword);
+    // 검색된 항목 담아줄 리스트 생성
+    List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
+    //for문을 통해서 List에 담아주기
+    for (Post post : postList) {
+      long comment = commentRepository.countAllByPost(post);
+      long postHeartCnt = postHeartRepository.findAllByPost(post).size();
+      postListResponseDtoList.add(
+              PostResponseDto.builder()
+                      .id(post.getId())
+                      .title(post.getTitle())
+                      .image(post.getImage())
+                      .content(post.getContent())
+                      .author(post.getMember().getNickname())
+                      .jobGroup(post.getJobGroup())
+                      .postHeartCnt(postHeartCnt) //게시글 좋아요
+                      .commentCnt(comment) // 댓글 갯수
+                      .hit(post.getHit()) //조회수
+                      .createdAt(post.getCreatedAt())
+                      .modifiedAt(post.getModifiedAt())
+                      .build()
+      );
+    }
+    //결과값
+    return ResponseDto.success(postListResponseDtoList);
+  }
+
+  //===============게시글 수정=================
   @Transactional
   public ResponseDto<?> updatePost(Long id, PostRequestDto requestDto, MultipartFile image, HttpServletRequest request) {
 
@@ -188,13 +217,7 @@ public class PostService {
     } catch (IOException e) {
       throw new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL);
     }
-//    String thumbnailUrl = "";
 
-//    try {
-//      thumbnailUrl = fileS3Service.uploadFile(thumbnail);
-//    } catch (IOException e) {
-//      CustomException.toResponse(new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL));
-//    }
     List<PostHeart> postHeartCnt = postHeartRepository.findByPost(post);
     Long commentCnt = commentRepository.countByPost(post);
 
@@ -216,6 +239,7 @@ public class PostService {
     );
   }
 
+  //===================게시글 삭제======================
   @Transactional
   public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
 //    if (null == request.getHeader("Refresh-Token")) {
@@ -245,6 +269,38 @@ public class PostService {
     postRepository.delete(post);
     return ResponseDto.success("delete success");
   }
+
+
+  //==================조회수TOP5 게시글 조회===================
+//  @Transactional
+//  public ResponseDto<?> getPostsByCount(Pageable pageable) {
+//
+//      Page<Post> postList = postRepository.findAll(pageable);
+//      List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
+//
+//      for (Post post : postList) {
+//
+//      long comment = commentRepository.countAllByPost(post);
+//      long postHeartCnt = postHeartRepository.findAllByPost(post).size();
+//
+//      postListResponseDtoList.add(PostResponseDto.builder()
+//                      .id(post.getId())
+//                      .title(post.getTitle())
+//                      .content(post.getContent())
+//                      .author(post.getMember().getNickname())
+//                      .jobGroup(post.getJobGroup())
+//                      .postHeartCnt(postHeartCnt) //게시글 좋아요
+//                      .commentCnt(comment) // 댓글 갯수
+//                      .hit(post.getHit()) //조회수
+//                      .createdAt(post.getCreatedAt())
+//                      .modifiedAt(post.getModifiedAt())
+////              .memberId(post.getMember().getMemberId())
+//                      .build()
+//      );
+//    }
+//    return ResponseDto.success(postListResponseDtoList);
+//  }
+
 
   @Transactional(readOnly = true)
   public int commentHeartCnt(Comment comment) {
