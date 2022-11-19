@@ -1,6 +1,7 @@
 package com.sparta.finalpj.controller;
 
 import com.sparta.finalpj.controller.request.OpenApiRequestDto;
+import com.sparta.finalpj.controller.response.OpenApiResponseDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.service.OpenApiService;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +16,15 @@ import java.io.IOException;
 public class OpenApiController {
     private final OpenApiService openApiService;
 
-    // 자사&타사 명함 등록
+    // 공공데이터 호출 => 기업정보 전체조회
     @PostMapping(value = "/companySearch")
-    public ResponseDto<?> getpublicInstitutionsApi(@RequestBody OpenApiRequestDto openApiRequestDto) throws IOException, ParseException {
-        return openApiService.apiTest(openApiRequestDto);
+    public ResponseDto<?> getPublicInstitutionsApi(@RequestBody OpenApiRequestDto requestDto) throws IOException, ParseException {
+        return openApiService.getPublicInstitutionsApi(requestDto);
+    }
+    
+    // 기업정보 받아오기
+    @PostMapping("/companyInfo")
+    public ResponseDto<?> getCompanyInfo(@RequestBody OpenApiResponseDto requestDto) {
+        return openApiService.getCompanyInfo(requestDto);
     }
 }

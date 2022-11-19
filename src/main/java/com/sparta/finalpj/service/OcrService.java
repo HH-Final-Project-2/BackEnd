@@ -40,6 +40,11 @@ public class OcrService {
         if (null == member) {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
+        
+        // 첨부파일이 없을 경우
+        if(cardImg.isEmpty()) {
+            throw new CustomException(ErrorCode.EMPTY_IMAGE_FILE);
+        }
 
         // 3.파일 업로드
         googleCloudUploadService.upload(cardImg);
@@ -99,45 +104,81 @@ public class OcrService {
             // parsing 
             for (int i = 0; i < txt.length; i++) {
                 // 휴대폰 번호 (M)
-                if (txt[i].contains("-") && txt[i].contains("M")) {
-                    phoneNum = txt[i].substring(txt[i].indexOf("M"), txt[i].indexOf("M")+14).replace("M", " ").trim();
-                    log.info("===========phone1=========");
-                    log.debug(phoneNum);
-                    System.out.println("===========phone1=========");
-                    System.out.println(phoneNum);
+                if (txt[i].contains("-") && txt[i].contains("010") || txt[i].contains("82")) {
 
-                } else if (txt[i].contains("-") && txt[i].contains("010") || txt[i].contains("82")) {
-                    System.out.println("===========phone2=========");
-                    phoneNum = txt[i].trim();
-                }
-
-                // companyTel (T)
-                if (txt[i].contains("-") && txt[i].contains("T")) {
-                    tel =  txt[i].substring(txt[i].indexOf("T"), txt[i].indexOf("T")+14).replace("T", " ").trim();
-                    System.out.println("==========companyTel1==========");
-                    System.out.println(tel);
-                }
-
-                // fax (F)
-                if (txt[i].contains("-") && txt[i].contains("F")) {
-                    fax = txt[i].replace("F", " ").trim();
-                    System.out.println("==========fax1==========");
-                    System.out.println(fax);
-
-                    if (txt[i].contains("-") || txt[i].contains("F")) {
-                        fax = txt[i].replace("F", " ").trim();
-                        System.out.println("==========fax2==========");
+                    if (txt[i].contains("M.")) {
+                        phoneNum = txt[i].replace("M.", " ").trim().substring(0, 13);
+                    } else if (txt[i].contains("M")) {
+                        phoneNum = txt[i].replace("M", " ").trim().substring(0, 13);
+                    } else {
+                        phoneNum = txt[i].trim();
                     }
                 }
+
+
+                // companyTel (T)
+                if (txt[i].contains("-") && txt[i].contains("T.")) {
+                    String telA = txt[i].substring(txt[i].indexOf("T."));
+                    if(telA.length() >= 15) {
+                        tel = txt[i].substring(txt[i].indexOf("T."), txt[i].indexOf("T.")+15).replace("T.", " ").trim();
+                    } else if(telA.length() < 15 || telA.length() >= 14) {
+                        tel = txt[i].substring(txt[i].indexOf("T."), txt[i].indexOf("T.")+14).replace("T.", " ").trim();
+                    } else {
+                        tel = txt[i].substring(txt[i].indexOf("T."), telA.length()).replace("T.", " ").trim();
+                    }
+                } else if (txt[i].contains("-") && txt[i].contains("T")) {
+                    String telA = txt[i].substring(txt[i].indexOf("T"));
+                    if(telA.length() >= 15) {
+                        tel = txt[i].substring(txt[i].indexOf("T"), txt[i].indexOf("T")+15).replace("T", " ").trim();
+                    } else if(telA.length() < 15 || telA.length() >= 14) {
+                        tel = txt[i].substring(txt[i].indexOf("T"), txt[i].indexOf("T")+14).replace("T", " ").trim();
+                    } else {
+                        tel = txt[i].substring(txt[i].indexOf("T"), telA.length()).replace("T", " ").trim();
+                    }
+                }
+
+               // fax (F)
+                if (txt[i].contains("-") && txt[i].contains("F.")) {
+                    String faxA = txt[i].substring(txt[i].indexOf("F."));
+                    if(faxA.length() >= 15) {
+                        fax = txt[i].substring(txt[i].indexOf("F."), txt[i].indexOf("F.")+15).replace("F.", " ").trim();
+                    } else if(faxA.length() < 15 || faxA.length() >= 14) {
+                        fax = txt[i].substring(txt[i].indexOf("F."), txt[i].indexOf("F.")+14).replace("F.", " ").trim();
+                    } else {
+                        fax = txt[i].substring(txt[i].indexOf("F."), faxA.length()).replace("F.", " ").trim();
+                    }
+                } else if (txt[i].contains("-") && txt[i].contains("F,")) {
+                    String faxA = txt[i].substring(txt[i].indexOf("F,"));
+                    if(faxA.length() >= 15) {
+                        fax = txt[i].substring(txt[i].indexOf("F,"), txt[i].indexOf("F,")+15).replace("F,", " ").trim();
+                    } else if(faxA.length() < 15 || faxA.length() >= 14) {
+                        fax = txt[i].substring(txt[i].indexOf("F,"), txt[i].indexOf("F,")+14).replace("F,", " ").trim();
+                    } else {
+                        fax = txt[i].substring(txt[i].indexOf("F,"), faxA.length()).replace("F,", " ").trim();
+                    }
+                } else if (txt[i].contains("-") && txt[i].contains("F")) {
+                    String faxA = txt[i].substring(txt[i].indexOf("F"));
+                    if(faxA.length() >= 15) {
+                        fax = txt[i].substring(txt[i].indexOf("F"), txt[i].indexOf("F")+15).replace("F", " ").trim();
+                    } else if(faxA.length() < 15 || faxA.length() >= 14) {
+                        fax = txt[i].substring(txt[i].indexOf("F"), txt[i].indexOf("F")+14).replace("F", " ").trim();
+                    } else {
+                        fax = txt[i].substring(txt[i].indexOf("F"), faxA.length()).replace("F", " ").trim();
+                    }
+                }
+
                 // 이메일
                 if (txt[i].contains("@")) {
-                    System.out.println("==========email1==========");
-                    System.out.println(email);
-                    email = txt[i];
+                    if (txt[i].contains("E.")) {
+                        email = txt[i].substring(txt[i].indexOf("E."), txt[i].indexOf(".com")+4).replace("E.", " ").trim();
+                    } else if (txt[i].contains("E")) {
+                        email = txt[i].substring(txt[i].indexOf("E"), txt[i].indexOf(".com")+4).replace("E", " ").trim();
+                    } else {
+                        email = txt[i];
+                    }
                 }
-                // Todo: 회사 주소 유효성 검사 체크, 경우의 수 확인 ( 도로명, 번지)
-
             }
+
             // 1.명함 이미지 정보 저장
             CardImage cardImage = CardImage.builder()
                     .member(member)

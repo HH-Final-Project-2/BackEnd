@@ -11,6 +11,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -28,17 +29,18 @@ public class OpenApiService {
     @Value("${spring.open.api.service.key}")
     String serviceKey;
 
-    public ResponseDto<?> apiTest(OpenApiRequestDto openApiRequestDto) throws IOException, ParseException {
+    // 공공데이터 호출 => 기업정보 전체조회
+    public ResponseDto<?> getPublicInstitutionsApi(OpenApiRequestDto requestDto) throws IOException, ParseException {
 
         // 1. URL을 만들기 위한 StringBuilder
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1160100/service/GetCorpBasicInfoService/getCorpOutline"); /*URL*/
         // 2. 오픈 API의요청 규격에 맞는 파라미터 생성, 발급받은 인증키
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + serviceKey); /*Service Key(필수)*/
-        urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode(openApiRequestDto.getPageNo(), "UTF-8")); /*페이지번호(필수)*/
+        urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode(requestDto.getPageNo(), "UTF-8")); /*페이지번호(필수)*/
         urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("20", "UTF-8")); /*한 페이지 결과 수(필수)*/
         urlBuilder.append("&" + URLEncoder.encode("resultType", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8")); /* 결과형식(xml/json)(필수) */
         urlBuilder.append("&" + URLEncoder.encode("basDt", "UTF-8") + "=" + URLEncoder.encode("20200509", "UTF-8")); /*기준일자 (필수)*/
-        urlBuilder.append("&" + URLEncoder.encode("corpNm", "UTF-8") + "=" + URLEncoder.encode(openApiRequestDto.getCompanyName(), "UTF-8")); /*법인(法人)의 명칭*/
+        urlBuilder.append("&" + URLEncoder.encode("corpNm", "UTF-8") + "=" + URLEncoder.encode(requestDto.getCompanyName(), "UTF-8")); /*법인(法人)의 명칭*/
 
         // 3. URL 객체 생성
         URL url = new URL(urlBuilder.toString());
@@ -112,5 +114,15 @@ public class OpenApiService {
         conn.disconnect();
 
         return ResponseDto.success(comapnyInfoList);
+    }
+
+    // 기업정보 받아오기
+    public ResponseDto<?> getCompanyInfo(OpenApiResponseDto requestDto) {
+        OpenApiResponseDto openApiResList = OpenApiResponseDto.builder()
+                .companyName(requestDto.getCompanyName())
+                .companyAddress(requestDto.getCompanyAddress())
+                .build();
+
+        return ResponseDto.success(openApiResList);
     }
 }

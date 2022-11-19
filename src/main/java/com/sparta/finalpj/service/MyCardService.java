@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Optional;
 
 @Service
@@ -54,7 +53,7 @@ public class MyCardService {
                     .build();
             myCardRepository.save(myCard);
 
-            // 명함 이미지 정보가 있을 경우 cardId를 업데이트
+            // 명함 이미지 정보가 있을 경우 MyCardId를 업데이트
             CardImage cardImage = isPresentCardImg(member);
             if (cardImage != null && cardImage.getMember() != null && cardImage.getMyCard() == null && cardImage.getCard() == null) {
                 cardImage.updateMyCard(myCard);
@@ -79,6 +78,7 @@ public class MyCardService {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
+        // 3. 내명함 존재여부
         MyCard myCard = isPresentMyCard(myCardId);
         if (myCard == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_CARD);
@@ -115,7 +115,7 @@ public class MyCardService {
         if (member == null) {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
-
+        // 3. 내명함 존재여부
         MyCard myCard = isPresentMyCard(myCardId);
         if (myCard == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_CARD);
@@ -172,7 +172,7 @@ public class MyCardService {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
-        // Card => CardResponseDto 타입으로 변환
+        // MyCard => MyCardResponseDto 타입으로 변환
         MyCard myCard = myCardRepository.findAllByMember(member);
 
         // 내명함정보가 없을 경우
