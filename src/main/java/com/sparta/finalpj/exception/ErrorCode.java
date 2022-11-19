@@ -16,6 +16,7 @@ public enum ErrorCode {
     PASSWORD_NOT_CORRECT(HttpStatus.BAD_REQUEST.value(),"M003","비밀번호가 틀렸습니다."),
     NOT_AUTHOR(HttpStatus.BAD_REQUEST.value(), "M004", "작성자가 아닙니다."),
 
+    //Token
     ACCESS_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND.value(),"M005","액세스 토큰이 없습니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND.value(),"M006","리프레시 토큰이 없습니다."),
     REFRESH_TOKEN_NOT_FOUND_IN_SERVER(HttpStatus.NOT_FOUND.value(),"M006","서버에 존재하지 않는 리프레시 토큰입니다."),
@@ -24,6 +25,8 @@ public enum ErrorCode {
     REFRESH_TOKEN_IS_EXPIRED(HttpStatus.BAD_REQUEST.value(), "M008", "만료된 리프레시 토큰 입니다."),
     INVALID_TOKEN_DELETE(HttpStatus.BAD_REQUEST.value(), "M009", "유효하지 않은 토큰 입니다. 토큰을 삭제합니다"),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST.value(), "M009", "유효하지 않은 토큰 입니다."),
+
+    // Validation
     DUPLICATED_EMAIL(HttpStatus.BAD_REQUEST.value(),"M010","이미 사용되고 있는 이메일입니다."),
     DUPLICATED_NICKNAME(HttpStatus.BAD_REQUEST.value(),"M011","이미 사용되고 있는 닉네임입니다."),
     INVALID_MEMBER_INFO(HttpStatus.BAD_REQUEST.value(),"M012" ,"잘못된 사용자 정보입니다."),
@@ -52,14 +55,14 @@ public enum ErrorCode {
     CONVERT_FAIL(HttpStatus.BAD_REQUEST.value(), "M026", "multipart을 파일로 변환하지 못하였습니다."),
     REMOVE_FAIL(HttpStatus.BAD_REQUEST.value(), "M027", "파일 제거를 실패하였습니다."),
     UPLOAD_FAIL_TO_GOOGLE(HttpStatus.BAD_REQUEST.value(), "M028", "Google Cloud에 파일을 업로드하지 못했습니다."),
-    CARDINFO_UPDATE_FAIL(HttpStatus.BAD_REQUEST.value(), "M029", "명함정보 등록을 실패했습니다."),
-    NOT_FOUND_CARDINFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M030", "명함정보 등록을 실패했습니다.")
+    EMPTY_IMAGE_FILE(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M029", "파일을 첨부해주세요."),
+    CARDINFO_UPDATE_FAIL(HttpStatus.BAD_REQUEST.value(), "M30", "명함정보 등록을 실패했습니다."),
+    NOT_FOUND_CARDINFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M031", "명함정보 등록을 실패했습니다.")
     ;
 
     private final int httpStatus;
     private final String code;
     private final String message;
-
 
 //    public static Object builder() {
 //    }
