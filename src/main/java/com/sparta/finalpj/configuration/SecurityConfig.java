@@ -44,6 +44,8 @@ public class SecurityConfig {
         // origin
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
         configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://jxy.me");
+
         // method
         configuration.setAllowedMethods(Arrays.asList("*"));
         // header
@@ -86,7 +88,6 @@ public class SecurityConfig {
                 .antMatchers("/pub/**").permitAll()
                 .antMatchers("/chat/**").permitAll()
                 .antMatchers("/ws-stomp/**").permitAll()
-                .antMatchers("/wss-stomp/**").permitAll()
                 .antMatchers("/stomp/**").permitAll()
                 .antMatchers("/websocket/**").permitAll()
                 //.antMatchers("/api/v1/**").hasRole(Role.USER.name())

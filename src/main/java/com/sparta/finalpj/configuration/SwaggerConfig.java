@@ -15,7 +15,9 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Configuration
 @EnableSwagger2
@@ -25,6 +27,7 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.OAS_30)
                 .useDefaultResponseMessages(true)
+                .consumes(getConsumeContentTypes())
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
                 .select()
@@ -33,6 +36,13 @@ public class SwaggerConfig {
                 .build()
                 .apiInfo(apiInfo())
                 ;
+    }
+    private Set<String> getConsumeContentTypes() {
+        Set<String> consumes = new HashSet<>();
+        consumes.add("application/json;charset=UTF-8");
+        consumes.add("image/jpeg;charset=UTF-8");
+        consumes.add("application/x-www-form-urlencoded");
+        return consumes;
     }
     //.apis(): API 문서를 만들어줄 범위를 지정한다.
     // 만약 apis(RequestHandlerSelectors.basePackage("com.example.demo"))에서는 com.example.demo 하위 구조를 탐색하여 문서를 생성해준다.
