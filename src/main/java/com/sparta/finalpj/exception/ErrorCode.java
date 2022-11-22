@@ -57,7 +57,8 @@ public enum ErrorCode {
     UPLOAD_FAIL_TO_GOOGLE(HttpStatus.BAD_REQUEST.value(), "M028", "Google Cloud에 파일을 업로드하지 못했습니다."),
     EMPTY_IMAGE_FILE(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M029", "파일을 첨부해주세요."),
     CARDINFO_UPDATE_FAIL(HttpStatus.BAD_REQUEST.value(), "M30", "명함정보 등록을 실패했습니다."),
-    NOT_FOUND_CARDINFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M031", "명함정보 등록을 실패했습니다.")
+    NOT_FOUND_CARDINFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M031", "명함정보 등록을 실패했습니다."),
+    NOT_FOUND_CALNFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M032", "캘린더 정보가 없습니다.")
     ;
 
     private final int httpStatus;
