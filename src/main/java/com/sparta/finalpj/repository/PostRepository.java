@@ -1,6 +1,8 @@
 package com.sparta.finalpj.repository;
 
 import com.sparta.finalpj.domain.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +13,9 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
+  Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
   List<Post> findAllByOrderByModifiedAtDesc();
+  List<Post> findTop5ByOrderByHitDesc();
 
   @Modifying(clearAutomatically = true)
   //@Query 어노테이션에서 작성된 조회를 제외한 데이터의 변경이 있는
@@ -20,6 +24,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
   @Query("update Post q set q.hit = q.hit + 1 where q.id = :id")
   int updateHit(@Param("id") Long id);
 
-  @Query(value = "SELECT p FROM Post p WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword% OR p.jobGroup LIKE %:keyword% ORDER BY p.createdAt desc", nativeQuery = true)
+  //==========게시글 검색(제목, 내용, 직군)============
+  @Query(value = "SELECT p FROM Post p WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword% OR p.jobGroup LIKE %:keyword% ORDER BY p.createdAt desc")
   List <Post> search(@Param("keyword") String keyword);
 }
