@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Builder
 @Getter
@@ -18,7 +19,6 @@ public class Comment extends Timestamped {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
   @JoinColumn(name = "member_id", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private Member member;
@@ -26,6 +26,9 @@ public class Comment extends Timestamped {
   @JoinColumn(name = "post_id", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private Post post;
+
+  @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private List<CommentHeart> commentHeart;
   @Column(nullable = false)
   private String content;
 
