@@ -58,6 +58,13 @@ public enum ErrorCode {
     EMPTY_IMAGE_FILE(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M029", "파일을 첨부해주세요."),
     CARDINFO_UPDATE_FAIL(HttpStatus.BAD_REQUEST.value(), "M30", "명함정보 등록을 실패했습니다."),
     NOT_FOUND_CARDINFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M031", "명함정보 등록을 실패했습니다."),
+
+    NOT_FOUND_CHATROOM(HttpStatus.NOT_FOUND.value(), "M031", "채팅방을 찾을 수 없습니다."),
+    MEMBER_NOT_FOUND_IN_ROOM(HttpStatus.NOT_FOUND.value(), "M032", "채팅방에 속해 있지 않은 회원입니다."),
+    CANNOT_CHAT_WITH_ME(HttpStatus.BAD_REQUEST.value(), "M033", "자신과 채팅할 수 없습니다."),
+    NOT_FOUND_CHAT_ROOM(HttpStatus.NOT_FOUND.value(), "M033", "채팅방을 찾을 수 없습니다."),
+    NOT_FOUND_CHAT_ROOM_MEMBER(HttpStatus.NOT_FOUND.value(), "M033", "채팅방 멤버를 찾을 수 없습니다.");
+    
     NOT_FOUND_CALNFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M032", "캘린더 정보가 없습니다.")
     ;
 
@@ -65,6 +72,5 @@ public enum ErrorCode {
     private final String code;
     private final String message;
 
-//    public static Object builder() {
-//    }
+
 }
