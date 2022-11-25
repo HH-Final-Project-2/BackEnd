@@ -4,6 +4,7 @@ package com.sparta.finalpj.service;
 
 import com.sparta.finalpj.controller.request.member.EmailCheckRequestDto;
 import com.sparta.finalpj.controller.request.member.LoginRequestDto;
+import com.sparta.finalpj.controller.request.member.MemberUpdateRequestDto;
 import com.sparta.finalpj.controller.request.member.SignupRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.controller.response.member.SignupResponseDto;
@@ -155,6 +156,47 @@ public class MemberService {
     public RefreshToken isPresentRefreshToken(Member member) {
         Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByMember(member);
         return optionalRefreshToken.orElse(null);
+    }
+
+    // 내 프로필 조회
+    public ResponseDto<?> myProfile(HttpServletRequest request) {
+        Member member = validation.validateMemberToAccess(request);
+        if (null == member) {
+            throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+
+        return ResponseDto.success(
+                SignupResponseDto.builder()
+                        .id(member.getId())
+                        .email(member.getEmail())
+                        .username(member.getUsername())
+                        .nickname(member.getNickname())
+                        .createdAt(member.getCreatedAt())
+                        .build()
+        );
+    }
+
+    // 내 프로필 수정
+    @Transactional
+    public ResponseDto<?> updateMember(MemberUpdateRequestDto memberRequestDto, HttpServletRequest request){
+        Member member = validation.validateMemberToAccess(request);
+        if (null == member) {
+            throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+
+        member.updateProfile(memberRequestDto);
+        // 저장
+        memberRepository.save(member);
+
+        return ResponseDto.success(
+                SignupResponseDto.builder()
+                        .id(member.getId())
+                        .email(member.getEmail())
+                        .username(member.getUsername())
+                        .nickname(member.getNickname())
+                        .createdAt(member.getCreatedAt())
+                        .build()
+        );
     }
 
 }
