@@ -4,13 +4,11 @@ import com.sparta.finalpj.controller.request.PostRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Entity
 public class Post extends Timestamped {
 
@@ -21,20 +19,10 @@ public class Post extends Timestamped {
   private String title;
   @Column(nullable = false)
   private String content;
-
-//  @Column(nullable = true)
-//  private String thumbnail;// 썸네일
   @Column(nullable = true)
   private String image;
-
   @Column(nullable = false)
   private String jobGroup;
-
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-//  private List<Comment> comments;
-//
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-//  private List<PostHeart> heart;
 
   //조회 수
   @Column(columnDefinition = "integer default 0",nullable = false) //조회수의 기본 값을 0으로 지정, null 불가 처리
@@ -49,7 +37,6 @@ public class Post extends Timestamped {
     this.jobGroup = postRequestDto.getJobGroup();
     this.content = postRequestDto.getContent();
     this.image=image;
-//    this.thumbnail=thumbnail;
   }
 
   public boolean validateMember(Member member) {

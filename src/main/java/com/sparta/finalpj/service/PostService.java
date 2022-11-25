@@ -1,14 +1,13 @@
 package com.sparta.finalpj.service;
 
 import com.sparta.finalpj.controller.request.PostRequestDto;
-import com.sparta.finalpj.controller.response.CommentResponseDto;
-import com.sparta.finalpj.controller.response.PostListResponseDto;
 import com.sparta.finalpj.controller.response.PostResponseDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.domain.*;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.jwt.TokenProvider;
+import com.sparta.finalpj.jwt.UserDetailsImpl;
 import com.sparta.finalpj.repository.CommentHeartRepository;
 import com.sparta.finalpj.repository.CommentRepository;
 import com.sparta.finalpj.repository.PostHeartRepository;
@@ -85,41 +84,42 @@ public class PostService {
 
   //=============게시글 상세 조회=============
   @Transactional(readOnly = false)
-  public ResponseDto<?> getPost(Long postingId) {
+  public ResponseDto<?> getPost(Long postingId, UserDetailsImpl userDetails) {
     Post post = isPresentPost(postingId);
     if (null == post) {
       throw new CustomException(ErrorCode.POST_NOT_FOUND);
     }
-    List<Comment> commentList = commentRepository.findAllByPost(post);
-    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+//    List<Comment> commentList = commentRepository.findAllByPost(post);
+//    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
     // 댓글 갯수 조회
     Long commentCnt = commentRepository.countByPost(post);
 
     // 해당 게시글에 대한 댓글 List
-    for (Comment comment : commentList) {
-      long commentHeartCnt = commentHeartRepository.findAllByComment(comment).size();
-      commentResponseDtoList.add(
-              CommentResponseDto.builder()
-                      .id(comment.getId())
-                      .author(comment.getMember().getNickname())
-                      .content(comment.getContent())
-                      .CommentHeartCnt(commentHeartCnt)
-                      .createdAt(comment.getCreatedAt())
-                      .modifiedAt(comment.getModifiedAt())
-                      .build()
-      );
-    }
+//    for (Comment comment : commentList) {
+//      long commentHeartCnt = commentHeartRepository.findAllByComment(comment).size();
+//      commentResponseDtoList.add(
+//              CommentResponseDto.builder()
+//                      .id(comment.getId())
+//                      .author(comment.getMember().getNickname())
+//                      .content(comment.getContent())
+//                      .CommentHeartCnt(commentHeartCnt)
+//                      .createdAt(comment.getCreatedAt())
+//                      .modifiedAt(comment.getModifiedAt())
+//                      .build()
+//      );
+//    }
 
     List<PostHeart> postHeartCnt=postHeartRepository.findByPost(post);
     PostResponseDto postDetailList = PostResponseDto.builder()
             .id(post.getId())
+            .postHeartYn(postHeartCheck(post, userDetails))
             .title(post.getTitle())
             .author(post.getMember().getNickname())
             .jobGroup(post.getJobGroup())
             .content(post.getContent())
             .image(post.getImage())
-            .commentResponseDtoList(commentResponseDtoList)
+//            .commentResponseDtoList(commentResponseDtoList)
             .postHeartCnt((long) postHeartCnt.size())
             .hit(updateHit(postingId))
             .hit(post.getHit()+1) // 조회수
@@ -137,17 +137,40 @@ public class PostService {
     return postRepository.updateHit(postId);
   }
 
-  //==============게시글 전체 조회================
+
+  @Transactional
+  public boolean postHeartCheck(Post post, UserDetailsImpl userDetails) {
+    if(userDetails == null){
+      return false;
+    }
+    return postHeartRepository.existsByMemberAndPost(userDetails.getMember(), post);
+  }
+  //======================게시글 전체 조회=====================
   @Transactional(readOnly = true)
-  public ResponseDto<?> getAllPost() {
+  public ResponseDto<?> getAllPost(UserDetailsImpl userDetails) {
+//    Member member = userDetails.getMember();
+//    boolean postHeartYn = false;
+
     List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
     List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
+
+//    Optional<PostHeart> postHeartInfo = postHeartRepository.findByMemberAndPost(member, post);
+
+//    if(postHeartInfo.isPresent()) {
+//      postHeartYn = true;
+//    }
     for (Post post : postList) {
+//      if(userDetails == null){
+//        postHeartYn = false;
+//      }else {
+//        postHeartYn = postHeartRepository.existsByMemberAndPost(userDetails.getMember(), post);
+//      }
       long comment = commentRepository.countAllByPost(post);
       long postHeartCnt = postHeartRepository.findAllByPost(post).size();
       postListResponseDtoList.add(
               PostResponseDto.builder()
                       .id(post.getId())
+                      .postHeartYn(postHeartCheck(post, userDetails))
                       .title(post.getTitle())
                       .image(post.getImage())
                       .content(post.getContent())

@@ -3,12 +3,14 @@ package com.sparta.finalpj.controller;
 import com.sparta.finalpj.configuration.SwaggerAnnotation;
 import com.sparta.finalpj.controller.request.PostRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
+import com.sparta.finalpj.jwt.UserDetailsImpl;
 import com.sparta.finalpj.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,14 +34,14 @@ public class PostController {
 
   //==============특정 게시글 조회=========
   @GetMapping(value = "/posting/{postingId}")
-  public ResponseDto<?> getPost(@PathVariable Long postingId) {
-    return postService.getPost(postingId);
+  public ResponseDto<?> getPost(@PathVariable Long postingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return postService.getPost(postingId, userDetails);
   }
 
   //==============게시글 전체 조회=============
   @GetMapping(value = "/posting")
-  public ResponseDto<?> getAllPosts() {
-    return postService.getAllPost();
+  public ResponseDto<?> getAllPosts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return postService.getAllPost(userDetails);
   }
 //  @GetMapping(value = "/posting/list/{page}")
 //  public ResponseDto<?> getAllPosts(@PathVariable int page) {
