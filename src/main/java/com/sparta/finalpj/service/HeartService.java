@@ -19,12 +19,13 @@ public class HeartService {
     private final PostService postService;
     private final CommentService commentService;
 
+    //===============게시글 좋아요================
     public ResponseDto<?> postHeartUp (Long id , UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
 
         Post post = postService.isPresentPost(id);
 
-   //Heart DB에서 맴버아이디와 포스트아이디가 존재하는지 확인
+   //Heart DB에서 맴버아이디와 PostId가 존재하는지 확인
         // 회원번호, 게시글번호 조회
         Optional<PostHeart> postHeart = postHeartRepository.findByMemberAndPost(member, post);
         if (postHeart.isPresent()) {
@@ -40,6 +41,7 @@ public class HeartService {
         }
     }
 
+    //===============댓글 좋아요===============
     public ResponseDto<?> commentHeartUp (Long id , UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
 
