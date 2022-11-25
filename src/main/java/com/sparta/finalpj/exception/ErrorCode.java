@@ -45,7 +45,7 @@ public enum ErrorCode {
     SIGNUP_EMAIL_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M019", "EMAIL 형식을 맞춰주세요"),
     SIGNUP_MEMBER_ID_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M020", "memberId 형식을 맞춰주세요"),
     SIGNUP_MEMBER_ID_DUPLICATE_ERROR(HttpStatus.BAD_REQUEST.value(), "M021", "memberId 가 중복됩니다"),
-    SIGNUP_NICKNAME_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M022", "nickname 형식을 맞춰주세요"),
+    NICKNAME_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M022", "nickname 형식을 맞춰주세요"),
     SIGNUP_PASSWORD_CHECK_ERROR(HttpStatus.BAD_REQUEST.value(), "M023", "password 와 passwordCheck 가 다릅니다"),
     SIGNUP_PASSWORD_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M024", "password 형식을 맞춰주세요"),
     AWS_S3_UPLOAD_FAIL(HttpStatus.BAD_REQUEST.value(), "M024", "S3 사진 업로드 실패"),

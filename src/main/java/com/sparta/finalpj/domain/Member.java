@@ -2,6 +2,9 @@ package com.sparta.finalpj.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sparta.finalpj.controller.request.member.MemberUpdateRequestDto;
+import com.sparta.finalpj.exception.CustomException;
+import com.sparta.finalpj.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,5 +63,11 @@ public class Member extends Timestamped {
 
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
         return passwordEncoder.matches(password, this.password);
+    }
+    public void updateProfile(MemberUpdateRequestDto memberRequestDto) {
+        if (memberRequestDto.getNickname() == null) {
+            throw new CustomException(ErrorCode.NICKNAME_FORM_ERROR);
+        }
+        this.nickname = memberRequestDto.getNickname();
     }
 }

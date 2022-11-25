@@ -4,6 +4,7 @@ package com.sparta.finalpj.controller;
 import com.sparta.finalpj.configuration.SwaggerAnnotation;
 import com.sparta.finalpj.controller.request.member.EmailCheckRequestDto;
 import com.sparta.finalpj.controller.request.member.LoginRequestDto;
+import com.sparta.finalpj.controller.request.member.MemberUpdateRequestDto;
 import com.sparta.finalpj.controller.request.member.SignupRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.service.MemberService;
@@ -59,5 +60,19 @@ public class MemberController {
 //    public ResponseDto<?> refreshTokenCheck(HttpServletRequest request, HttpServletResponse response){
 //        return memberService.refreshToken(request, response);
 //    }
+
+    //내 프로필 조회
+    @SwaggerAnnotation
+    @GetMapping("/members/profiles")
+    public ResponseDto<?> myProfile(HttpServletRequest request){
+
+        return  memberService.myProfile(request);
+    }
+    @SwaggerAnnotation
+    @PatchMapping("/members/profiles")
+    public ResponseDto<?> memberUpdate(@RequestBody MemberUpdateRequestDto memberRequestDto,
+                                       HttpServletRequest request){
+        return memberService.updateMember(memberRequestDto, request);
+    }
 
 }
