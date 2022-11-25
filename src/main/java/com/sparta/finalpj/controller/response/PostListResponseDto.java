@@ -16,9 +16,10 @@ public class PostListResponseDto {
   private Long id;
   private String title;
   private String content;
-  private String thumbnail;
   private String author;
   private String jobGroup;
+//  private String image;
+//  private List<CommentResponseDto> commentResponseDtoList;
   private Long commentCnt; // 댓글 갯수
   private Long postHeartCnt;
   private Integer hit;

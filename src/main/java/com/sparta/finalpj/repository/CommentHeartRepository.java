@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface CommentHeartRepository extends JpaRepository<CommentHeart, Long> {
   Optional<CommentHeart> findByMemberAndComment(Member member, Comment comment);
   List<CommentHeart> findAllByComment(Comment comment);
+
+    boolean existsByMemberAndComment(Member member, Comment comment);
 }

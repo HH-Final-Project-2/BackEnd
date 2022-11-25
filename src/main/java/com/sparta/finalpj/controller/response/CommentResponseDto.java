@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommentResponseDto {
   private Long id;
+  private boolean commentHeartYn;
   private String content;
   private String author;
   private Long CommentHeartCnt; // 좋아요 갯수
