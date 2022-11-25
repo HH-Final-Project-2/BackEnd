@@ -26,17 +26,17 @@ public class OcrService {
 
 
 
-    public ResponseDto<?> readFileInfo(String cardImgName, Member member) throws IOException {
+    public ResponseDto<?> readFileInfo(String cardImgName, String imgUrl) throws IOException {
 
         // Google Storage 경로
         String filePath = bucketFilePath + cardImgName;
 
         // OCR
-        return detectTextGcs(filePath, cardImgName, member);
+        return detectTextGcs(filePath, imgUrl);
     }
 
     // Google 클라우드 저장소의 지정된 원격 이미지에서 텍스트를 추출
-    public ResponseDto<?> detectTextGcs(String gcsPath, String cardImgName, Member member) throws IOException {
+    public ResponseDto<?> detectTextGcs(String gcsPath, String imgUrl) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
         ImageSource imgSource = ImageSource.newBuilder().setGcsImageUri(gcsPath).build();
@@ -163,7 +163,7 @@ public class OcrService {
                     .phoneNum(phoneNum)
                     .tel(tel)
                     .fax(fax)
-                    .imgUrl(gcsPath)
+                    .imgUrl(imgUrl)
                     .build();
             return ResponseDto.success(ocrResponseDto);
         }

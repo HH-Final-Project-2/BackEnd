@@ -52,8 +52,9 @@ public class GoogleCloudUploadService {
                     BlobInfo.newBuilder(bucketName, fileName).build(), //get original file name
                     file.getBytes() // the file
             );
+            String imgUrl = blobInfo.getMediaLink();
             // 3. OCR 실행
-            return ocrService.readFileInfo(fileName, member); //blobInfo.getName() => Return file url
+            return ocrService.readFileInfo(fileName, imgUrl); //blobInfo.getName() => Return file url
         } catch (IllegalStateException | IOException e) {
             //todo: exception Test 해보기
             throw new CustomException(ErrorCode.UPLOAD_FAIL_TO_GOOGLE);
