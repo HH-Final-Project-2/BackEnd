@@ -9,6 +9,8 @@ import com.sparta.finalpj.domain.Post;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.jwt.TokenProvider;
+import com.sparta.finalpj.jwt.UserDetailsImpl;
+import com.sparta.finalpj.repository.CommentHeartRepository;
 import com.sparta.finalpj.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ import java.util.Optional;
 public class CommentService {
 
   private final CommentRepository commentRepository;
+  private final CommentHeartRepository commentHeartRepository;
+
   private final TokenProvider tokenProvider;
   private final PostService postService;
 
@@ -65,28 +69,40 @@ public class CommentService {
     );
   }
 
-//  @Transactional(readOnly = true)
-//  public ResponseDto<?> getAllCommentsByPost(Long postId) {
-//    Post post = postService.isPresentPost(postId);
-//    if (null == post) {
-//      throw new CustomException(ErrorCode.POST_NOT_FOUND);
-//    }
-//    List<Comment> commentList = commentRepository.findAllByPost(post);
-//    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-//
-//    for (Comment comment : commentList) {
-//      commentResponseDtoList.add(
-//          CommentResponseDto.builder()
-//              .id(comment.getId())
-//              .author(comment.getMember().getNickname())
-//              .content(comment.getContent())
-//              .createdAt(comment.getCreatedAt())
-//              .modifiedAt(comment.getModifiedAt())
-//              .build()
-//      );
-//    }
-//    return ResponseDto.success(commentResponseDtoList);
-//  }
+  @Transactional
+  public boolean commentHeartCheck(Comment comment, UserDetailsImpl userDetails) {
+    if(userDetails == null){
+      return false;
+    }
+    return commentHeartRepository.existsByMemberAndComment(userDetails.getMember(), comment);
+  }
+
+  //================특정 게시글의 댓글 전체조회=================
+  @Transactional(readOnly = true)
+  public ResponseDto<?> getAllCommentByPost(Long postingId, UserDetailsImpl userDetails) {
+    Post post = postService.isPresentPost(postingId);
+    if (null == post) {
+      throw new CustomException(ErrorCode.POST_NOT_FOUND);
+    }
+    List<Comment> commentList = commentRepository.findAllByPost(post);
+    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+
+    for (Comment comment : commentList) {
+      long commentHeartCnt = commentHeartRepository.findAllByComment(comment).size();
+      commentResponseDtoList.add(
+          CommentResponseDto.builder()
+              .id(comment.getId())
+              .commentHeartYn(commentHeartCheck(comment, userDetails))
+              .author(comment.getMember().getNickname())
+              .content(comment.getContent())
+              .CommentHeartCnt(commentHeartCnt)
+              .createdAt(comment.getCreatedAt())
+              .modifiedAt(comment.getModifiedAt())
+              .build()
+      );
+    }
+    return ResponseDto.success(commentResponseDtoList);
+  }
 
   //댓글 수정
   @Transactional

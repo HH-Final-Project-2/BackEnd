@@ -64,6 +64,9 @@ public enum ErrorCode {
     CANNOT_CHAT_WITH_ME(HttpStatus.BAD_REQUEST.value(), "M033", "자신과 채팅할 수 없습니다."),
     NOT_FOUND_CHAT_ROOM(HttpStatus.NOT_FOUND.value(), "M033", "채팅방을 찾을 수 없습니다."),
     NOT_FOUND_CHAT_ROOM_MEMBER(HttpStatus.NOT_FOUND.value(), "M033", "채팅방 멤버를 찾을 수 없습니다.");
+    
+    NOT_FOUND_CALNFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M032", "캘린더 정보가 없습니다.")
+    ;
 
     private final int httpStatus;
     private final String code;

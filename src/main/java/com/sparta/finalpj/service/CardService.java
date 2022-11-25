@@ -9,6 +9,7 @@ import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.repository.CardImageRepository;
 import com.sparta.finalpj.repository.CardRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CardService {
     private final CommonService commonService;
@@ -54,12 +56,6 @@ public class CardService {
                         .companyType(requestDto.getCompanyType())
                         .build();
                 cardRepository.save(card);
-
-                // 명함 이미지 정보가 있을 경우 cardId를 업데이트
-                CardImage cardImage = isPresentCardImg(member);
-                if (cardImage != null && cardImage.getMember() != null && cardImage.getCard() == null && cardImage.getMyCard() == null) {
-                    cardImage.updateCard(card);
-                }
 
             } catch (IllegalArgumentException e) {
                 throw new CustomException(ErrorCode.CARDINFO_UPDATE_FAIL);
@@ -164,6 +160,45 @@ public class CardService {
         if(cardList.isEmpty()) {
             return ResponseDto.success("명함을 등록해주세요");
         }
+
+        for (Card card : cardList) {
+            cardResponseDtoList.add(
+                    CardResponseDto.builder()
+                            .id(card.getId())
+                            .cardName(card.getCardName())
+                            .engName(card.getEngName())
+                            .email(card.getEmail())
+                            .phoneNum(card.getPhoneNum())
+                            .company(card.getCompany())
+                            .department(card.getCompany())
+                            .position(card.getPosition())
+                            .companyAddress(card.getCompanyAddress())
+                            .tel(card.getTel())
+                            .fax(card.getFax())
+                            .companyType(card.getCompanyType())
+                            .createdAt(card.getCreatedAt())
+                            .modifiedAt(card.getModifiedAt())
+                            .build()
+            );
+        }
+        return ResponseDto.success(cardResponseDtoList);
+    }
+
+    // 자사&타사 명함 검색
+    @Transactional
+    public ResponseDto<?> searchCard(String keyword, HttpServletRequest request) {
+        // 1. 로그인 확인
+        commonService.loginCheck(request);
+
+        // 2. Token validation => member 생성
+        Member member = commonService.validateMember(request);
+        if (member == null) {
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
+
+        // Card => CardResponseDto 타입으로 변환
+        List<Card> cardList = cardRepository.searchCard(keyword);
+        List<CardResponseDto> cardResponseDtoList = new ArrayList<>();
 
         for (Card card : cardList) {
             cardResponseDtoList.add(

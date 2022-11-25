@@ -3,8 +3,10 @@ package com.sparta.finalpj.controller;
 import com.sparta.finalpj.configuration.SwaggerAnnotation;
 import com.sparta.finalpj.controller.request.CommentRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
+import com.sparta.finalpj.jwt.UserDetailsImpl;
 import com.sparta.finalpj.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,11 +28,11 @@ public class CommentController {
     return commentService.createComment(postingId, requestDto, request);
   }
 
-  //특정 댓글 조회
-//  @GetMapping(value = "/comment/{postingId}/{commentid}")
-//  public ResponseDto<?> getAllComments(@PathVariable Long id) {
-//    return commentService.getAllCommentsByPost(id);
-//  }
+  //특정 게시글의 댓글 전체조회
+  @GetMapping(value = "/comment/{postingId}")
+  public ResponseDto<?> getAllComment(@PathVariable Long postingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return commentService.getAllCommentByPost(postingId, userDetails);
+  }
 
   //댓글 수정
   @SwaggerAnnotation

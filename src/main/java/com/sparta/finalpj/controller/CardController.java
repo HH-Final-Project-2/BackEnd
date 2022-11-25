@@ -43,4 +43,10 @@ public class CardController {
     public ResponseDto<?> getAllCardsList(HttpServletRequest request) {
         return cardService.getAllCardsList(request);
     }
+
+    // 자사&타사 명함 검색
+    @PostMapping("/search/businessCards")
+    public ResponseDto<?> searchCard(@RequestParam("keyword")String keyword, HttpServletRequest request){
+        return cardService.searchCard(keyword, request);
+    }
 }
