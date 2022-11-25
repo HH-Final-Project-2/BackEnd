@@ -157,15 +157,7 @@ public class OcrService {
                 }
             }
 
-            // 1.명함 이미지 정보 저장
-            CardImage cardImage = CardImage.builder()
-                    .member(member)
-                    .cardImgName(cardImgName)
-                    .cardImgUrl(gcsPath)
-                    .build();
-            cardImageRepository.save(cardImage);
-
-            // 2. 클라이언트에게 던져줄 정보
+            // 클라이언트에게 던져줄 정보
             OcrResponseDto ocrResponseDto = OcrResponseDto.builder()
                     .email(email)
                     .phoneNum(phoneNum)
