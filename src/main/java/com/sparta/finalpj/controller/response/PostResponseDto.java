@@ -20,9 +20,8 @@ public class PostResponseDto {
   private String jobGroup; // 관심 직군
   private String content;
   private String image;
-//  private List<CommentResponseDto> commentResponseDtoList;
   private Long commentCnt; // 댓글 갯수
-  private Long postHeartCnt; // 게시글 좋아요 갯수
+  private Long postHeartCnt; // 게시글 좋아요
   private Integer hit; // 조회수
   private LocalDateTime createdAt;
   private LocalDateTime modifiedAt;

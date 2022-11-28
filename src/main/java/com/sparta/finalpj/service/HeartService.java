@@ -47,8 +47,8 @@ public class HeartService {
 
         Comment comment = commentService.isPresentComment(id);
 
-        //Heart DB에서 맴버아이디와 commentId가 존재하는지 확인
-        // 회원번호, 게시글번호 조회
+        //Heart DB에서 member와 commentId가 존재하는지 확인
+        // 회원번호, 댓글 조회
         Optional<CommentHeart> commentHeart = commentHeartRepository.findByMemberAndComment(member, comment);
         if (commentHeart.isPresent()) {
             commentHeartRepository.deleteById(commentHeart.get().getId());
