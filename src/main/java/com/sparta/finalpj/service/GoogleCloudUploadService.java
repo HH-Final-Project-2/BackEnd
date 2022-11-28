@@ -27,8 +27,7 @@ public class GoogleCloudUploadService {
     // get service by env var GOOGLE_APPLICATION_CREDENTIALS. Json file generated in API & Services -> Service account key
     private static Storage storage = StorageOptions.getDefaultInstance().getService();
 
-    public ResponseDto<?> upload(MultipartFile file, HttpServletRequest request) {
-
+    public String upload(String path, MultipartFile file, HttpServletRequest request) {
         // 1. 로그인 확인
         commonService.loginCheck(request);
 
@@ -47,17 +46,52 @@ public class GoogleCloudUploadService {
         UUID uuid = UUID.randomUUID();
         String fileName = uuid.toString() + "_" + file.getOriginalFilename();
 
-        try {
-            BlobInfo blobInfo = storage.create(
-                    BlobInfo.newBuilder(bucketName, fileName).build(), //get original file name
-                    file.getBytes() // the file
-            );
-            String imgUrl = blobInfo.getMediaLink();
-            // 3. OCR 실행
-            return ocrService.readFileInfo(fileName, imgUrl); //blobInfo.getName() => Return file url
-        } catch (IllegalStateException | IOException e) {
-            //todo: exception Test 해보기
-            throw new CustomException(ErrorCode.UPLOAD_FAIL_TO_GOOGLE);
+        System.out.println("====================");
+        System.out.println(path);
+
+        // 명함 사진 업로드
+        if(path.equals("card")) {
+            try {
+                BlobInfo blobInfo = storage.create(
+                        BlobInfo.newBuilder(bucketName, "card/" + fileName).build(), //get original file name
+                        file.getBytes() // the file0
+                );
+                String imgUrl = blobInfo.getMediaLink();
+
+                // 3. OCR 실행
+                return ocrService.readFileInfo(fileName, imgUrl).toString(); //blobInfo.getName() => Return file url
+            } catch (IllegalStateException | IOException e) {
+                //todo: exception Test 해보기
+                throw new CustomException(ErrorCode.UPLOAD_FAIL_TO_GOOGLE);
+            }
+        } else {
+            try {
+                BlobInfo blobInfo = storage.create(
+                        BlobInfo.newBuilder(bucketName, "community/" + fileName).build(), //get original file name
+                        file.getBytes() // the file0
+                );
+
+                // 3. image url
+                return blobInfo.getMediaLink(); //blobInfo.getName() => Return file url
+            } catch (IllegalStateException | IOException e) {
+                //todo: exception Test 해보기
+                throw new CustomException(ErrorCode.UPLOAD_FAIL_TO_GOOGLE);
+            }
         }
+//
+//        try {
+//            BlobInfo blobInfo = storage.create(
+//                    BlobInfo.newBuilder(bucketName, "card/" + fileName).build(), //get original file name
+//                    file.getBytes() // the file0
+//            );
+//            String imgUrl = blobInfo.getMediaLink();
+//
+//            // 3. OCR 실행
+//            return ocrService.readFileInfo(fileName, imgUrl); //blobInfo.getName() => Return file url
+//        } catch (IllegalStateException | IOException e) {
+//            //todo: exception Test 해보기
+//            throw new CustomException(ErrorCode.UPLOAD_FAIL_TO_GOOGLE);
+//        }
+
     }
 }

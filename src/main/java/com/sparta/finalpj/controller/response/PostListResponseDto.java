@@ -17,12 +17,10 @@ public class PostListResponseDto {
   private String title;
   private String content;
   private String author;
-  private String jobGroup;
-//  private String image;
-//  private List<CommentResponseDto> commentResponseDtoList;
+  private String jobGroup; // 관심 직군
   private Long commentCnt; // 댓글 갯수
-  private Long postHeartCnt;
-  private Integer hit;
+  private Long postHeartCnt; // 게시글 좋아요
+  private Integer hit; // 조회수
   private LocalDateTime createdAt;
   private LocalDateTime modifiedAt;
 }

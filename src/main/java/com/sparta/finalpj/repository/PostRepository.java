@@ -19,8 +19,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
   @Modifying(clearAutomatically = true)
   //@Query 어노테이션에서 작성된 조회를 제외한 데이터의 변경이 있는
-//삽입(Insert), 수정(Update), 삭제(Delete) 쿼리 사용시 필요한 어노테이션
-//@Query("update Post p set p.hit = p.hit + 1 where p.id = :postId") int updateHit(Long postId);
+  //삽입(Insert), 수정(Update), 삭제(Delete) 쿼리 사용시 필요한 어노테이션
+  //@Query("update Post p set p.hit = p.hit + 1 where p.id = :postId") int updateHit(Long postId);
   @Query("update Post q set q.hit = q.hit + 1 where q.id = :id")
   int updateHit(@Param("id") Long id);
 
