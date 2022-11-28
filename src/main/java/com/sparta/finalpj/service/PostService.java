@@ -33,8 +33,8 @@ public class PostService {
   private final CommentRepository commentRepository;
   private final PostHeartRepository postHeartRepository;
   private final CommentHeartRepository commentHeartRepository;
-  private final FileS3Service fileS3Service;
   private final TokenProvider tokenProvider;
+  private final GoogleCloudUploadService googleCloudUploadService;
 
 
   //===============게시글 작성================
@@ -47,40 +47,41 @@ public class PostService {
       throw new CustomException(ErrorCode.INVALID_TOKEN);
     }
 
-    //===이미지 파일 처리===
     String imageUrl = "";
 
-    try {
-      imageUrl = fileS3Service.uploadFile(image);
-    } catch (IOException e) {
-      throw new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL);
+    if (!image.isEmpty()) {
+      //===이미지 파일 처리===
+      imageUrl = googleCloudUploadService.upload("community", image, request);
     }
 
-    Post post = Post.builder()
-            .title(requestDto.getTitle())
-            .content(requestDto.getContent())
-            .jobGroup(requestDto.getJobGroup())
-            .member(member)
-            .image(imageUrl)
-            .hit(0)
-            .build();
-    postRepository.save(post);
-    return ResponseDto.success(
-            PostResponseDto.builder()
-                    .id(post.getId())
-                    .title(post.getTitle())
-                    .author(post.getMember().getNickname())
-                    .jobGroup(post.getJobGroup())
-                    .content(post.getContent())
-                    .image(post.getImage())
-                    .postHeartCnt(0L)
-                    .commentCnt(0L)
-                    .hit(post.getHit())
-                    .createdAt(post.getCreatedAt())
-                    .modifiedAt(post.getModifiedAt())
-                    .build()
-    );
+      Post post = Post.builder()
+              .title(requestDto.getTitle())
+              .content(requestDto.getContent())
+              .jobGroup(requestDto.getJobGroup())
+              .member(member)
+              .image(imageUrl)
+              .hit(0)
+              .build();
+
+      postRepository.save(post);
+      return ResponseDto.success(
+              PostResponseDto.builder()
+                      .id(post.getId())
+                      .title(post.getTitle())
+                      .author(post.getMember().getNickname())
+                      .jobGroup(post.getJobGroup()) // 관심 직군
+                      .content(post.getContent())
+                      .image(post.getImage())
+                      .postHeartCnt(0L) // 게시글 좋아요
+                      .commentCnt(0L) // 댓글 갯수
+                      .hit(post.getHit()) // 조회수
+                      .createdAt(post.getCreatedAt())
+                      .modifiedAt(post.getModifiedAt())
+                      .build()
+      );
+
   }
+
 
   //=============게시글 상세 조회=============
   @Transactional(readOnly = false)
@@ -89,26 +90,9 @@ public class PostService {
     if (null == post) {
       throw new CustomException(ErrorCode.POST_NOT_FOUND);
     }
-//    List<Comment> commentList = commentRepository.findAllByPost(post);
-//    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
     // 댓글 갯수 조회
     Long commentCnt = commentRepository.countByPost(post);
-
-    // 해당 게시글에 대한 댓글 List
-//    for (Comment comment : commentList) {
-//      long commentHeartCnt = commentHeartRepository.findAllByComment(comment).size();
-//      commentResponseDtoList.add(
-//              CommentResponseDto.builder()
-//                      .id(comment.getId())
-//                      .author(comment.getMember().getNickname())
-//                      .content(comment.getContent())
-//                      .CommentHeartCnt(commentHeartCnt)
-//                      .createdAt(comment.getCreatedAt())
-//                      .modifiedAt(comment.getModifiedAt())
-//                      .build()
-//      );
-//    }
 
     List<PostHeart> postHeartCnt=postHeartRepository.findByPost(post);
     PostResponseDto postDetailList = PostResponseDto.builder()
@@ -119,7 +103,6 @@ public class PostService {
             .jobGroup(post.getJobGroup())
             .content(post.getContent())
             .image(post.getImage())
-//            .commentResponseDtoList(commentResponseDtoList)
             .postHeartCnt((long) postHeartCnt.size())
             .hit(updateHit(postingId))
             .hit(post.getHit()+1) // 조회수
@@ -137,7 +120,6 @@ public class PostService {
     return postRepository.updateHit(postId);
   }
 
-
   @Transactional
   public boolean postHeartCheck(Post post, UserDetailsImpl userDetails) {
     if(userDetails == null){
@@ -145,6 +127,7 @@ public class PostService {
     }
     return postHeartRepository.existsByMemberAndPost(userDetails.getMember(), post);
   }
+
   //======================게시글 전체 조회=====================
   @Transactional(readOnly = true)
   public ResponseDto<?> getAllPost(UserDetailsImpl userDetails) {
@@ -175,7 +158,7 @@ public class PostService {
                       .image(post.getImage())
                       .content(post.getContent())
                       .author(post.getMember().getNickname())
-                      .jobGroup(post.getJobGroup())
+                      .jobGroup(post.getJobGroup()) // 관심 직군
                       .postHeartCnt(postHeartCnt) //게시글 좋아요
                       .commentCnt(comment) // 댓글 갯수
                       .hit(post.getHit()) //조회수
@@ -243,7 +226,6 @@ public class PostService {
                       .build()
       );
     }
-    //결과값
     return ResponseDto.success(postListResponseDtoList);
   }
 
@@ -263,13 +245,11 @@ public class PostService {
       throw new CustomException(ErrorCode.NOT_AUTHOR);
     }
 
-    // 이미지 파일 처리
     String imageUrl = "";
 
-    try {
-      imageUrl = fileS3Service.uploadFile(image);
-    } catch (IOException e) {
-      throw new CustomException(ErrorCode.AWS_S3_UPLOAD_FAIL);
+    if (!image.isEmpty()) {
+      //===이미지 파일 처리===
+      imageUrl = googleCloudUploadService.upload("community", image, request);
     }
 
     List<PostHeart> postHeartCnt = postHeartRepository.findByPost(post);
@@ -296,15 +276,6 @@ public class PostService {
   //===================게시글 삭제======================
   @Transactional
   public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
-//    if (null == request.getHeader("Refresh-Token")) {
-//      return ResponseDto.fail("MEMBER_NOT_FOUND",
-//          "로그인이 필요합니다.");
-//    }
-//
-//    if (null == request.getHeader("Authorization")) {
-//      return ResponseDto.fail("MEMBER_NOT_FOUND",
-//          "로그인이 필요합니다.");
-//    }
 
     Member member = validateMember(request);
     if (null == member) {
@@ -342,7 +313,7 @@ public class PostService {
                       .title(post.getTitle())
                       .content(post.getContent())
                       .author(post.getMember().getNickname())
-                      .jobGroup(post.getJobGroup())
+                      .jobGroup(post.getJobGroup()) // 관심 직군
                       .postHeartCnt(postHeartCnt) //게시글 좋아요
                       .commentCnt(comment) // 댓글 갯수
                       .hit(post.getHit()) //조회수
@@ -371,7 +342,7 @@ public class PostService {
               .title(post.getTitle())
               .content(post.getContent())
               .author(post.getMember().getNickname())
-              .jobGroup(post.getJobGroup())
+              .jobGroup(post.getJobGroup()) // 관심 직군
               .postHeartCnt(postHeartCnt) //게시글 좋아요
               .commentCnt(comment) // 댓글 갯수
               .hit(post.getHit()) //조회수
@@ -384,7 +355,7 @@ public class PostService {
     return ResponseDto.success(postListResponseDtoList);
   }
 
-  //==================조회순 게시글 전체 조회====================
+  //==================조회순 게시글 전체 조회===================
   @Transactional
   public ResponseDto<?> getPostByHits(Pageable pageable) {
     Page<Post> postList = postRepository.findAll(pageable);
@@ -400,7 +371,7 @@ public class PostService {
               .title(post.getTitle())
               .content(post.getContent())
               .author(post.getMember().getNickname())
-              .jobGroup(post.getJobGroup())
+              .jobGroup(post.getJobGroup()) // 관심 직군
               .postHeartCnt(postHeartCnt) //게시글 좋아요
               .commentCnt(comment) // 댓글 갯수
               .hit(post.getHit()) //조회수
