@@ -197,7 +197,7 @@ public class CardService {
         }
 
         // Card => CardResponseDto 타입으로 변환
-        List<Card> cardList = cardRepository.searchCard(keyword);
+        List<Card> cardList = cardRepository.searchCard(member, keyword);
         List<CardResponseDto> cardResponseDtoList = new ArrayList<>();
 
         for (Card card : cardList) {

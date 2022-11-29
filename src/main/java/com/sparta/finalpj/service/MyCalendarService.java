@@ -111,7 +111,7 @@ public class MyCalendarService {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
-        List<MyCalendar> myCalendarList = myCalendarRepository.findAllByOrderByStartDateTimeAscCreatedAtAsc();
+        List<MyCalendar> myCalendarList = myCalendarRepository.findAllByMemberOrderByStartDateTimeAscCreatedAtAsc(member);
         List<MyCalendarResponseDto> calendarAllList = new ArrayList<>();
 
         for (MyCalendar myCalendar : myCalendarList) {

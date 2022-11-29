@@ -45,7 +45,7 @@ public class CardController {
     }
 
     // 자사&타사 명함 검색
-    @PostMapping("/search/businessCards")
+    @GetMapping("/search/businessCards")
     public ResponseDto<?> searchCard(@RequestParam("keyword")String keyword, HttpServletRequest request){
         return cardService.searchCard(keyword, request);
     }
