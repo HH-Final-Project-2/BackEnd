@@ -20,10 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -47,11 +47,14 @@ public class PostService {
       throw new CustomException(ErrorCode.INVALID_TOKEN);
     }
 
+    UUID uuid = UUID.randomUUID();
+    String fileName = uuid.toString() + "_" + image.getOriginalFilename();
+
     String imageUrl = "";
 
     if (!image.isEmpty()) {
       //===이미지 파일 처리===
-      imageUrl = googleCloudUploadService.upload("community", image, request);
+      imageUrl = googleCloudUploadService.upload("community", image, fileName);
     }
 
       Post post = Post.builder()
@@ -245,11 +248,14 @@ public class PostService {
       throw new CustomException(ErrorCode.NOT_AUTHOR);
     }
 
+    UUID uuid = UUID.randomUUID();
+    String fileName = uuid.toString() + "_" + image.getOriginalFilename();
+
     String imageUrl = "";
 
     if (!image.isEmpty()) {
       //===이미지 파일 처리===
-      imageUrl = googleCloudUploadService.upload("community", image, request);
+      imageUrl = googleCloudUploadService.upload("community", image, fileName);
     }
 
     List<PostHeart> postHeartCnt = postHeartRepository.findByPost(post);
