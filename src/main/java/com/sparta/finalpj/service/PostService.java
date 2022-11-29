@@ -47,16 +47,15 @@ public class PostService {
       throw new CustomException(ErrorCode.INVALID_TOKEN);
     }
 
-    UUID uuid = UUID.randomUUID();
-    String fileName = uuid.toString() + "_" + image.getOriginalFilename();
-
     String imageUrl = "";
 
-    if (!image.isEmpty()) {
-      //===이미지 파일 처리===
-      imageUrl = googleCloudUploadService.upload("community", image, fileName);
-    }
-
+    if (image == null) {
+      imageUrl = "";
+    }else {
+      UUID uuid = UUID.randomUUID();
+      String fileName = uuid.toString() + "_" + image.getOriginalFilename();
+        imageUrl = googleCloudUploadService.upload("community", image, fileName);
+      }
       Post post = Post.builder()
               .title(requestDto.getTitle())
               .content(requestDto.getContent())
@@ -248,13 +247,13 @@ public class PostService {
       throw new CustomException(ErrorCode.NOT_AUTHOR);
     }
 
-    UUID uuid = UUID.randomUUID();
-    String fileName = uuid.toString() + "_" + image.getOriginalFilename();
-
     String imageUrl = "";
 
-    if (!image.isEmpty()) {
-      //===이미지 파일 처리===
+    if (image == null) {
+      imageUrl = "";
+    }else {
+      UUID uuid = UUID.randomUUID();
+      String fileName = uuid.toString() + "_" + image.getOriginalFilename();
       imageUrl = googleCloudUploadService.upload("community", image, fileName);
     }
 
