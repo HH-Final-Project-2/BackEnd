@@ -7,7 +7,6 @@ import com.sparta.finalpj.chatting.chat.ChatMessage;
 import com.sparta.finalpj.chatting.chat.ChatMessageRepository;
 import com.sparta.finalpj.chatting.chat.RedisRepository;
 import com.sparta.finalpj.chatting.chat.responseDto.ChatMessageTestDto;
-import com.sparta.finalpj.chatting.chatRoom.requestDto.ChatRoomUserRequestDto;
 import com.sparta.finalpj.chatting.chatRoom.responseDto.ChatRoomOtherMemberInfoResponseDto;
 import com.sparta.finalpj.chatting.chatRoom.responseDto.ChatRoomResponseDto;
 import com.sparta.finalpj.domain.Member;
@@ -45,7 +44,8 @@ public class ChatRoomService {
             Long partnerId,
             UserDetailsImpl userDetails) {
         //상대방 방도 생성 > 상대방 찾기
-        if(partnerId.equals(userDetails.getMember().getId())) throw new RuntimeException ("자기자신에게 채팅을 신청할 수 없습니다");
+        if(partnerId.equals(userDetails.getMember().getId()))
+            throw new RuntimeException ("자기자신에게 채팅을 신청할 수 없습니다");
         Member anotherUser = memberRepository.findById(partnerId).orElseThrow(
                 () -> new NotFoundException("상대방을 찾을 수 없습니다.")
         );

@@ -6,6 +6,7 @@ import com.sparta.finalpj.chatting.chat.responseDto.ChatMessageTestDto;
 import com.sparta.finalpj.chatting.chatRoom.requestDto.ChatRoomUserRequestDto;
 import com.sparta.finalpj.chatting.chatRoom.responseDto.ChatRoomResponseDto;
 import com.sparta.finalpj.chatting.chatRoom.responseDto.ChatRoomOtherMemberInfoResponseDto;
+import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.domain.Post;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
@@ -29,7 +30,7 @@ public class ChatRoomController {
 
     //방생성
     @PostMapping ("/chat/rooms")
-    public String createChatRoom(
+    public ResponseDto<?> createChatRoom(
         @RequestBody ChatRoomUserRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Post post = postService.isPresentPost(requestDto.getPostId());
@@ -47,7 +48,7 @@ public class ChatRoomController {
         redisRepository.initChatRoomMessageInfo(chatRoomUuid, myUserId);
         redisRepository.initChatRoomMessageInfo(chatRoomUuid, chatPartnerUserId);
 
-        return chatRoomUuid;
+        return ResponseDto.success(chatRoomUuid);
     }
 
     //내가 가진 채팅방 조회
