@@ -5,35 +5,66 @@ import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.controller.response.ocr.OcrResponseDto;
 import com.sparta.finalpj.domain.CardImage;
 import com.sparta.finalpj.domain.Member;
-import com.sparta.finalpj.repository.CardImageRepository;
+import com.sparta.finalpj.exception.CustomException;
+import com.sparta.finalpj.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class OcrService {
+    private final CommonService commonService;
+    private final GoogleCloudUploadService googleCloudUploadService;
 
     @Value("${cloud.gcp.storage.bucket.filePath}")
     String bucketFilePath;
-    private final CardImageRepository cardImageRepository;
 
+    public ResponseDto<?> readFileInfo(MultipartFile cardImg, HttpServletRequest request) throws IOException {
+        // 1. 로그인 확인
+        commonService.loginCheck(request);
 
+        // 2. Token validation => member 생성
+        Member member = commonService.validateMember(request);
+        if (null == member) {
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
 
-    public ResponseDto<?> readFileInfo(String cardImgName, String imgUrl) throws IOException {
+        // *첨부파일이 없을 경우
+        if (cardImg.isEmpty()) {
+            throw new CustomException(ErrorCode.EMPTY_IMAGE_FILE);
+        }
+
+        UUID uuid = UUID.randomUUID();
+        String fileName = uuid.toString() + "_" + cardImg.getOriginalFilename();
+
+        String imgUrl = "";
+        imgUrl = googleCloudUploadService.upload("card", cardImg, fileName);
 
         // Google Storage 경로
-        String filePath = bucketFilePath + cardImgName;
+        String filePath = bucketFilePath + "card/" + fileName;
 
-        // OCR
+
         return detectTextGcs(filePath, imgUrl);
     }
+
+//    public ResponseDto<?> readFileInfo(String cardImgName, String imgUrl) throws IOException {
+//
+//        // Google Storage 경로
+//        String filePath = bucketFilePath + cardImgName;
+//
+//        // OCR
+//        return detectTextGcs(filePath, imgUrl);
+//    }
 
     // Google 클라우드 저장소의 지정된 원격 이미지에서 텍스트를 추출
     public ResponseDto<?> detectTextGcs(String gcsPath, String imgUrl) throws IOException {
