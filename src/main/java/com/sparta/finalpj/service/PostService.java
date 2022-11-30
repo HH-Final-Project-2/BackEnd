@@ -122,6 +122,7 @@ public class PostService {
     return postRepository.updateHit(postId);
   }
 
+  //=====사용자별 게시글 좋아요 체크=====
   @Transactional
   public boolean postHeartCheck(Post post, UserDetailsImpl userDetails) {
     if(userDetails == null){
@@ -139,17 +140,7 @@ public class PostService {
     List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
     List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
 
-//    Optional<PostHeart> postHeartInfo = postHeartRepository.findByMemberAndPost(member, post);
-
-//    if(postHeartInfo.isPresent()) {
-//      postHeartYn = true;
-//    }
     for (Post post : postList) {
-//      if(userDetails == null){
-//        postHeartYn = false;
-//      }else {
-//        postHeartYn = postHeartRepository.existsByMemberAndPost(userDetails.getMember(), post);
-//      }
       long comment = commentRepository.countAllByPost(post);
       long postHeartCnt = postHeartRepository.findAllByPost(post).size();
       postListResponseDtoList.add(
@@ -172,35 +163,6 @@ public class PostService {
     return ResponseDto.success(postListResponseDtoList);
   }
 
-//  @Transactional(readOnly = true)
-//  public ResponseDto<?> getAllPost(int page) {
-//    //페이징 처리 -> 요청한 페이지 값(0부터 시작), 20개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
-//    Pageable pageable = PageRequest.of(page-1,20, Sort.by("createdAt").descending());
-//
-//    Page<Post> postList = postRepository.findAllByOrderByCreatedAtDesc(pageable);
-//
-//    List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
-//    for (Post post : postList) {
-//      long comment = commentRepository.countAllByPost(post);
-//      long postHeartCnt = postHeartRepository.findAllByPost(post).size();
-//      postListResponseDtoList.add(
-//              PostResponseDto.builder()
-//                      .id(post.getId())
-//                      .title(post.getTitle())
-//                      .image(post.getImage())
-//                      .content(post.getContent())
-//                      .author(post.getMember().getNickname())
-//                      .jobGroup(post.getJobGroup())
-//                      .postHeartCnt(postHeartCnt) //게시글 좋아요
-//                      .commentCnt(comment) // 댓글 갯수
-//                      .hit(post.getHit()) //조회수
-//                      .createdAt(post.getCreatedAt())
-//                      .modifiedAt(post.getModifiedAt())
-//                      .build()
-//      );
-//    }
-//    return ResponseDto.success(postListResponseDtoList);
-//  }
 
   //=================게시글 검색=================
   @Transactional
@@ -219,7 +181,7 @@ public class PostService {
                       .image(post.getImage())
                       .content(post.getContent())
                       .author(post.getMember().getNickname())
-                      .jobGroup(post.getJobGroup())
+                      .jobGroup(post.getJobGroup()) // 관심 직군
                       .postHeartCnt(postHeartCnt) //게시글 좋아요
                       .commentCnt(comment) // 댓글 갯수
                       .hit(post.getHit()) //조회수
@@ -266,12 +228,12 @@ public class PostService {
                     .id(post.getId())
                     .title(post.getTitle())
                     .author(post.getMember().getNickname())
-                    .jobGroup(post.getJobGroup())
+                    .jobGroup(post.getJobGroup()) // 관심 직군
                     .content(post.getContent())
                     .image(post.getImage())
-                    .postHeartCnt((long) postHeartCnt.size())
-                    .commentCnt(commentCnt)
-                    .hit(post.getHit())
+                    .postHeartCnt((long) postHeartCnt.size()) // 게시글 좋아요
+                    .commentCnt(commentCnt) // 댓글 갯수
+                    .hit(post.getHit()) // 조회수
                     .createdAt(post.getCreatedAt())
                     .modifiedAt(post.getModifiedAt())
                     .build()
@@ -331,7 +293,7 @@ public class PostService {
     return ResponseDto.success(postListResponseDtoList);
   }
 
-  //==================좋야요순 게시글 전체 조회====================
+  //==================좋아요순 게시글 전체 조회====================
   @Transactional
   public ResponseDto<?> getPostByHeart(Pageable pageable) {
     Page<Post> postList = postRepository.findAll(pageable);
@@ -389,11 +351,11 @@ public class PostService {
     return ResponseDto.success(postListResponseDtoList);
   }
 
-  @Transactional(readOnly = true)
-  public int commentHeartCnt(Comment comment) {
-    List<CommentHeart> commentLikeList = commentHeartRepository.findAllByComment(comment);
-    return commentLikeList.size();
-  }
+//  @Transactional(readOnly = true)
+//  public int commentHeartCnt(Comment comment) {
+//    List<CommentHeart> commentLikeList = commentHeartRepository.findAllByComment(comment);
+//    return commentLikeList.size();
+//  }
 
   @Transactional(readOnly = true)
   public Post isPresentPost(Long id) {
