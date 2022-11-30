@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-//@CustomBaseControllerAnnotation
 public class HeartController {
     private final HeartService heartService;
 
@@ -22,6 +21,7 @@ public class HeartController {
     public ResponseDto<?> postHeart(@PathVariable Long postingId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return heartService.postHeartUp(postingId, userDetails);
     }
+
     //==========댓글 좋아요==========
     @SwaggerAnnotation
     @PostMapping("/api/auth/comment/heart/{commentId}")
