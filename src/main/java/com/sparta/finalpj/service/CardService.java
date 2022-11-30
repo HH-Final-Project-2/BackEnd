@@ -6,7 +6,6 @@ import com.sparta.finalpj.controller.response.card.CardResponseDto;
 import com.sparta.finalpj.domain.*;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
-import com.sparta.finalpj.repository.CardImageRepository;
 import com.sparta.finalpj.repository.CardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,6 @@ import java.util.Optional;
 public class CardService {
     private final CommonService commonService;
     private final CardRepository cardRepository;
-    private final CardImageRepository cardImageRepository;
 
     // 자사&타사 명함 등록
     @Transactional
@@ -228,11 +226,4 @@ public class CardService {
         Optional<Card> optionalCard = cardRepository.findById(cardId);
         return optionalCard.orElse(null);
     }
-
-    @Transactional(readOnly = true)
-    public CardImage isPresentCardImg(Member member) {
-        Optional<CardImage> optionalCardImage = cardImageRepository.findByMemberAndCard(member, null);
-        return optionalCardImage.orElse(null);
-    }
-
 }
