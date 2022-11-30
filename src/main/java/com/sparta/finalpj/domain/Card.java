@@ -55,9 +55,6 @@ public class Card extends Timestamped {
   @ManyToOne(fetch = FetchType.LAZY)
   private Member member;
 
-  @OneToOne(mappedBy = "card", cascade = CascadeType.REMOVE, orphanRemoval = true)
-  private CardImage cardImage;
-
   public void update(CardRequestDto cardRequestDto) {
     this.cardName = cardRequestDto.getCardName();
     this.engName = cardRequestDto.getEngName();

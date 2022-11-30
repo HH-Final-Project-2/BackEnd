@@ -3,7 +3,6 @@ package com.sparta.finalpj.service;
 import com.google.cloud.vision.v1.*;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.controller.response.ocr.OcrResponseDto;
-import com.sparta.finalpj.domain.CardImage;
 import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;

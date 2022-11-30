@@ -6,7 +6,6 @@ import com.sparta.finalpj.controller.response.card.MyCardResponseDto;
 import com.sparta.finalpj.domain.*;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
-import com.sparta.finalpj.repository.CardImageRepository;
 import com.sparta.finalpj.repository.MyCardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,6 @@ import java.util.Optional;
 public class MyCardService {
     private final CommonService commonService;
     private final MyCardRepository myCardRepository;
-    private final CardImageRepository cardImageRepository;
 
     // 내명함 등록
     @Transactional
@@ -52,12 +50,6 @@ public class MyCardService {
                     .fax(requestDto.getFax())
                     .build();
             myCardRepository.save(myCard);
-
-            // 명함 이미지 정보가 있을 경우 MyCardId를 업데이트
-            CardImage cardImage = isPresentCardImg(member);
-            if (cardImage != null && cardImage.getMember() != null && cardImage.getMyCard() == null && cardImage.getCard() == null) {
-                cardImage.updateMyCard(myCard);
-            }
 
         } catch (IllegalArgumentException e) {
             throw new CustomException(ErrorCode.CARDINFO_UPDATE_FAIL);
@@ -204,9 +196,4 @@ public class MyCardService {
         return optionalMyCard.orElse(null);
     }
 
-    @Transactional(readOnly = true)
-    public CardImage isPresentCardImg(Member member) {
-        Optional<CardImage> optionalCardImage = cardImageRepository.findByMemberAndCard(member, null);
-        return optionalCardImage.orElse(null);
-    }
 }
