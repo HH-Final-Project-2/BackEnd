@@ -83,7 +83,6 @@ public class PostService {
 
   }
 
-
   //=============게시글 상세 조회=============
   @Transactional(readOnly = false)
   public ResponseDto<?> getPost(Long postingId, UserDetailsImpl userDetails) {
@@ -115,7 +114,7 @@ public class PostService {
     return ResponseDto.success(postDetailList);
   }
 
-  //=====조회수 증가 =====
+  //=====조회수 증가=====
   @Transactional
   public int updateHit(Long postId) {
     return postRepository.updateHit(postId);
@@ -162,7 +161,7 @@ public class PostService {
 
   //=================게시글 검색=================
   @Transactional
-    public ResponseDto<?> searchPost(String keyword) {
+    public ResponseDto<?> searchPost(String keyword, UserDetailsImpl userDetails) {
     List<Post> postList = postRepository.search(keyword);
     // 검색된 항목 담아줄 리스트 생성
     List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
@@ -173,6 +172,7 @@ public class PostService {
       postListResponseDtoList.add(
               PostResponseDto.builder()
                       .id(post.getId())
+                      .postHeartYn(postHeartCheck(post, userDetails))
                       .title(post.getTitle())
                       .image(post.getImage())
                       .content(post.getContent())
@@ -261,7 +261,7 @@ public class PostService {
 
   //==================조회수TOP5 게시글 조회===================
   @Transactional
-  public ResponseDto<?> getPostByTop() {
+  public ResponseDto<?> getPostByTop(UserDetailsImpl userDetails) {
 
       List<Post> postList = postRepository.findTop5ByOrderByHitDesc();
       List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
@@ -273,6 +273,7 @@ public class PostService {
 
       postListResponseDtoList.add(PostResponseDto.builder()
                       .id(post.getId())
+                      .postHeartYn(postHeartCheck(post, userDetails))
                       .title(post.getTitle())
                       .image(post.getImage())
                       .content(post.getContent())
@@ -292,8 +293,9 @@ public class PostService {
 
   //==================좋아요순 게시글 전체 조회====================
   @Transactional
-  public ResponseDto<?> getPostByHeart(Pageable pageable) {
-    Page<Post> postList = postRepository.findAll(pageable);
+  public ResponseDto<?> getPostByHeart(UserDetailsImpl userDetails) {
+
+    List<Post> postList = postRepository.findAll();
     List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
 
     for (Post post : postList) {
@@ -303,6 +305,7 @@ public class PostService {
 
       postListResponseDtoList.add(PostResponseDto.builder()
               .id(post.getId())
+              .postHeartYn(postHeartCheck(post, userDetails))
               .title(post.getTitle())
               .image(post.getImage())
               .content(post.getContent())
@@ -321,9 +324,39 @@ public class PostService {
   }
 
   //==================조회순 게시글 전체 조회===================
+//  @Transactional
+//  public ResponseDto<?> getPostByHits(Pageable pageable) {
+//    Page<Post> postList = postRepository.findAll(pageable);
+//    List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
+//
+//    for (Post post : postList) {
+//
+//      long comment = commentRepository.countAllByPost(post);
+//      long postHeartCnt = postHeartRepository.findAllByPost(post).size();
+//
+//      postListResponseDtoList.add(PostResponseDto.builder()
+//              .id(post.getId())
+//              .title(post.getTitle())
+//              .image(post.getImage())
+//              .content(post.getContent())
+//              .author(post.getMember().getNickname())
+//              .jobGroup(post.getJobGroup()) // 관심 직군
+//              .postHeartCnt(postHeartCnt) //게시글 좋아요
+//              .commentCnt(comment) // 댓글 갯수
+//              .hit(post.getHit()) //조회수
+//              .createdAt(post.getCreatedAt())
+//              .modifiedAt(post.getModifiedAt())
+//              .build()
+//      );
+//      postListResponseDtoList.sort((o1, o2) -> (o2.getHit() - o1.getHit()));
+//    }
+//    return ResponseDto.success(postListResponseDtoList);
+//  }
+
   @Transactional
-  public ResponseDto<?> getPostByHits(Pageable pageable) {
-    Page<Post> postList = postRepository.findAll(pageable);
+  public ResponseDto<?> getPostByHits(UserDetailsImpl userDetails) {
+
+    List<Post> postList = postRepository.findAll();
     List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
 
     for (Post post : postList) {
@@ -333,6 +366,7 @@ public class PostService {
 
       postListResponseDtoList.add(PostResponseDto.builder()
               .id(post.getId())
+              .postHeartYn(postHeartCheck(post, userDetails))
               .title(post.getTitle())
               .image(post.getImage())
               .content(post.getContent())

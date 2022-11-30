@@ -68,26 +68,34 @@ public class PostController {
 //    return postService.getPostByTop(pageable);
 //  }
   @GetMapping(value = "/posting/five")
-  public ResponseDto<?> getPostByTop() {
-    return postService.getPostByTop();
+  public ResponseDto<?> getPostByTop(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return postService.getPostByTop(userDetails);
   }
 
   //=============게시글 좋아요순 전체 조회=============
+//  @GetMapping(value = "/posting/hearts")
+//  public ResponseDto<?> getPostByHeart(@PageableDefault(size = 20, direction = Sort.Direction.DESC) Pageable pageable) {
+//    return postService.getPostByHeart(pageable);
+//  }
   @GetMapping(value = "/posting/hearts")
-  public ResponseDto<?> getPostByHeart(@PageableDefault(size = 20, direction = Sort.Direction.DESC) Pageable pageable) {
-    return postService.getPostByHeart(pageable);
+  public ResponseDto<?> getPostByHeart(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return postService.getPostByHeart(userDetails);
   }
 
   //=============게시글 조회순 전체 조회==============
+//  @GetMapping(value = "/posting/hits")
+//  public ResponseDto<?> getPostByHits(@PageableDefault(size = 20, direction = Sort.Direction.DESC) Pageable pageable) {
+//    return postService.getPostByHits(pageable);
+//  }
   @GetMapping(value = "/posting/hits")
-  public ResponseDto<?> getPostByHits(@PageableDefault(size = 20, direction = Sort.Direction.DESC) Pageable pageable) {
-    return postService.getPostByHits(pageable);
+  public ResponseDto<?> getPostByHits(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return postService.getPostByHits(userDetails);
   }
 
   //===============게시글 검색=================
   @GetMapping("/posting/search")
-  public ResponseDto<?> search(@RequestParam(value = "keyword") String keyword){
-    return postService.searchPost(keyword);
+  public ResponseDto<?> search(@RequestParam(value = "keyword") String keyword, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    return postService.searchPost(keyword, userDetails);
   }
 }
 
