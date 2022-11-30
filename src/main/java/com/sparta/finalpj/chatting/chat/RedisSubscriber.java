@@ -1,9 +1,10 @@
 package com.sparta.finalpj.chatting.chat;
 
-import com.amazonaws.services.kms.model.NotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.finalpj.chatting.chat.requestDto.ChatMessageDto;
 import com.sparta.finalpj.chatting.chat.responseDto.MessageResponseDto;
+import com.sparta.finalpj.exception.CustomException;
+import com.sparta.finalpj.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -37,7 +38,7 @@ public class RedisSubscriber implements MessageListener {
             messagingTemplate.convertAndSend("/sub/chat/room/" + roomMessage.getRoomId(), messageResponseDto);
 
         } catch (Exception e) {
-            throw new NotFoundException("메세지를 확인할 수 없습니다.");
+            throw new CustomException(ErrorCode.NOT_FOUND_MESSAGE);
         }
     }
 }

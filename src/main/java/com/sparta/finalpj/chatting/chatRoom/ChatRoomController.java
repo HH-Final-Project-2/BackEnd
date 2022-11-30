@@ -1,6 +1,5 @@
 package com.sparta.finalpj.chatting.chatRoom;
 
-import com.amazonaws.services.kms.model.NotFoundException;
 import com.sparta.finalpj.chatting.chat.RedisRepository;
 import com.sparta.finalpj.chatting.chat.responseDto.ChatMessageTestDto;
 import com.sparta.finalpj.chatting.chatRoom.requestDto.ChatRoomUserRequestDto;
@@ -71,7 +70,7 @@ public class ChatRoomController {
         System.out.println(roomId+"삭제 요청");
         System.out.println(userDetails.getMember().getNickname()+"삭제 요청");
         ChatRoom chatroom = chatRoomRepository.findByChatRoomUuid(roomId).orElseThrow(
-                () -> new NotFoundException("존재하지 않는 채팅방입니다.")
+                () -> new CustomException(ErrorCode.NOT_EXIST_CHATROOM)
         );
 
         chatRoomService.deleteChatRoom(chatroom, userDetails.getMember());

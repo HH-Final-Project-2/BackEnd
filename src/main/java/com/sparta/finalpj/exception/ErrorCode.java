@@ -57,7 +57,15 @@ public enum ErrorCode {
     EMPTY_IMAGE_FILE(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M029", "파일을 첨부해주세요."),
     CARDINFO_UPDATE_FAIL(HttpStatus.BAD_REQUEST.value(), "M30", "명함정보 등록을 실패했습니다."),
     NOT_FOUND_CARDINFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M031", "명함정보 등록을 실패했습니다."),
-    NOT_FOUND_CALNFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M032", "캘린더 정보가 없습니다.")
+    NOT_FOUND_CALNFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M032", "캘린더 정보가 없습니다."),
+    NOT_EXIST_CHATROOM(HttpStatus.NOT_FOUND.value(), "M033", "채팅방이 존재하지 않습니다."),
+    NOT_FOUND_CHATROOM(HttpStatus.NOT_FOUND.value(), "M034", "채팅방을 찾을 수 없습니다."),
+    NOT_FOUND_MESSAGE(HttpStatus.NOT_FOUND.value(), "M035", "메세지를 확인할 수 없습니다."),
+    CANT_CHAT_TO_ME(HttpStatus.BAD_REQUEST.value(), "M036", "자기자신에게 채팅을 신청할 수 없습니다"),
+    NOT_FOUND_PARTNER(HttpStatus.NOT_FOUND.value(), "M037", "상대방을 찾을 수 없습니다."),
+    NOT_ALLOWED_CHATROOM(HttpStatus.FORBIDDEN.value(), "M038", "접근할 수 없는 채팅방입니다.")
+
+
     ;
 
     private final int httpStatus;

@@ -1,6 +1,5 @@
 package com.sparta.finalpj.chatting.chatRoom;
 
-import com.amazonaws.services.kms.model.NotFoundException;
 
 import com.sparta.finalpj.chatting.Time;
 import com.sparta.finalpj.chatting.chat.ChatMessage;
@@ -10,6 +9,8 @@ import com.sparta.finalpj.chatting.chat.responseDto.ChatMessageTestDto;
 import com.sparta.finalpj.chatting.chatRoom.responseDto.ChatRoomOtherMemberInfoResponseDto;
 import com.sparta.finalpj.chatting.chatRoom.responseDto.ChatRoomResponseDto;
 import com.sparta.finalpj.domain.Member;
+import com.sparta.finalpj.exception.CustomException;
+import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.jwt.UserDetailsImpl;
 import com.sparta.finalpj.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,9 +46,9 @@ public class ChatRoomService {
             UserDetailsImpl userDetails) {
         //상대방 방도 생성 > 상대방 찾기
         if(partnerId.equals(userDetails.getMember().getId()))
-            throw new RuntimeException ("자기자신에게 채팅을 신청할 수 없습니다");
+            throw new CustomException(ErrorCode.CANT_CHAT_TO_ME);
         Member anotherUser = memberRepository.findById(partnerId).orElseThrow(
-                () -> new NotFoundException("상대방을 찾을 수 없습니다.")
+                () -> new CustomException(ErrorCode.NOT_FOUND_PARTNER)
         );
 
         //roomHashCode 만들기
@@ -56,7 +57,7 @@ public class ChatRoomService {
         //방 존재 확인 함수
         if(existRoom(roomHashCode, userDetails, anotherUser)){
             ChatRoom existChatRoom = chatRoomRepository.findByRoomHashCode(roomHashCode).orElseThrow(
-                    ()-> new RuntimeException("알 수 없는 채팅방 입니다.")
+                    ()-> new CustomException(ErrorCode.NOT_FOUND_CHATROOM)
             );
             return existChatRoom.getChatRoomUuid();
         }
@@ -178,7 +179,7 @@ public class ChatRoomService {
     public ChatRoomOtherMemberInfoResponseDto getOtherUserInfo(String roomId, UserDetailsImpl userDetails) {
         Member myMember = userDetails.getMember();
         ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(roomId).orElseThrow(
-                () -> new NotFoundException("채팅방을 찾을 수 없습니다.")
+                ()-> new CustomException(ErrorCode.NOT_FOUND_CHATROOM)
         );
 
         List<ChatRoomUser> members = chatRoom.getChatRoomUsers();
@@ -191,7 +192,7 @@ public class ChatRoomService {
         }
 
         Member anotherUser = memberRepository.findByEmail(members.get(0).getOtherMember().getEmail()).orElseThrow(
-                ()-> new NotFoundException("채팅상대가 존재하지 않습니다.")
+                ()-> new CustomException(ErrorCode.NOT_FOUND_PARTNER)
         );
         ChatRoomUser anotherChatRoomUser = new ChatRoomUser(anotherUser, myMember, chatRoom);
         chatRoomUserRepository.save(anotherChatRoomUser);
@@ -205,7 +206,7 @@ public class ChatRoomService {
         List<ChatMessageTestDto> chatMessageTestDtos = new ArrayList<>();
 
         ChatRoom chatroom = chatRoomRepository.findByChatRoomUuid(roomId).orElseThrow(
-                () -> new NotFoundException("채팅방을 찾을 수 없습니다.")
+                ()-> new CustomException(ErrorCode.NOT_FOUND_CHATROOM)
         );
 
         List<ChatRoomUser> chatRoomUsers = chatroom.getChatRoomUsers();
@@ -220,7 +221,7 @@ public class ChatRoomService {
                 return chatMessageTestDtos;
             }
         }
-        throw new RuntimeException("접근할 수 없는 채팅방입니다.");
+        throw new CustomException(ErrorCode.NOT_ALLOWED_CHATROOM);
     }
 
 

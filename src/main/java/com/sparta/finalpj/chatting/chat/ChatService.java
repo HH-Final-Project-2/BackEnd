@@ -6,6 +6,8 @@ import com.sparta.finalpj.chatting.chatRoom.ChatRoomRepository;
 import com.sparta.finalpj.chatting.chatRoom.ChatRoomUser;
 import com.sparta.finalpj.chatting.chatRoom.ChatRoomUserRepository;
 import com.sparta.finalpj.domain.Member;
+import com.sparta.finalpj.exception.CustomException;
+import com.sparta.finalpj.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -40,7 +42,7 @@ public class ChatService {
     @Transactional
     public void sendMessage(ChatMessageDto chatMessageDto, Member member) {
         ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(chatMessageDto.getRoomId()).orElseThrow(
-                () -> new IllegalArgumentException("채팅방이 존재하지 않습니다.")
+                () -> new CustomException(ErrorCode.NOT_EXIST_CHATROOM)
         );
         ChatMessage chatMessage = new ChatMessage(member, chatMessageDto, chatRoom);
         chatMessageRepository.save(chatMessage);
