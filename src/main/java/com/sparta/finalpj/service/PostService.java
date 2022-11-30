@@ -32,7 +32,6 @@ public class PostService {
   private final PostRepository postRepository;
   private final CommentRepository commentRepository;
   private final PostHeartRepository postHeartRepository;
-  private final CommentHeartRepository commentHeartRepository;
   private final TokenProvider tokenProvider;
   private final GoogleCloudUploadService googleCloudUploadService;
 
@@ -101,10 +100,10 @@ public class PostService {
             .id(post.getId())
             .postHeartYn(postHeartCheck(post, userDetails))
             .title(post.getTitle())
-            .author(post.getMember().getNickname())
-            .jobGroup(post.getJobGroup())
-            .content(post.getContent())
             .image(post.getImage())
+            .author(post.getMember().getNickname())
+            .jobGroup(post.getJobGroup()) // 관심 직군
+            .content(post.getContent())
             .postHeartCnt((long) postHeartCnt.size())
             .hit(updateHit(postingId))
             .hit(post.getHit()+1) // 조회수
@@ -134,8 +133,6 @@ public class PostService {
   //======================게시글 전체 조회=====================
   @Transactional(readOnly = true)
   public ResponseDto<?> getAllPost(UserDetailsImpl userDetails) {
-//    Member member = userDetails.getMember();
-//    boolean postHeartYn = false;
 
     List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
     List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
@@ -162,7 +159,6 @@ public class PostService {
     }
     return ResponseDto.success(postListResponseDtoList);
   }
-
 
   //=================게시글 검색=================
   @Transactional
@@ -227,10 +223,10 @@ public class PostService {
             PostResponseDto.builder()
                     .id(post.getId())
                     .title(post.getTitle())
+                    .image(post.getImage())
                     .author(post.getMember().getNickname())
                     .jobGroup(post.getJobGroup()) // 관심 직군
                     .content(post.getContent())
-                    .image(post.getImage())
                     .postHeartCnt((long) postHeartCnt.size()) // 게시글 좋아요
                     .commentCnt(commentCnt) // 댓글 갯수
                     .hit(post.getHit()) // 조회수
@@ -278,6 +274,7 @@ public class PostService {
       postListResponseDtoList.add(PostResponseDto.builder()
                       .id(post.getId())
                       .title(post.getTitle())
+                      .image(post.getImage())
                       .content(post.getContent())
                       .author(post.getMember().getNickname())
                       .jobGroup(post.getJobGroup()) // 관심 직군
@@ -307,6 +304,7 @@ public class PostService {
       postListResponseDtoList.add(PostResponseDto.builder()
               .id(post.getId())
               .title(post.getTitle())
+              .image(post.getImage())
               .content(post.getContent())
               .author(post.getMember().getNickname())
               .jobGroup(post.getJobGroup()) // 관심 직군
@@ -336,6 +334,7 @@ public class PostService {
       postListResponseDtoList.add(PostResponseDto.builder()
               .id(post.getId())
               .title(post.getTitle())
+              .image(post.getImage())
               .content(post.getContent())
               .author(post.getMember().getNickname())
               .jobGroup(post.getJobGroup()) // 관심 직군
@@ -350,12 +349,6 @@ public class PostService {
     }
     return ResponseDto.success(postListResponseDtoList);
   }
-
-//  @Transactional(readOnly = true)
-//  public int commentHeartCnt(Comment comment) {
-//    List<CommentHeart> commentLikeList = commentHeartRepository.findAllByComment(comment);
-//    return commentLikeList.size();
-//  }
 
   @Transactional(readOnly = true)
   public Post isPresentPost(Long id) {
