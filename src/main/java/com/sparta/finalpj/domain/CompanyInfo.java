@@ -22,9 +22,9 @@ public class CompanyInfo {
     private String crno;
 
     @Column
-    private String companyName; // 법인명칭(corpNm)
+    private String companyName;
 
     @Column
-    private String companyAddress; // 회사주소(enpBsadr)
+    private String companyAddress;
 
 }
