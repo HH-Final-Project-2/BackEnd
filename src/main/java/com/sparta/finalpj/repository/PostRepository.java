@@ -13,8 +13,7 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-  Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
-  List<Post> findAllByOrderByModifiedAtDesc();
+  List<Post> findAllByOrderByCreatedAtDesc();
   List<Post> findTop5ByOrderByHitDesc();
 
   @Modifying(clearAutomatically = true)

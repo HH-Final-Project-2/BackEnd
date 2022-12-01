@@ -133,7 +133,7 @@ public class PostService {
   @Transactional(readOnly = true)
   public ResponseDto<?> getAllPost(UserDetailsImpl userDetails) {
 
-    List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
+    List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
     List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
 
     for (Post post : postList) {
@@ -295,7 +295,7 @@ public class PostService {
   @Transactional
   public ResponseDto<?> getPostByHeart(UserDetailsImpl userDetails) {
 
-    List<Post> postList = postRepository.findAll();
+    List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
     List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
 
     for (Post post : postList) {
@@ -356,7 +356,7 @@ public class PostService {
   @Transactional
   public ResponseDto<?> getPostByHits(UserDetailsImpl userDetails) {
 
-    List<Post> postList = postRepository.findAll();
+    List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
     List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
 
     for (Post post : postList) {
