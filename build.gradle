@@ -54,7 +54,11 @@ dependencies {
     implementation 'io.springfox:springfox-swagger-ui:3.0.0'
     //JSON-Parse
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
-
+    // Spring Batch
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
+    // quartz-scheduler
+    implementation 'org.quartz-scheduler:quartz:2.3.2'
 
 }
 

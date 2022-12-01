@@ -1,12 +1,16 @@
 package com.sparta.finalpj;
 
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 
+@EnableBatchProcessing // 배치 기능 활성화
+@EnableScheduling // 스프링 부트에서 스케줄러가 작동
 @SpringBootApplication
 @EnableJpaAuditing //타임스탬프 상속해서 쓰려면 넣어줘야함
 public class FinalpjApplication {
