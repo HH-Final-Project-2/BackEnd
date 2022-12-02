@@ -8,13 +8,10 @@ import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.jwt.TokenProvider;
 import com.sparta.finalpj.jwt.UserDetailsImpl;
-import com.sparta.finalpj.repository.CommentHeartRepository;
 import com.sparta.finalpj.repository.CommentRepository;
 import com.sparta.finalpj.repository.PostHeartRepository;
 import com.sparta.finalpj.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -208,7 +205,7 @@ public class PostService {
     String imageUrl = "";
 
     if (image == null) {
-      imageUrl = "";
+      imageUrl = post.getImage();
     }else {
       UUID uuid = UUID.randomUUID();
       String fileName = uuid.toString() + "_" + image.getOriginalFilename();
