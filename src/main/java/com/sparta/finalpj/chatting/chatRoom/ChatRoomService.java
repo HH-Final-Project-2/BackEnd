@@ -14,15 +14,12 @@ import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.jwt.UserDetailsImpl;
 import com.sparta.finalpj.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -118,14 +115,14 @@ public class ChatRoomService {
         return false;
     }
 
-    //채팅방 조회
-    public List<ChatRoomResponseDto> getChatRoom(UserDetailsImpl userDetails, int page) {
+    //내가 가진 채팅방 조회
+    public List<ChatRoomResponseDto> getChatRoom(UserDetailsImpl userDetails) {
 
         // user로 챗룸 유저를 찾고 >> 챗룸 유저에서 채팅방을 찾는다
         // 마지막나온 메시지 ,내용 ,시간
-        Pageable pageable = PageRequest.of(page, DISPLAY_CHAT_ROOM_COUNT);
+//        Pageable pageable = PageRequest.of(page, DISPLAY_CHAT_ROOM_COUNT);
         List<ChatRoomResponseDto> responseDtos = new ArrayList<>();
-        Page<ChatRoomUser> chatRoomUsers = chatRoomUserRepository.findAllByMember(userDetails.getMember(),pageable);
+        List<ChatRoomUser> chatRoomUsers = chatRoomUserRepository.findAllByMember(userDetails.getMember());
         //List<ChatRoomUser> chatRoomUsers = chatRoomUserRepository.findAllByMember(userDetails.getMember());
         int totalCnt = 0;
         for(ChatRoomUser chatRoomUser : chatRoomUsers) {
@@ -137,7 +134,7 @@ public class ChatRoomService {
             responseDtos.add(responseDto);
 
             //정렬
-            responseDtos.sort(Collections.reverseOrder());
+//            responseDtos.sort(Collections.reverseOrder());
         }
         return responseDtos;
     }
@@ -185,19 +182,22 @@ public class ChatRoomService {
         List<ChatRoomUser> members = chatRoom.getChatRoomUsers();
 
         for(ChatRoomUser member : members){
+            //otherUser 뽑기위한 logic
+            //ChatRoomUser에서 빼온 임의의 member가 myId와 같지 않다면! => 다르다면 => 즉, 상대방이라면 if문 타게함
             if(!member.getMember().getId().equals(myMember.getId())) {
                 Member otherUser = member.getMember();
-                return new ChatRoomOtherMemberInfoResponseDto(otherUser);
+                return new ChatRoomOtherMemberInfoResponseDto(myMember,otherUser);
             }
         }
 
-        Member anotherUser = memberRepository.findByEmail(members.get(0).getOtherMember().getEmail()).orElseThrow(
-                ()-> new CustomException(ErrorCode.NOT_FOUND_PARTNER)
-        );
-        ChatRoomUser anotherChatRoomUser = new ChatRoomUser(anotherUser, myMember, chatRoom);
-        chatRoomUserRepository.save(anotherChatRoomUser);
+//        Member anotherUser = memberRepository.findByEmail(members.get(0).getOtherMember().getEmail()).orElseThrow(
+//                ()-> new CustomException(ErrorCode.NOT_FOUND_PARTNER)
+//        );
+//        ChatRoomUser anotherChatRoomUser = new ChatRoomUser(anotherUser, myMember, chatRoom);
+//        chatRoomUserRepository.save(anotherChatRoomUser);
+//        return new ChatRoomOtherMemberInfoResponseDto(anotherUser);
 
-        return new ChatRoomOtherMemberInfoResponseDto(anotherUser);
+        throw new CustomException(ErrorCode.NOT_FOUND_PARTNER);
 
     }
 
@@ -211,7 +211,7 @@ public class ChatRoomService {
 
         List<ChatRoomUser> chatRoomUsers = chatroom.getChatRoomUsers();
 
-        //혹시 채팅방 이용자가 아닌데 들어온다면,
+        //혹시 채팅방 이용자가 아닌데 들어온다면, NOT_ALLOWED_CHATROOM로 CustomException
         for(ChatRoomUser chatroomUser:chatRoomUsers){
             if(chatroomUser.getMember().getId().equals(userDetails.getMember().getId())) {
                 List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoomOrderByCreatedAtAsc(chatroom);

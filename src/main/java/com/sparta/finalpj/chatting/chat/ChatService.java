@@ -9,6 +9,7 @@ import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ChatService {
 
@@ -38,7 +40,10 @@ public class ChatService {
         redisRepository.initChatRoomMessageInfo(roomId, memberId);
     }
 
-    //채팅
+    /**
+     *채팅 메세지보내기
+     */
+
     @Transactional
     public void sendMessage(ChatMessageDto chatMessageDto, Member member) {
         ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(chatMessageDto.getRoomId()).orElseThrow(
@@ -57,6 +62,8 @@ public class ChatService {
         chatMessageDto.setType(ChatMessageDto.MessageType.TALK);
         // front에서 요청해서 진행한 작업 나의 userId 넣어주기
         chatMessageDto.setUserId(member.getId());
+
+        log.info(chatMessageDto.getMessage()); //=> test : 메세지 로그 찍어보기
 
         redisTemplate.convertAndSend(topic, chatMessageDto);
     }

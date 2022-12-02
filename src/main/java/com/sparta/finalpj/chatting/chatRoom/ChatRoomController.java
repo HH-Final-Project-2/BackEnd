@@ -51,13 +51,11 @@ public class ChatRoomController {
     }
 
     //내가 가진 채팅방 조회
-    @GetMapping ("/chat/rooms/{page}")
+    @GetMapping ("/chat/rooms")
     public List<ChatRoomResponseDto> getChatRoom (
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable int page) {
-        page -= 1;
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         System.out.println(userDetails.getMember().getNickname()+ "채팅방 조회 요청");
-        return chatRoomService.getChatRoom(userDetails, page);
+        return chatRoomService.getChatRoom(userDetails);
     }
 
     //채팅방 삭제
@@ -87,7 +85,7 @@ public class ChatRoomController {
     }
 
     //채팅방 입장시 상대정보 조회
-    @GetMapping("/chat/rooms/otherUserInfo/{roomId}")
+    @GetMapping("/chat/rooms/userInfo/{roomId}")
     public ChatRoomOtherMemberInfoResponseDto getOtherUserInfo(
             @PathVariable String roomId,
             @AuthenticationPrincipal UserDetailsImpl userDetails){

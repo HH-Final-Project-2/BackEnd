@@ -11,9 +11,13 @@ public class ChatRoomOtherMemberInfoResponseDto {
 
     private Long otherUserId;
     private String otherNickname;
+    private Long myId;
+    private String myNickname;
 
-    public ChatRoomOtherMemberInfoResponseDto(Member otherUser) {
+    public ChatRoomOtherMemberInfoResponseDto(Member User, Member otherUser) {
         this.otherUserId = otherUser.getId();
         this.otherNickname = otherUser.getNickname();
+        this.myId = User.getId();
+        this.myNickname = User.getNickname();
     }
 }
