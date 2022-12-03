@@ -204,13 +204,22 @@ public class PostService {
 
     String imageUrl = "";
 
-    if (image == null) {
+//    if (image == null) {
+//    imageUrl = post.getImage();
+//    }else {
+//      UUID uuid = UUID.randomUUID();
+//      String fileName = uuid.toString() + "_" + image.getOriginalFilename();
+//      imageUrl = googleCloudUploadService.upload("community", image, fileName);
+//    }
+    if(image == null && requestDto.isImageDelete()) {
+      imageUrl = "";
+    } else if(image == null && !requestDto.isImageDelete()) {
       imageUrl = post.getImage();
     }else {
       UUID uuid = UUID.randomUUID();
       String fileName = uuid.toString() + "_" + image.getOriginalFilename();
       imageUrl = googleCloudUploadService.upload("community", image, fileName);
-    }
+          }
 
     List<PostHeart> postHeartCnt = postHeartRepository.findByPost(post);
     Long commentCnt = commentRepository.countByPost(post);
