@@ -1,5 +1,7 @@
 package com.sparta.finalpj.controller;
 
+import com.sparta.finalpj.controller.request.card.CardInfoRequestDto;
+import com.sparta.finalpj.controller.request.card.CardRequestDto;
 import com.sparta.finalpj.controller.request.company.CompanyRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.service.CompanyInfoService;
@@ -31,5 +33,14 @@ public class CompanyInfoController {
     public ResponseDto<?> getCompanyInfo(@RequestBody CompanyRequestDto requestDto) {
 
         return companyInfoService.getCompanyInfo(requestDto);
+    }
+
+    /**
+     * 카드정보 저장
+     */
+    @PostMapping("/cardInfo")
+    public ResponseDto<?> getCardInfo(@RequestBody CardInfoRequestDto requestDto) {
+
+        return companyInfoService.saveCardInfo(requestDto);
     }
 }
