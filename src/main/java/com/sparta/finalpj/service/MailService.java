@@ -1,6 +1,7 @@
 package com.sparta.finalpj.service;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Optional;
 import java.util.Random;
 
 import javax.mail.MessagingException;
@@ -8,22 +9,33 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 
+import com.sparta.finalpj.controller.request.EmailAuthRequestDto;
+import com.sparta.finalpj.controller.request.EmailConfirmRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
+import com.sparta.finalpj.domain.Mail;
+import com.sparta.finalpj.domain.Member;
+import com.sparta.finalpj.domain.Post;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
+import com.sparta.finalpj.repository.MailRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-public class RegisterMail {
+@RequiredArgsConstructor
+public class MailService {
 
     @Autowired
     JavaMailSender emailsender; // Bean 등록해둔 MailConfig 를 emailsender 라는 이름으로 autowired
 
     private String ePw; // 인증번호
+
+    private final MailRepository mailRepository;
 
     // 메일 내용 작성
     public MimeMessage createMessage(String to) throws MessagingException, UnsupportedEncodingException {
@@ -88,6 +100,7 @@ public class RegisterMail {
     // sendSimpleMessage 의 매개변수로 들어온 to 는 곧 이메일 주소가 되고,
     // MimeMessage 객체 안에 내가 전송할 메일의 내용을 담는다.
     // 그리고 bean 으로 등록해둔 javaMail 객체를 사용해서 이메일 send!!
+    @Transactional
     public ResponseDto<?> sendSimpleMessage(String to) throws Exception {
 
         ePw = createKey(); // 랜덤 인증번호 생성
@@ -101,8 +114,34 @@ public class RegisterMail {
             throw new CustomException(ErrorCode.INVALID_EMAIL_ERROR);
         }
 
-        System.out.println("인증코드 : " + ePw);
+        Mail mail = isPresentMail(to); //이전에 인증했던 메일인지 DB조회
+        if (null == mail) {
+            //(메일-인증번호) 객체 생성
+            mail = Mail.of(to,ePw);
+            //저장
+            mailRepository.save(mail);
+            return ResponseDto.success("인증코드 발송 완료"); // 메일로 보냈던 인증 코드를 서버로 반환
+        }
+            //이전에 코드를 보냈던 메일이면, 인증번호 갱신
+            mail.update(ePw);
+        return ResponseDto.success("인증코드 재발송 완료"); // 메일로 보냈던 인증 코드를 서버로 반환
+    }
 
-        return ResponseDto.success(ePw); // 메일로 보냈던 인증 코드를 서버로 반환
+    public ResponseDto<?> mailConfirm(EmailAuthRequestDto requestDto){
+        Mail mail = isPresentMail(requestDto.getEmail()); //DB조회
+        if (null == mail) {
+            throw new CustomException(ErrorCode.AUTH_CODE_NOT_ISSUE);
+        }
+
+        if (!mail.getCode().equals(requestDto.getCode())) {
+            throw new CustomException(ErrorCode.AUTH_CODE_NOT_CORRECT);
+        }
+        return ResponseDto.success("인증 완료");
+    }
+
+    @Transactional(readOnly = true)
+    public Mail isPresentMail(String email) {
+        Optional<Mail> optionalMail = mailRepository.findByEmail(email);
+        return optionalMail.orElse(null);
     }
 }

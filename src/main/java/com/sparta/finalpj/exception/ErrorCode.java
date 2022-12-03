@@ -60,7 +60,10 @@ public enum ErrorCode {
     NOT_FOUND_CALNFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M032", "캘린더 정보가 없습니다."),
     EMAIL_NULL_INPUT_ERROR(HttpStatus.BAD_REQUEST.value(), "M033", "이메일을 입력해주세요."),
     EMAIL_INPUT_ERROR(HttpStatus.BAD_REQUEST.value(), "M034", "올바른 이메일이 아닙니다."),
-    INVALID_EMAIL_ERROR(HttpStatus.BAD_REQUEST.value(), "M035", "이메일을 다시 확인해주세요.")
+    INVALID_EMAIL_ERROR(HttpStatus.BAD_REQUEST.value(), "M035", "이메일을 다시 확인해주세요."),
+    AUTH_CODE_NOT_ISSUE(HttpStatus.PRECONDITION_FAILED.value(),"M036","먼저 인증번호를 받아주세요."),
+    AUTH_CODE_NOT_CORRECT(HttpStatus.NOT_ACCEPTABLE.value(),"M037","인증번호가 틀렸습니다.")
+
 
     ;
 

@@ -1,9 +1,10 @@
 package com.sparta.finalpj.controller;
 
 import com.sparta.finalpj.controller.request.EmailAuthRequestDto;
+import com.sparta.finalpj.controller.request.EmailConfirmRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.jwt.Validation;
-import com.sparta.finalpj.service.RegisterMail;
+import com.sparta.finalpj.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,17 +14,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MailController {
 
-    private final RegisterMail registerMail;
+    private final MailService mailService;
     private final Validation validation;
 
 
-    @PostMapping("/api/login/mailConfirm")
-    public ResponseDto<?> mailConfirm(@RequestBody EmailAuthRequestDto requestDto) throws Exception {
-
-//        String code = registerMail.sendSimpleMessage(requestDto.getEmail());
-//        System.out.println("인증코드 : " + code);
+    @PostMapping("/api/mail/auth")
+    public ResponseDto<?> mailAuth(@RequestBody EmailAuthRequestDto requestDto) throws Exception {
         validation.validateEmailInput(requestDto);
-
-        return registerMail.sendSimpleMessage(requestDto.getEmail());
+        validation.emailCheck(requestDto);
+        return mailService.sendSimpleMessage(requestDto.getEmail());
     }
+
+    @PostMapping("/api/mail/confirm")
+    public ResponseDto<?> mailConfirm(@RequestBody EmailAuthRequestDto requestDto){
+        return mailService.mailConfirm(requestDto);
+    }
+
+
 }
