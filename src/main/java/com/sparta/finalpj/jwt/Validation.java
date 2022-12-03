@@ -1,6 +1,9 @@
 package com.sparta.finalpj.jwt;
 
+import com.sparta.finalpj.controller.request.EmailAuthRequestDto;
+import com.sparta.finalpj.controller.request.member.EmailCheckRequestDto;
 import com.sparta.finalpj.controller.request.member.SignupRequestDto;
+import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
@@ -46,6 +49,21 @@ public class Validation {
         //비밀번호확인도 6자 ~ 15자 , 영문 , 숫자
         if (!isValidPasswordCheck(signupRequestDto.getPasswordCheck())) {
             throw new CustomException(ErrorCode.SIGNUP_PASSWORD_FORM_ERROR);
+        }
+    }
+
+    public void validateEmailInput(EmailAuthRequestDto emailAuthRequestDto) {
+        if(emailAuthRequestDto.getEmail()==null){
+            throw new CustomException(ErrorCode.EMAIL_NULL_INPUT_ERROR);
+        }
+        if (!isValidEmail(emailAuthRequestDto.getEmail())) {
+            throw new CustomException(ErrorCode.EMAIL_INPUT_ERROR);
+        }
+    }
+
+    public void emailCheck(EmailAuthRequestDto requestDto) {
+        if (memberRepository.existsByEmail(requestDto.getEmail())) {
+            throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
         }
     }
 
