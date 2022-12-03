@@ -57,7 +57,11 @@ public enum ErrorCode {
     EMPTY_IMAGE_FILE(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M029", "파일을 첨부해주세요."),
     CARDINFO_UPDATE_FAIL(HttpStatus.BAD_REQUEST.value(), "M30", "명함정보 등록을 실패했습니다."),
     NOT_FOUND_CARDINFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M031", "명함정보 등록을 실패했습니다."),
-    NOT_FOUND_CALNFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M032", "캘린더 정보가 없습니다.")
+    NOT_FOUND_CALNFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M032", "캘린더 정보가 없습니다."),
+    EMAIL_NULL_INPUT_ERROR(HttpStatus.BAD_REQUEST.value(), "M033", "이메일을 입력해주세요."),
+    EMAIL_INPUT_ERROR(HttpStatus.BAD_REQUEST.value(), "M034", "올바른 이메일이 아닙니다."),
+    INVALID_EMAIL_ERROR(HttpStatus.BAD_REQUEST.value(), "M035", "이메일을 다시 확인해주세요.")
+
     ;
 
     private final int httpStatus;
