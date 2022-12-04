@@ -17,7 +17,6 @@ public class MyCalendarResponseDto {
     private String startTime;
     private String endDate;
     private String endTime;
-    private String filteredDate;
     private String title;
     private String todo;
     private LocalDateTime createdAt;
