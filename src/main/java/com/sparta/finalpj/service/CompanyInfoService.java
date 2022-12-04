@@ -1,9 +1,8 @@
 package com.sparta.finalpj.service;
 
 import com.sparta.finalpj.controller.request.card.CardInfoRequestDto;
-import com.sparta.finalpj.controller.request.company.CompanyRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
-import com.sparta.finalpj.controller.response.card.CardInfoResponseDto;
+import com.sparta.finalpj.controller.response.card.CardResponseDto;
 import com.sparta.finalpj.controller.response.company.CompanyInfoResponseDto;
 import com.sparta.finalpj.domain.CompanyInfo;
 import com.sparta.finalpj.domain.Member;
@@ -25,6 +24,13 @@ public class CompanyInfoService {
 
     private final CommonService commonService;
     private final CompanyInfoRepository companyInfoRepository;
+
+    private CardInfoRequestDto cardResponseDto;
+
+    public CardInfoRequestDto cardInfo(CardInfoRequestDto requestDto) {
+        cardResponseDto = requestDto;
+        return requestDto;
+    }
 
     // 명함등록 시 기업 검색
     public ResponseDto<?> companySearch(String keyword, HttpServletRequest request) {
@@ -51,28 +57,19 @@ public class CompanyInfoService {
         return ResponseDto.success(responseDtoList);
     }
 
-    // 기업정보 받아오기
-    public ResponseDto<?> getCompanyInfo(CompanyRequestDto requestDto) {
-        CompanyInfoResponseDto responseDto = CompanyInfoResponseDto.builder()
-                .companyName(requestDto.getCompanyName())
+    // 카드 및 기업정보 받아오기
+    public ResponseDto<?> getCompanyInfo(CompanyInfoResponseDto requestDto) {
+        CardResponseDto responseDto = CardResponseDto.builder()
+                .cardName(cardResponseDto.getCardName())
+                .email(cardResponseDto.getEmail())
+                .phoneNum(cardResponseDto.getPhoneNum())
+                .company(requestDto.getCompanyName())
                 .companyAddress(requestDto.getCompanyAddress())
-                .build();
-
-        return ResponseDto.success(responseDto);
-    }
-
-    // 카드정보 임시저장
-    public ResponseDto<?> getCardInfo(CardInfoRequestDto requestDto) {
-        CardInfoResponseDto responseDto = CardInfoResponseDto.builder()
-                .cardName(requestDto.getCardName())
-                .engName(requestDto.getEngName())
-                .email(requestDto.getEmail())
-                .phoneNum(requestDto.getPhoneNum())
-                .department(requestDto.getDepartment())
-                .position(requestDto.getPosition())
-                .tel(requestDto.getTel())
-                .fax(requestDto.getFax())
-                .companyType(requestDto.getCompanyType())
+                .department(cardResponseDto.getDepartment())
+                .position(cardResponseDto.getPosition())
+                .tel(cardResponseDto.getTel())
+                .fax(cardResponseDto.getFax())
+                .companyType(cardResponseDto.getCompanyType())
                 .build();
 
         return ResponseDto.success(responseDto);

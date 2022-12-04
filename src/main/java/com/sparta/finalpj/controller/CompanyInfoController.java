@@ -1,9 +1,8 @@
 package com.sparta.finalpj.controller;
 
 import com.sparta.finalpj.controller.request.card.CardInfoRequestDto;
-import com.sparta.finalpj.controller.request.card.CardRequestDto;
-import com.sparta.finalpj.controller.request.company.CompanyRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
+import com.sparta.finalpj.controller.response.company.CompanyInfoResponseDto;
 import com.sparta.finalpj.service.CompanyInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +16,12 @@ public class CompanyInfoController {
 
     private final CompanyInfoService companyInfoService;
 
+    @PostMapping(value = "/cardInfo")
+    public CardInfoRequestDto cardInfo(@RequestBody CardInfoRequestDto requestDto){
+
+        return companyInfoService.cardInfo(requestDto);
+    }
+
     /**
      * 명함등록 시 기업 검색
      */
@@ -27,20 +32,11 @@ public class CompanyInfoController {
     }
 
     /**
-     * 기업정보 가져오기
+     * 카드 및 기업정보 가져오기
      */
     @PostMapping("/companyInfo")
-    public ResponseDto<?> getCompanyInfo(@RequestBody CompanyRequestDto requestDto) {
+    public ResponseDto<?> getCompanyInfo(@RequestBody CompanyInfoResponseDto requestDto) {
 
         return companyInfoService.getCompanyInfo(requestDto);
-    }
-
-    /**
-     * 카드정보 저장
-     */
-    @PostMapping("/cardInfo")
-    public ResponseDto<?> getCardInfo(@RequestBody CardInfoRequestDto requestDto) {
-
-        return companyInfoService.saveCardInfo(requestDto);
     }
 }
