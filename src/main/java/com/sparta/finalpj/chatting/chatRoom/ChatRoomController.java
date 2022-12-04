@@ -59,8 +59,8 @@ public class ChatRoomController {
     }
 
     //채팅방 삭제
-    @DeleteMapping("chat/rooms/{roomId}")
-    public void deleteChatRoom(
+    @DeleteMapping("/chat/rooms/{roomId}")
+    public ResponseDto<?> deleteChatRoom(
             @PathVariable String roomId,
             @AuthenticationPrincipal UserDetailsImpl userDetails){
         //roonId=uuid
@@ -71,7 +71,7 @@ public class ChatRoomController {
                 () -> new CustomException(ErrorCode.NOT_EXIST_CHATROOM)
         );
 
-        chatRoomService.deleteChatRoom(chatroom, userDetails.getMember());
+        return chatRoomService.deleteChatRoom(chatroom, userDetails.getMember());
     }
 
     //이전 채팅 메시지 불러오기

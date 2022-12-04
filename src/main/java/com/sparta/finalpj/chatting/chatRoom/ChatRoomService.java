@@ -8,6 +8,7 @@ import com.sparta.finalpj.chatting.chat.RedisRepository;
 import com.sparta.finalpj.chatting.chat.responseDto.ChatMessageTestDto;
 import com.sparta.finalpj.chatting.chatRoom.responseDto.ChatRoomOtherMemberInfoResponseDto;
 import com.sparta.finalpj.chatting.chatRoom.responseDto.ChatRoomResponseDto;
+import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
@@ -164,12 +165,13 @@ public class ChatRoomService {
 
     //채팅방 삭제
     @Transactional
-    public void deleteChatRoom(ChatRoom chatroom, Member member) {
+    public ResponseDto<?> deleteChatRoom(ChatRoom chatroom, Member member) {
         if (chatroom.getChatRoomUsers().size() != 1) {
             chatRoomUserRepository.deleteByChatRoomAndMember(chatroom, member);
         } else if (chatroom.getChatRoomUsers().size() == 1){
             chatRoomRepository.delete(chatroom);
         }
+        return ResponseDto.success("채팅방 나가기 완료");
     }
 
     //채팅방 입장시 상대 유저 정보 조회

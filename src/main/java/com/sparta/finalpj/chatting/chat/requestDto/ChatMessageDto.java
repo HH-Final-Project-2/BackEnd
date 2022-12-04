@@ -20,7 +20,6 @@ public class ChatMessageDto implements Serializable {
         TALK, UNREAD_MESSAGE_COUNT_ALARM
     }
 
-    private Long messageId;
     private MessageType type; // 메시지 타입
     private String roomId; // 공통으로 만들어진 방 번호
     private Long otherMemberId; // 상대방

@@ -49,15 +49,11 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(chatMessageDto.getRoomId()).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_EXIST_CHATROOM)
         );
-        ChatMessage chatMessage = new ChatMessage(member, chatMessageDto, chatRoom);
-        chatMessageRepository.save(chatMessage);
-
 
         List<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findAllByMemberNotAndChatRoom(member, chatRoom);
         String topic = channelTopic.getTopic();
         String createdAt = getCurrentTime();
         chatMessageDto.setCreatedAt(createdAt);
-        chatMessageDto.setMessageId(chatMessage.getId());
         chatMessageDto.setOtherMemberId(chatRoomUser.get(0).getMember().getId());
         chatMessageDto.setType(ChatMessageDto.MessageType.TALK);
         // front에서 요청해서 진행한 작업 나의 userId 넣어주기
@@ -65,12 +61,15 @@ public class ChatService {
 
         log.info(chatMessageDto.getMessage()); //=> test : 메세지 로그 찍어보기
 
+        ChatMessage chatMessage = new ChatMessage(member, chatMessageDto, chatRoom);
+        chatMessageRepository.save(chatMessage);
+
         redisTemplate.convertAndSend(topic, chatMessageDto);
     }
 
     //현재시간 추출 메소드
     private String getCurrentTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd a hh:mm");
         Calendar cal = Calendar.getInstance();
         Date date = cal.getTime();
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
@@ -91,7 +90,7 @@ public class ChatService {
 
             ChatMessageDto responseChatMessageDto = new ChatMessageDto(requestChatMessageDto, unReadMessageCount);
 
-          //  redisTemplate.convertAndSend(topic, responseChatMessageDto);
+//            redisTemplate.convertAndSend(topic, responseChatMessageDto);
         }
     }
 }
