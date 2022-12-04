@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CardInfoResponseDto {
     private String cardName;
-    private String engName;
     private String email;
     private String phoneNum;
     private String department;
