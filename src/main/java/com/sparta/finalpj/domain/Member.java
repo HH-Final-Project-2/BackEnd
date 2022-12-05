@@ -1,6 +1,5 @@
 package com.sparta.finalpj.domain;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.finalpj.controller.request.member.MemberUpdateRequestDto;
 import com.sparta.finalpj.exception.CustomException;
@@ -56,8 +55,8 @@ public class Member extends Timestamped {
     private List<Post> post;
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Card> card;
-    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private MyCard myCard;
+//    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private MyCard myCard;
 
     public Member(String email, String username, String nickname, String encodedPassword, Long kakaoId) {
         this.email = email;
@@ -82,6 +81,7 @@ public class Member extends Timestamped {
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
         return passwordEncoder.matches(password, this.password);
     }
+
     public void updateProfile(MemberUpdateRequestDto memberRequestDto) {
         if (memberRequestDto.getNickname() == null) {
             throw new CustomException(ErrorCode.NICKNAME_FORM_ERROR);
