@@ -10,11 +10,8 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 
 import com.sparta.finalpj.controller.request.EmailAuthRequestDto;
-import com.sparta.finalpj.controller.request.EmailConfirmRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.domain.Mail;
-import com.sparta.finalpj.domain.Member;
-import com.sparta.finalpj.domain.Post;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.repository.MailRepository;
@@ -37,27 +34,36 @@ public class MailService {
 
     private final MailRepository mailRepository;
 
-    // 메일 내용 작성
-    public MimeMessage createMessage(String to) throws MessagingException, UnsupportedEncodingException {
+    public enum EmailType {
+        SIGNUP, FINDPW
+    }
+    // 회원가입 인증 메일 내용 작성
+    public MimeMessage createMessage(String to, EmailType emailType) throws MessagingException, UnsupportedEncodingException {
 //		System.out.println("보내는 대상 : " + to);
 //		System.out.println("인증 번호 : " + ePw);
 
+        String Authname = "";
+        if (emailType == EmailType.SIGNUP) {
+            Authname = "회원가입";
+        }else if(emailType == EmailType.FINDPW) {
+            Authname = "비밀번호 확인";
+        }
         MimeMessage message = emailsender.createMimeMessage();
 
         message.addRecipients(RecipientType.TO, to);// 보내는 대상
-        message.setSubject("Businus 회원가입 이메일 인증");// 제목
+        message.setSubject("Businus " + Authname + " 이메일 인증");// 제목
 
         String msgg = "";
         msgg += "<div style='margin:100px;'>";
         msgg += "<h1> 안녕하세요</h1>";
         msgg += "<h1> Businus 입니다</h1>";
         msgg += "<br>";
-        msgg += "<p>아래 코드를 회원가입 창으로 돌아가 입력해주세요<p>";
+        msgg += "<p>아래 코드를 "+ Authname +" 창으로 돌아가 입력해주세요<p>";
         msgg += "<br>";
         msgg += "<p>감사합니다!<p>";
         msgg += "<br>";
         msgg += "<div align='center' style='border:1px solid black; font-family:verdana';>";
-        msgg += "<h3 style='color:blue;'>회원가입 인증 코드입니다.</h3>";
+        msgg += "<h3 style='color:blue;'>"+ Authname + " 인증 코드입니다.</h3>";
         msgg += "<div style='font-size:130%'>";
         msgg += "CODE : <strong>";
         msgg += ePw + "</strong><div><br/> "; // 메일에 인증번호 넣기
@@ -68,6 +74,37 @@ public class MailService {
 
         return message;
     }
+
+//    public MimeMessage createFindpwMessage(String to) throws MessagingException, UnsupportedEncodingException {
+////		System.out.println("보내는 대상 : " + to);
+////		System.out.println("인증 번호 : " + ePw);
+//
+//        MimeMessage message = emailsender.createMimeMessage();
+//
+//        message.addRecipients(RecipientType.TO, to);// 보내는 대상
+//        message.setSubject("Businus 비밀번호 찾기 이메일 인증");// 제목
+//
+//        String msgg = "";
+//        msgg += "<div style='margin:100px;'>";
+//        msgg += "<h1> 안녕하세요</h1>";
+//        msgg += "<h1> Businus 입니다</h1>";
+//        msgg += "<br>";
+//        msgg += "<p>아래 코드를 비밀번호 찾기 창으로 돌아가 입력해주세요<p>";
+//        msgg += "<br>";
+//        msgg += "<p>감사합니다!<p>";
+//        msgg += "<br>";
+//        msgg += "<div align='center' style='border:1px solid black; font-family:verdana';>";
+//        msgg += "<h3 style='color:blue;'>비밀번호 찾기 인증 코드입니다.</h3>";
+//        msgg += "<div style='font-size:130%'>";
+//        msgg += "CODE : <strong>";
+//        msgg += ePw + "</strong><div><br/> "; // 메일에 인증번호 넣기
+//        msgg += "</div>";
+//        message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
+//        // 보내는 사람의 이메일 주소, 보내는 사람 이름
+//        message.setFrom(new InternetAddress("bum4321@naver.com", "Businus 관리자"));// 보내는 사람
+//
+//        return message;
+//    }
 
     // 랜덤 인증 코드 전송
     public String createKey() {
@@ -101,12 +138,12 @@ public class MailService {
     // MimeMessage 객체 안에 내가 전송할 메일의 내용을 담는다.
     // 그리고 bean 으로 등록해둔 javaMail 객체를 사용해서 이메일 send!!
     @Transactional
-    public ResponseDto<?> sendSimpleMessage(String to) throws Exception {
+    public ResponseDto<?> sendSimpleMessage(String to, EmailType emailType) throws Exception {
 
         ePw = createKey(); // 랜덤 인증번호 생성
 
         // TODO Auto-generated method stub
-        MimeMessage message = createMessage(to); // 메일 발송
+        MimeMessage message = createMessage(to, emailType); // 메일 발송
         try {// 예외처리
             emailsender.send(message);
         } catch (MailException es) {

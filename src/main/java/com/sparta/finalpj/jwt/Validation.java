@@ -1,9 +1,7 @@
 package com.sparta.finalpj.jwt;
 
 import com.sparta.finalpj.controller.request.EmailAuthRequestDto;
-import com.sparta.finalpj.controller.request.member.EmailCheckRequestDto;
 import com.sparta.finalpj.controller.request.member.SignupRequestDto;
-import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
@@ -38,19 +36,24 @@ public class Validation {
         if (!isValidEmail(signupRequestDto.getEmail())) {
             throw new CustomException(ErrorCode.SIGNUP_EMAIL_FORM_ERROR);
         }
+        validatePasswordInput(signupRequestDto.getPassword(),signupRequestDto.getPasswordCheck());
+
+    }
+    public void validatePasswordInput(String password, String passwordCheck) {
         //password 는 passwordCheck 와 동일한지 검사
-        if (!isValidPasswordCheck(signupRequestDto.getPassword(),signupRequestDto.getPasswordCheck())) {
+        if (!isValidPasswordCheck(password,passwordCheck)) {
             throw new CustomException(ErrorCode.SIGNUP_PASSWORD_CHECK_ERROR);
         }
         //비밀번호는 6자 ~ 15자 , 영문 , 숫자
-        if (!isValidPassword(signupRequestDto.getPassword())) {
+        if (!isValidPassword(password)) {
             throw new CustomException(ErrorCode.SIGNUP_PASSWORD_FORM_ERROR);
         }
         //비밀번호확인도 6자 ~ 15자 , 영문 , 숫자
-        if (!isValidPasswordCheck(signupRequestDto.getPasswordCheck())) {
+        if (!isValidPasswordCheck(passwordCheck)) {
             throw new CustomException(ErrorCode.SIGNUP_PASSWORD_FORM_ERROR);
         }
     }
+
 
     public void validateEmailInput(EmailAuthRequestDto emailAuthRequestDto) {
         if(emailAuthRequestDto.getEmail()==null){
@@ -61,9 +64,14 @@ public class Validation {
         }
     }
 
-    public void emailCheck(EmailAuthRequestDto requestDto) {
+    public void emailDupCheck(EmailAuthRequestDto requestDto) {
         if (memberRepository.existsByEmail(requestDto.getEmail())) {
             throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
+        }
+    }
+    public void emailCheck(String email) {
+        if (!memberRepository.existsByEmail(email)) {
+            throw new CustomException(ErrorCode.EMAIL_NOT_FOUND);
         }
     }
 
