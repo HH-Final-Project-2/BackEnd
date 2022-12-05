@@ -18,5 +18,6 @@ public class CardInfoRequestDto {
     private String position;
     private String tel;
     private String fax;
+    private String company;
     private String companyType;
 }
