@@ -70,4 +70,8 @@ public class Member extends Timestamped {
         }
         this.nickname = memberRequestDto.getNickname();
     }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }
