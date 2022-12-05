@@ -50,7 +50,7 @@ public class MyCard extends Timestamped {
   private String fax;
 
   @JoinColumn(name = "memberId", nullable = false)
-  @ManyToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.LAZY)
   private Member member;
 
   public void update(MyCardRequestDto myCardRequestDto) {
