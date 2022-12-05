@@ -2,10 +2,7 @@ package com.sparta.finalpj.controller;
 
 
 import com.sparta.finalpj.configuration.SwaggerAnnotation;
-import com.sparta.finalpj.controller.request.member.EmailCheckRequestDto;
-import com.sparta.finalpj.controller.request.member.LoginRequestDto;
-import com.sparta.finalpj.controller.request.member.MemberUpdateRequestDto;
-import com.sparta.finalpj.controller.request.member.SignupRequestDto;
+import com.sparta.finalpj.controller.request.member.*;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -68,11 +65,18 @@ public class MemberController {
 
         return  memberService.myProfile(request);
     }
+    //닉네임 수정
     @SwaggerAnnotation
     @PatchMapping("/members/profiles")
     public ResponseDto<?> memberUpdate(@RequestBody MemberUpdateRequestDto memberRequestDto,
                                        HttpServletRequest request){
         return memberService.updateMember(memberRequestDto, request);
+    }
+    // 비밀번호 찾기 후 새로운 비밀번호 수정
+    @PutMapping("/change/pw")
+    public ResponseDto<?> updatePassword(@RequestBody PasswordFindDto passwordFindDto){
+
+        return memberService.updatePassword(passwordFindDto);
     }
 
 

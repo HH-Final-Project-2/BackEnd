@@ -2,16 +2,15 @@ package com.sparta.finalpj.service;
 
 
 
-import com.sparta.finalpj.controller.request.member.EmailCheckRequestDto;
-import com.sparta.finalpj.controller.request.member.LoginRequestDto;
-import com.sparta.finalpj.controller.request.member.MemberUpdateRequestDto;
-import com.sparta.finalpj.controller.request.member.SignupRequestDto;
+import com.sparta.finalpj.controller.request.member.*;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.controller.response.member.SignupResponseDto;
+import com.sparta.finalpj.domain.Mail;
 import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.jwt.*;
+import com.sparta.finalpj.repository.MailRepository;
 import com.sparta.finalpj.repository.MemberRepository;
 import com.sparta.finalpj.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +28,8 @@ import java.util.*;
 @Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final MailService mailService;
+    private final MailRepository mailRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -51,6 +52,11 @@ public class MemberService {
                 .build();
         //저장
         memberRepository.save(member);
+        //인증코드 제거
+        Mail mail = mailService.isPresentMail(requestDto.getEmail());
+        if(mail != null){
+            mailRepository.delete(mail);
+        }
         return ResponseDto.success(
                 SignupResponseDto.builder()
                         .id(member.getId())
@@ -76,9 +82,7 @@ public class MemberService {
     @Transactional
     public ResponseDto<?> loginMember(LoginRequestDto requestDto, HttpServletResponse response) {
         //해당 이메일이 있는지 조회
-        if (!memberRepository.existsByEmail(requestDto.getEmail())) {
-            throw new CustomException(ErrorCode.EMAIL_NOT_FOUND);
-        }
+        validation.emailCheck(requestDto.getEmail());
         //해당 member email로 조회
         Member member = validation.getPresentEmail(requestDto.getEmail());
         if (!member.validatePassword(passwordEncoder, requestDto.getPassword())) {
@@ -176,17 +180,16 @@ public class MemberService {
         );
     }
 
-    // 내 프로필 수정
+    // 닉네임 수정
     @Transactional
     public ResponseDto<?> updateMember(MemberUpdateRequestDto memberRequestDto, HttpServletRequest request){
         Member member = validation.validateMemberToAccess(request);
         if (null == member) {
             throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
         }
-
         member.updateProfile(memberRequestDto);
-        // 저장
-        memberRepository.save(member);
+//        // 저장
+//        memberRepository.save(member);
 
         return ResponseDto.success(
                 SignupResponseDto.builder()
@@ -198,5 +201,32 @@ public class MemberService {
                         .build()
         );
     }
+    @Transactional
+    public ResponseDto<?> updatePassword(PasswordFindDto passwordFindDto) {
+        if (passwordFindDto.getPassword() == null || passwordFindDto.getPasswordCheck() == null) {
+            throw new CustomException(ErrorCode.PASSWORD_NULL_INPUT_ERROR);
+        }
+        //비밀번호 유효성 검사
+        validation.validatePasswordInput(passwordFindDto.getPassword(),passwordFindDto.getPasswordCheck());
+        //해당 이메일이 있는지 조회
+        validation.emailCheck(passwordFindDto.getEmail());
+        //해당 member email로 조회
+        Member member = validation.getPresentEmail(passwordFindDto.getEmail());
+
+        Mail mail = mailService.isPresentMail(passwordFindDto.getEmail()); //DB조회
+        if (null == mail) {
+            throw new CustomException(ErrorCode.AUTH_CODE_NOT_ISSUE);
+        }
+        if (!mail.getCode().equals(passwordFindDto.getCode())) {
+            throw new CustomException(ErrorCode.AUTH_CODE_NOT_CORRECT);
+        }
+        //인증코드 제거
+        mailRepository.delete(mail);
+
+        member.updatePassword(passwordEncoder.encode(passwordFindDto.getPassword()));
+
+        return ResponseDto.success("비밀번호 수정완료. 새로운 비밀번호로 로그인 해주세요.");
+    }
+
 
 }
