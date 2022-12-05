@@ -49,8 +49,8 @@ public class SwaggerConfig {
     //.paths(): API 의 URL 경로를 지정할 수 있다. .paths(PathSelectors.ant("api/v1/**")) 와 같이 하면 http://localhost/api/v1/ 하위 경로를 가지는 API에 대해 문서를 생성해준다.
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("스프링 부트 API")
-                .description("스프링 부트 API Swagger 페이지")
+                .title("Bisinus API")
+                .description("Bisinus API Swagger 페이지")
                 .version("1.0")
                 .build();
     }
