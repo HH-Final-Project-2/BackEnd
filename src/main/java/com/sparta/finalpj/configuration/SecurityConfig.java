@@ -84,6 +84,8 @@ public class SecurityConfig {
                 .antMatchers("/v2/**","/v2/api-docs", "/swagger-resources/**",
                         "/swagger-ui.html/**","/swagger-ui/**","/swagger*/**","/v3/api-docs").permitAll()
                 .antMatchers("/webjars/**").permitAll()
+                .antMatchers("/kakao").permitAll()
+                .antMatchers("/oauth/**").permitAll()
                 .antMatchers("/sub/**").permitAll()
                 .antMatchers("/pub/**").permitAll()
                 .antMatchers("/chat/**").permitAll()
