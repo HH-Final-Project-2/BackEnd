@@ -204,13 +204,6 @@ public class PostService {
 
     String imageUrl = "";
 
-//    if (image == null) {
-//    imageUrl = post.getImage();
-//    }else {
-//      UUID uuid = UUID.randomUUID();
-//      String fileName = uuid.toString() + "_" + image.getOriginalFilename();
-//      imageUrl = googleCloudUploadService.upload("community", image, fileName);
-//    }
     if(image == null && requestDto.isImageDelete()) {
       imageUrl = "";
     } else if(image == null && !requestDto.isImageDelete()) {
@@ -330,35 +323,6 @@ public class PostService {
   }
 
   //==================조회순 게시글 전체 조회===================
-//  @Transactional
-//  public ResponseDto<?> getPostByHits(Pageable pageable) {
-//    Page<Post> postList = postRepository.findAll(pageable);
-//    List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
-//
-//    for (Post post : postList) {
-//
-//      long comment = commentRepository.countAllByPost(post);
-//      long postHeartCnt = postHeartRepository.findAllByPost(post).size();
-//
-//      postListResponseDtoList.add(PostResponseDto.builder()
-//              .id(post.getId())
-//              .title(post.getTitle())
-//              .image(post.getImage())
-//              .content(post.getContent())
-//              .author(post.getMember().getNickname())
-//              .jobGroup(post.getJobGroup()) // 관심 직군
-//              .postHeartCnt(postHeartCnt) //게시글 좋아요
-//              .commentCnt(comment) // 댓글 갯수
-//              .hit(post.getHit()) //조회수
-//              .createdAt(post.getCreatedAt())
-//              .modifiedAt(post.getModifiedAt())
-//              .build()
-//      );
-//      postListResponseDtoList.sort((o1, o2) -> (o2.getHit() - o1.getHit()));
-//    }
-//    return ResponseDto.success(postListResponseDtoList);
-//  }
-
   @Transactional
   public ResponseDto<?> getPostByHits(UserDetailsImpl userDetails) {
 
