@@ -22,7 +22,6 @@ import java.util.Objects;
 @Getter
 @Builder
 public class Member extends Timestamped {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,6 +45,8 @@ public class Member extends Timestamped {
     private String tel;//회사 유선전화
     @Column
     private String fax;//팩스
+    @Column(unique = true)
+    private Long kakaoId;//카카오 ID
     @Column(nullable = false)
     @JsonIgnore
     private String password;
@@ -57,6 +58,14 @@ public class Member extends Timestamped {
     private List<Card> card;
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MyCard myCard;
+
+    public Member(String email, String username, String nickname, String encodedPassword, Long kakaoId) {
+        this.email = email;
+        this.nickname = nickname;
+        this.username = username;
+        this.password = encodedPassword;
+        this.kakaoId = kakaoId;
+    }
 
     @Override
     public boolean equals(Object o) {
