@@ -97,13 +97,14 @@ public class PostService {
             .postHeartYn(postHeartCheck(post, userDetails))
             .title(post.getTitle())
             .image(post.getImage())
-            .author(post.getMember().getNickname())
-            .jobGroup(post.getJobGroup()) // 관심 직군
+            .author(post.getMember().getNickname()) //작성자
+            .authorId(post.getMember().getId()) //게시글 수정, 삭제 시 필요한 권한을 부여하기 위한 식별자
+            .jobGroup(post.getJobGroup()) //관심 직군
             .content(post.getContent())
-            .postHeartCnt((long) postHeartCnt.size())
-            .hit(updateHit(postingId))
-            .hit(post.getHit()+1) // 조회수
-            .commentCnt(commentCnt) // 댓글 갯수
+            .postHeartCnt((long) postHeartCnt.size()) //게시글 좋아요
+            .hit(updateHit(postingId)) //조회수 카운트
+            .hit(post.getHit()+1) //조회수
+            .commentCnt(commentCnt) //댓글 갯수
             .createdAt(post.getCreatedAt())
             .modifiedAt(post.getModifiedAt())
             .build();
@@ -139,14 +140,14 @@ public class PostService {
       postListResponseDtoList.add(
               PostResponseDto.builder()
                       .id(post.getId())
-                      .postHeartYn(postHeartCheck(post, userDetails))
+                      .postHeartYn(postHeartCheck(post, userDetails)) //게시글 좋아요 상태 체크
                       .title(post.getTitle())
                       .image(post.getImage())
                       .content(post.getContent())
-                      .author(post.getMember().getNickname())
-                      .jobGroup(post.getJobGroup()) // 관심 직군
+                      .author(post.getMember().getNickname()) //작성자
+                      .jobGroup(post.getJobGroup()) //관심 직군
                       .postHeartCnt(postHeartCnt) //게시글 좋아요
-                      .commentCnt(comment) // 댓글 갯수
+                      .commentCnt(comment) //댓글 갯수
                       .hit(post.getHit()) //조회수
                       .createdAt(post.getCreatedAt())
                       .modifiedAt(post.getModifiedAt())
@@ -169,11 +170,11 @@ public class PostService {
       postListResponseDtoList.add(
               PostResponseDto.builder()
                       .id(post.getId())
-                      .postHeartYn(postHeartCheck(post, userDetails))
+                      .postHeartYn(postHeartCheck(post, userDetails)) //게시글 좋아요 상태 체크
                       .title(post.getTitle())
                       .image(post.getImage())
                       .content(post.getContent())
-                      .author(post.getMember().getNickname())
+                      .author(post.getMember().getNickname()) //작성자
                       .jobGroup(post.getJobGroup()) // 관심 직군
                       .postHeartCnt(postHeartCnt) //게시글 좋아요
                       .commentCnt(comment) // 댓글 갯수
@@ -223,7 +224,7 @@ public class PostService {
                     .id(post.getId())
                     .title(post.getTitle())
                     .image(post.getImage())
-                    .author(post.getMember().getNickname())
+                    .author(post.getMember().getNickname()) //작성자
                     .jobGroup(post.getJobGroup()) // 관심 직군
                     .content(post.getContent())
                     .postHeartCnt((long) postHeartCnt.size()) // 게시글 좋아요
@@ -272,11 +273,11 @@ public class PostService {
 
       postListResponseDtoList.add(PostResponseDto.builder()
                       .id(post.getId())
-                      .postHeartYn(postHeartCheck(post, userDetails))
+                      .postHeartYn(postHeartCheck(post, userDetails)) //게시글 좋아요 상태 체크
                       .title(post.getTitle())
                       .image(post.getImage())
                       .content(post.getContent())
-                      .author(post.getMember().getNickname())
+                      .author(post.getMember().getNickname()) //작성자
                       .jobGroup(post.getJobGroup()) // 관심 직군
                       .postHeartCnt(postHeartCnt) //게시글 좋아요
                       .commentCnt(comment) // 댓글 갯수
@@ -304,11 +305,11 @@ public class PostService {
 
       postListResponseDtoList.add(PostResponseDto.builder()
               .id(post.getId())
-              .postHeartYn(postHeartCheck(post, userDetails))
+              .postHeartYn(postHeartCheck(post, userDetails)) //게시글 좋아요 상태 체크
               .title(post.getTitle())
               .image(post.getImage())
               .content(post.getContent())
-              .author(post.getMember().getNickname())
+              .author(post.getMember().getNickname()) //작성자
               .jobGroup(post.getJobGroup()) // 관심 직군
               .postHeartCnt(postHeartCnt) //게시글 좋아요
               .commentCnt(comment) // 댓글 갯수
@@ -336,14 +337,14 @@ public class PostService {
 
       postListResponseDtoList.add(PostResponseDto.builder()
               .id(post.getId())
-              .postHeartYn(postHeartCheck(post, userDetails))
+              .postHeartYn(postHeartCheck(post, userDetails)) //게시글 좋아요 상태 체크
               .title(post.getTitle())
               .image(post.getImage())
               .content(post.getContent())
-              .author(post.getMember().getNickname())
-              .jobGroup(post.getJobGroup()) // 관심 직군
+              .author(post.getMember().getNickname()) //작성자
+              .jobGroup(post.getJobGroup()) //관심 직군
               .postHeartCnt(postHeartCnt) //게시글 좋아요
-              .commentCnt(comment) // 댓글 갯수
+              .commentCnt(comment) //댓글 갯수
               .hit(post.getHit()) //조회수
               .createdAt(post.getCreatedAt())
               .modifiedAt(post.getModifiedAt())
