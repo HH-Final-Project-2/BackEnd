@@ -27,7 +27,6 @@ public class CommentService {
 
   private final CommentRepository commentRepository;
   private final CommentHeartRepository commentHeartRepository;
-
   private final TokenProvider tokenProvider;
   private final PostService postService;
 
@@ -94,9 +93,10 @@ public class CommentService {
           CommentResponseDto.builder()
               .id(comment.getId())
               .commentHeartYn(commentHeartCheck(comment, userDetails))
-              .author(comment.getMember().getNickname())
+              .author(comment.getMember().getNickname()) //작성자
+              .authorId(post.getMember().getId()) //게시글 수정, 삭제 시 필요한 권한을 부여하기 위한 식별자
               .content(comment.getContent())
-              .CommentHeartCnt(commentHeartCnt)
+              .CommentHeartCnt(commentHeartCnt) //댓글 좋아요
               .createdAt(comment.getCreatedAt())
               .modifiedAt(comment.getModifiedAt())
               .build()
@@ -139,7 +139,7 @@ public class CommentService {
     return ResponseDto.success(
         CommentResponseDto.builder()
             .id(comment.getId())
-            .author(comment.getMember().getNickname())
+            .author(comment.getMember().getNickname()) //작성자
             .content(comment.getContent())
             .createdAt(comment.getCreatedAt())
             .modifiedAt(comment.getModifiedAt())
