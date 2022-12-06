@@ -205,7 +205,7 @@ public class OcrService {
                     // ex) TEL 070-0000-0000 / TEL 070 0000 0000
                     } else if (text.contains("TEL") && (text.contains("-") || text.contains(" "))) {
                         String telStr = text.substring(text.indexOf("TEL")).replace("TEL", "").trim();
-                        if (text.contains("-")) {
+                        if (text.contains("-") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
 
                         } else if (telStr.contains(" ") && telStr.contains("0")) {
@@ -215,7 +215,7 @@ public class OcrService {
                     // ex) T. 070-0000-0000 / T. 070 0000 0000
                     } else if (text.contains("T.") && (text.contains("-") || text.contains(" "))) {
                         String telStr = text.substring(text.indexOf("T.")).replace("T.", "").trim();
-                        if (telStr.contains("-")) {
+                        if (telStr.contains("-") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
                         } else if (telStr.contains(" ") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");;
@@ -224,7 +224,7 @@ public class OcrService {
                     // ex) T 070-0000-0000 / T 070 0000 0000
                     } else {
                         String telStr = text.substring(text.indexOf("T")).replace("T", "").trim();
-                        if (text.contains("-")) {
+                        if (text.contains("-") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
                         } else if (telStr.contains(" ") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");;
@@ -233,11 +233,21 @@ public class OcrService {
                 }
 
                 // 3. 팩스(fax)
-                 if (text.contains("F") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
+                 if (text.contains("F ") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
 
                     if (text.contains("Fax.") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
                         String faxStr = text.substring(text.indexOf("Fax.")).replace("Fax.", "").trim();
-                        if (faxStr.contains("-")) {
+                        if (faxStr.contains("-") && faxStr.contains("0")) {
+                            fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                        } else if (faxStr.contains(" ") && faxStr.contains("0")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                        } else if (faxStr.contains(".")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                        }
+
+                    } else if (text.contains("Fax,") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
+                        String faxStr = text.substring(text.indexOf("Fax,")).replace("Fax,", "").trim();
+                        if (faxStr.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
                         } else if (faxStr.contains(" ") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
@@ -247,7 +257,7 @@ public class OcrService {
 
                     } else if (text.contains("Fax") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
                         String faxStr = text.substring(text.indexOf("Fax")).replace("Fax", "").trim();
-                        if (faxStr.contains("-")) {
+                        if (faxStr.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
                         } else if (faxStr.contains(" ") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
@@ -257,7 +267,7 @@ public class OcrService {
 
                     } else if (text.contains("FAX") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
                         String faxStr = text.substring(text.indexOf("FAX")).replace("FAX", "").trim();
-                        if (faxStr.contains("-")) {
+                        if (faxStr.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
                         } else if (faxStr.contains(" ") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
@@ -267,7 +277,7 @@ public class OcrService {
 
                     } else if (text.contains("FAX.") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
                         String faxStr = text.substring(text.indexOf("FAX.")).replace("FAX.", "").trim();
-                        if (faxStr.contains("-")) {
+                        if (faxStr.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
                         } else if (faxStr.contains(" ") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
@@ -277,7 +287,7 @@ public class OcrService {
 
                     } else if (text.contains("F.") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
                         String faxStr = text.substring(text.indexOf("F.")).replace("F.", "").trim();
-                        if (text.contains("-")) {
+                        if (text.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
                         } else if (faxStr.contains(" ") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
@@ -287,7 +297,7 @@ public class OcrService {
 
                     } else if (text.contains("F,") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
                         String faxStr = text.substring(text.indexOf("F,")).replace("F,", "").trim();
-                        if (text.contains("-")) {
+                        if (text.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
                         } else if (faxStr.contains(" ") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
@@ -297,7 +307,7 @@ public class OcrService {
 
                     } else {
                         String faxStr = text.substring(text.indexOf("F")).replace("F", "").trim();
-                        if (faxStr.contains("-")) {
+                        if (faxStr.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
                         } else if (faxStr.contains(" ") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
@@ -308,29 +318,34 @@ public class OcrService {
                 }
 
                 // 4. 이메일
-                if (text.contains("@")) {
+                if (text.contains("@") && text.contains("E") ) {
                     String emailStr = text.substring(text.indexOf("E"));
-                    if (emailStr.contains(".com") && (emailStr.contains("E-mail.") || emailStr.contains("E-mail"))) {
+                    if (emailStr.contains(".com") && (emailStr.contains("E-mail.") || emailStr.contains("E-mail "))) {
                         email = emailStr.contains("E-mail.")
                                 ? emailStr.substring(emailStr.indexOf("E-mail."), emailStr.indexOf(".com") + 4).replace("E-mail.", " ").trim()
                                 : emailStr.substring(emailStr.indexOf("E-mail"), emailStr.indexOf(".com") + 4).replace("E-mail", " ").trim();
 
-                    } else if (emailStr.contains(".kr") && (emailStr.contains("E-mail.") || emailStr.contains("E-mail"))) {
+                    } else if (emailStr.contains(".kr") && (emailStr.contains("E-mail.") || emailStr.contains("E-mail "))) {
                         email = emailStr.contains("E-mail.")
                                 ? emailStr.substring(emailStr.indexOf("E-mail."), emailStr.indexOf(".kr") + 3).replace("E-mail.", " ").trim()
                                 : emailStr.substring(emailStr.indexOf("E-mail"), emailStr.indexOf(".kr") + 3).replace("E-mail", " ").trim();
 
-                    }else if (emailStr.contains(".com") && (emailStr.contains("Email.") || emailStr.contains("Email"))) {
+                    } else if ((emailStr.contains("E-mail,")) && (emailStr.contains(".kr") || emailStr.contains(".com"))) {
+                        email = emailStr.contains(".com")
+                                ? emailStr.substring(emailStr.indexOf("E-mail,"), emailStr.indexOf(".com") + 4).replace("E-mail,", " ").trim()
+                                : emailStr.substring(emailStr.indexOf("E-mail,"), emailStr.indexOf(".kr") + 3).replace("E-mail,", " ").trim();
+
+                    } else if (emailStr.contains(".com") && (emailStr.contains("Email.") || emailStr.contains("Email "))) {
                         email = emailStr.contains("Email.")
                                 ? emailStr.substring(emailStr.indexOf("Email."), emailStr.indexOf(".com") + 4).replace("Email.", " ").trim()
                                 : emailStr.substring(emailStr.indexOf("Email"), emailStr.indexOf(".com") + 4).replace("Email", " ").trim();
 
-                    } else if (emailStr.contains(".kr") && (emailStr.contains("Email.") || emailStr.contains("Email"))) {
+                    } else if (emailStr.contains(".kr") && (emailStr.contains("Email.") || emailStr.contains("Email "))) {
                         email = emailStr.contains("Email.")
                                 ? emailStr.substring(emailStr.indexOf("Email."), emailStr.indexOf(".kr") + 3).replace("Email.", " ").trim()
                                 : emailStr.substring(emailStr.indexOf("Email"), emailStr.indexOf(".kr") + 3).replace("Email", " ").trim();
 
-                    } else if (emailStr.contains(".com") && (emailStr.contains("E.") || emailStr.contains("E"))) {
+                    } else if (emailStr.contains(".com") && (emailStr.contains("E.") || emailStr.contains("E "))) {
                         email = emailStr.contains("E.")
                                 ? emailStr.substring(emailStr.indexOf("E."), emailStr.indexOf(".com") + 4).replace("E.", " ").trim()
                                 : emailStr.substring(emailStr.indexOf("E"), emailStr.indexOf(".com") + 4).replace("E", " ").trim();
@@ -340,9 +355,11 @@ public class OcrService {
                                 ? emailStr.substring(emailStr.indexOf("E."), emailStr.indexOf(".kr") + 3).replace("E.", " ").trim()
                                 : emailStr.substring(emailStr.indexOf("E"), emailStr.indexOf(".kr") + 3).replace("E", " ").trim();
 
-                    } else {
-                        email = emailStr.trim();
                     }
+                } else if(text.contains("@") && (text.contains(".com") || text.contains(".kr"))) {
+                    email = text.contains(".com")
+                            ? text.substring(0, text.indexOf(".com") + 4).trim()
+                            : text.substring(0, text.indexOf(".kr") + 3).trim();
                 }
             }
 
