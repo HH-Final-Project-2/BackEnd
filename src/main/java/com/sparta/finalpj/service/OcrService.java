@@ -5,6 +5,7 @@ import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.controller.response.ocr.OcrResponseDto;
 import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.exception.CustomException;
+import com.sparta.finalpj.exception.CustomResponseBody;
 import com.sparta.finalpj.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -105,143 +106,242 @@ public class OcrService {
             for (int i = 0; i < txt.length; i++) {
                 String text = txt[i];
 
-                // 휴대폰 번호 (M)
+                // 1. 휴대폰 번호
                 if (text.contains("-") && text.contains("010") || text.contains("82") || text.contains("+82")) {
 
-                    if (text.contains("M.")) {
-                        String phoneStr = text.substring(text.indexOf("M.")).replace("M.", "").trim();
-                        phoneNum = phoneStr.substring(0, phoneStr.indexOf("-", 5) + 5);
-
-                    } else if (text.contains("M")) {
-                        String phoneStr = text.substring(text.indexOf("M")).replace("M", "").trim();
-                        phoneNum = phoneStr.substring(0, phoneStr.indexOf("-", 5) + 5);
-
-                    } else if (text.contains("Mobile.")) {
+                    // ex) Mobile. 010-0000-0000
+                    if (text.contains("Mobile.")) {
                         String phoneStr = text.substring(text.indexOf("Mobile.")).replace("Mobile.", "").trim();
                         phoneNum = phoneStr.substring(0, phoneStr.indexOf("-", 5) + 5);
 
-                    }  else if (text.contains("Mobile")) {
+                    // ex) Mobile 010-0000-0000
+                    } else if (text.contains("Mobile")) {
                         String phoneStr = text.substring(text.indexOf("Mobile")).replace("Mobile", "").trim();
                         phoneNum = phoneStr.substring(0, phoneStr.indexOf("-", 5) + 5);
 
+                    // ex) M. 010-0000-0000
+                    } else if (text.contains("M.") ) {
+                        String phoneStr1 = text.substring(text.indexOf("M.")).replace("M.", "").trim();
+                        String phoneStr2 = phoneStr1.substring(0, phoneStr1.indexOf("-", 5) + 5);
+                        if (phoneStr2.length() < 15) {
+                            phoneNum = phoneStr2;
+                        }
+
+                    // ex) M 010-0000-0000
+                    } else if (text.contains("M")) {
+                        String phoneStr1 = text.substring(text.indexOf("M")).replace("M", "").trim();
+                        String phoneStr2 = phoneStr1.substring(0, phoneStr1.indexOf("-", 5) + 5);
+                        if (phoneStr2.length() < 15) {
+                            phoneNum = phoneStr2;
+                        }
+                    } else {
+                        phoneNum = text.trim();
+                    }
+
+                // 1. 휴대폰 번호
+                } else if (text.contains(" ") && text.contains("010") || text.contains("82") || text.contains("+82")) {
+
+                    // ex) Mobile. 010 0000 0000
+                    if (text.contains("Mobile.")) {
+                        String phoneStr = text.substring(text.indexOf("Mobile.")).replace("Mobile.", "").trim();
+                        phoneNum = phoneStr.substring(0, phoneStr.indexOf(" ", 5) + 5).replace(" ", "-");
+
+                    // ex) Mobile 010 0000 0000
+                    } else if (text.contains("Mobile")) {
+                        String phoneStr = text.substring(text.indexOf("Mobile")).replace("Mobile", "").trim();
+                        phoneNum = phoneStr.substring(0, phoneStr.indexOf(" ", 5) + 5).replace(" ", "-");
+
+                    // ex) M. 010 0000 0000
+                    } else if (text.contains("M.")) {
+                        String phoneStr1 = text.substring(text.indexOf("M.")).replace("M.", "").trim();
+                        String phoneStr2 = phoneStr1.substring(0, phoneStr1.indexOf(" ", 5) + 5).replace(" ", "-");
+                        if (phoneStr2.length() < 15) {
+                            phoneNum = phoneStr2;
+                        }
+
+                    // ex) M 010 0000 0000
+                    } else if (text.contains("M")) {
+                        String phoneStr1 = text.substring(text.indexOf("M")).replace("M", "").trim();
+                        String phoneStr2 = phoneStr1.substring(0, phoneStr1.indexOf(" ", 5) + 5).replace(" ", "-");
+                        if (phoneStr2.length() < 15) {
+                            phoneNum = phoneStr2;
+                        }
+                        
                     } else {
                         phoneNum = text.trim();
                     }
                 }
 
-                // companyTel (T)
-                if (text.contains("T.") && (text.contains("-") || text.contains(" "))) {
-                    String telStr = text.substring(text.indexOf("T.")).replace("T.", "").trim();
-                    if (text.contains("-")) {
-                        tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
-                    } else {
-                        tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5);
-                    }
+                // 2. 회사번호
+                if (text.contains("T") && (text.contains("-") || text.contains(" "))) {
 
-                } else if (text.contains("T") && (text.contains("-") || text.contains(" "))) {
-                    String telStr = text.substring(text.indexOf("T")).replace("T", "").trim();
-                    if (text.contains("-")) {
-                        tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
-                    } else {
-                        tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5);
-                    }
+                    // ex) Tel. 070-0000-0000 / Tel. 070 0000 0000
+                    if (text.contains("Tel.") && (text.contains("-") || text.contains(" "))) {
+                        String telStr = text.substring(text.indexOf("Tel.")).replace("Tel.", "").trim();
+                        if (text.contains("-")) {
+                            tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
+                        } else if (telStr.contains(" ") && telStr.contains("0")) {
+                            tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
+                        }
 
-                } else if (text.contains("Tel.") && (text.contains("-") || text.contains(" "))) {
-                    String telStr = text.substring(text.indexOf("Tel.")).replace("Tel.", "").trim();
-                    if (text.contains("-")) {
-                        tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
-                    } else {
-                        tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5);
-                    }
+                    // ex) TEL. 070-0000-0000 / TEL. 070 0000 0000
+                    } else if (text.contains("TEL.") && (text.contains("-") || text.contains(" "))) {
+                        String telStr = text.substring(text.indexOf("TEL.")).replace("TEL.", "").trim();
+                        if (text.contains("-")) {
+                            tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
+                        } else if (telStr.contains(" ") && telStr.contains("0")) {
+                            tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
+                        }
 
-                } else if (text.contains("Tel") && (text.contains("-") || text.contains(" "))) {
-                    String telStr = text.substring(text.indexOf("Tel")).replace("Tel", "").trim();
-                    if (text.contains("-")) {
-                        tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
+                    // ex) Tel 070-0000-0000 / Tel 070 0000 0000
+                    }  else if (text.contains("Tel") && (text.contains("-") || text.contains(" "))) {
+                        String telStr = text.substring(text.indexOf("Tel")).replace("Tel", "").trim();
+                        if (text.contains("-")) {
+                            tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
+                        } else if (telStr.contains(" ") && telStr.contains("0")) {
+                            tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
+                        }
+
+                    // ex) TEL 070-0000-0000 / TEL 070 0000 0000
+                    } else if (text.contains("TEL") && (text.contains("-") || text.contains(" "))) {
+                        String telStr = text.substring(text.indexOf("TEL")).replace("TEL", "").trim();
+                        if (text.contains("-")) {
+                            tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
+
+                        } else if (telStr.contains(" ") && telStr.contains("0")) {
+                            tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
+                        }
+
+                    // ex) T. 070-0000-0000 / T. 070 0000 0000
+                    } else if (text.contains("T.") && (text.contains("-") || text.contains(" "))) {
+                        String telStr = text.substring(text.indexOf("T.")).replace("T.", "").trim();
+                        if (telStr.contains("-")) {
+                            tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
+                        } else if (telStr.contains(" ") && telStr.contains("0")) {
+                            tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");;
+                        }
+
+                    // ex) T 070-0000-0000 / T 070 0000 0000
                     } else {
-                        tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5);
+                        String telStr = text.substring(text.indexOf("T")).replace("T", "").trim();
+                        if (text.contains("-")) {
+                            tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
+                        } else if (telStr.contains(" ") && telStr.contains("0")) {
+                            tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");;
+                        }
                     }
                 }
 
-                // fax (F)
-                if (text.contains("F.") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
-                    String faxStr = text.substring(text.indexOf("F.")).replace("F.", "").trim();
-                    if (text.contains("-")) {
-                        fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
-                    } else if (text.contains(" ")) {
-                        fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
-                    } else {
-                        fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
-                    }
+                // 3. 팩스(fax)
+                 if (text.contains("F") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
 
-                } else if (text.contains("F,") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
-                    String faxStr = text.substring(text.indexOf("F,")).replace("F", "").trim();
-                    if (text.contains("-")) {
-                        fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
-                    } else if (text.contains(" ")) {
-                        fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
-                    } else {
-                        fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
-                    }
+                    if (text.contains("Fax.") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
+                        String faxStr = text.substring(text.indexOf("Fax.")).replace("Fax.", "").trim();
+                        if (faxStr.contains("-")) {
+                            fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                        } else if (faxStr.contains(" ") && faxStr.contains("0")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                        } else if (faxStr.contains(".")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                        }
 
-                } else if (text.contains("F") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
-                    String faxStr = text.substring(text.indexOf("F")).replace("F", "").trim();
-                    if (text.contains("-")) {
-                        fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
-                    } else if (text.contains(" ")) {
-                        fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
-                    } else {
-                        fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
-                    }
-                } else if (text.contains("Fax.") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
-                    String faxStr = text.substring(text.indexOf("Fax.")).replace("Fax.", "").trim();
-                    if (text.contains("-")) {
-                        fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
-                    } else if (text.contains(" ")) {
-                        fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
-                    } else {
-                        fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
-                    }
+                    } else if (text.contains("Fax") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
+                        String faxStr = text.substring(text.indexOf("Fax")).replace("Fax", "").trim();
+                        if (faxStr.contains("-")) {
+                            fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                        } else if (faxStr.contains(" ") && faxStr.contains("0")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                        } else if (faxStr.contains(".")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                        }
 
-                } else if (text.contains("Fax") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
-                    String faxStr = text.substring(text.indexOf("Fax")).replace("Fax", "").trim();
-                    if (text.contains("-")) {
-                        fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
-                    } else if (text.contains(" ")) {
-                        fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                    } else if (text.contains("FAX") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
+                        String faxStr = text.substring(text.indexOf("FAX")).replace("FAX", "").trim();
+                        if (faxStr.contains("-")) {
+                            fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                        } else if (faxStr.contains(" ") && faxStr.contains("0")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                        } else if (faxStr.contains(".")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                        }
+
+                    } else if (text.contains("FAX.") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
+                        String faxStr = text.substring(text.indexOf("FAX.")).replace("FAX.", "").trim();
+                        if (faxStr.contains("-")) {
+                            fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                        } else if (faxStr.contains(" ") && faxStr.contains("0")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                        } else if (faxStr.contains(".")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                        }
+
+                    } else if (text.contains("F.") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
+                        String faxStr = text.substring(text.indexOf("F.")).replace("F.", "").trim();
+                        if (text.contains("-")) {
+                            fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                        } else if (faxStr.contains(" ") && faxStr.contains("0")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                        } else if (faxStr.contains(".")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                        }
+
+                    } else if (text.contains("F,") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
+                        String faxStr = text.substring(text.indexOf("F,")).replace("F,", "").trim();
+                        if (text.contains("-")) {
+                            fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                        } else if (faxStr.contains(" ") && faxStr.contains("0")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                        } else if (faxStr.contains(".")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                        }
+
                     } else {
-                        fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                        String faxStr = text.substring(text.indexOf("F")).replace("F", "").trim();
+                        if (faxStr.contains("-")) {
+                            fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                        } else if (faxStr.contains(" ") && faxStr.contains("0")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                        } else if (faxStr.contains(".")) {
+                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                        }
                     }
                 }
 
-                // 이메일
+                // 4. 이메일
                 if (text.contains("@")) {
-                    if (text.contains(".com") && (text.contains("E.") || text.contains("E"))) {
-                        email = text.contains("E.")
-                                ? text.substring(text.indexOf("E."), text.indexOf(".com") + 4).replace("E.", " ").trim()
-                                : text.substring(text.indexOf("E"), text.indexOf(".com") + 4).replace("E", " ").trim();
+                    String emailStr = text.substring(text.indexOf("E"));
+                    if (emailStr.contains(".com") && (emailStr.contains("E-mail.") || emailStr.contains("E-mail"))) {
+                        email = emailStr.contains("E-mail.")
+                                ? emailStr.substring(emailStr.indexOf("E-mail."), emailStr.indexOf(".com") + 4).replace("E-mail.", " ").trim()
+                                : emailStr.substring(emailStr.indexOf("E-mail"), emailStr.indexOf(".com") + 4).replace("E-mail", " ").trim();
 
-                    } else if (text.contains(".kr") && (text.contains("E.") || text.contains("E"))) {
-                        email = text.contains("E.")
-                                ? text.substring(text.indexOf("E."), text.indexOf(".kr") + 3).replace("E.", " ").trim()
-                                : text.substring(text.indexOf("E"), text.indexOf(".kr") + 3).replace("E", " ").trim();
+                    } else if (emailStr.contains(".kr") && (emailStr.contains("E-mail.") || emailStr.contains("E-mail"))) {
+                        email = emailStr.contains("E-mail.")
+                                ? emailStr.substring(emailStr.indexOf("E-mail."), emailStr.indexOf(".kr") + 3).replace("E-mail.", " ").trim()
+                                : emailStr.substring(emailStr.indexOf("E-mail"), emailStr.indexOf(".kr") + 3).replace("E-mail", " ").trim();
 
-                    } else if (text.contains(".com") && (text.contains("Email.") || text.contains("Email"))) {
-                        email = text.contains("Email.")
-                                ? text.substring(text.indexOf("Email."), text.indexOf(".com") + 4).replace("Email.", " ").trim()
-                                : text.substring(text.indexOf("Email"), text.indexOf(".com") + 4).replace("Email", " ").trim();
+                    }else if (emailStr.contains(".com") && (emailStr.contains("Email.") || emailStr.contains("Email"))) {
+                        email = emailStr.contains("Email.")
+                                ? emailStr.substring(emailStr.indexOf("Email."), emailStr.indexOf(".com") + 4).replace("Email.", " ").trim()
+                                : emailStr.substring(emailStr.indexOf("Email"), emailStr.indexOf(".com") + 4).replace("Email", " ").trim();
 
-                    } else if (text.contains(".com") && (text.contains("Email.") || text.contains("Email"))) {
-                        email = text.contains("Email.")
-                                ? text.substring(text.indexOf("Email."), text.indexOf(".com") + 4).replace("Email.", " ").trim()
-                                : text.substring(text.indexOf("Email"), text.indexOf(".com") + 4).replace("Email", " ").trim();
+                    } else if (emailStr.contains(".kr") && (emailStr.contains("Email.") || emailStr.contains("Email"))) {
+                        email = emailStr.contains("Email.")
+                                ? emailStr.substring(emailStr.indexOf("Email."), emailStr.indexOf(".kr") + 3).replace("Email.", " ").trim()
+                                : emailStr.substring(emailStr.indexOf("Email"), emailStr.indexOf(".kr") + 3).replace("Email", " ").trim();
 
-                    } else if (text.contains(".kr") && (text.contains("Email.") || text.contains("Email"))) {
-                        email = text.contains("Email.")
-                                ? text.substring(text.indexOf("Email."), text.indexOf(".kr") + 4).replace("Email.", " ").trim()
-                                : text.substring(text.indexOf("Email"), text.indexOf(".kr") + 4).replace("Email", " ").trim();
+                    } else if (emailStr.contains(".com") && (emailStr.contains("E.") || emailStr.contains("E"))) {
+                        email = emailStr.contains("E.")
+                                ? emailStr.substring(emailStr.indexOf("E."), emailStr.indexOf(".com") + 4).replace("E.", " ").trim()
+                                : emailStr.substring(emailStr.indexOf("E"), emailStr.indexOf(".com") + 4).replace("E", " ").trim();
+
+                    } else if (emailStr.contains(".kr") && (text.contains("E.") || emailStr.contains("E"))) {
+                        email = emailStr.contains("E.")
+                                ? emailStr.substring(emailStr.indexOf("E."), emailStr.indexOf(".kr") + 3).replace("E.", " ").trim()
+                                : emailStr.substring(emailStr.indexOf("E"), emailStr.indexOf(".kr") + 3).replace("E", " ").trim();
+
                     } else {
-                        email = text.trim();
+                        email = emailStr.trim();
                     }
                 }
             }
@@ -255,6 +355,8 @@ public class OcrService {
                     .imgUrl(imgUrl)
                     .build();
             return ResponseDto.success(ocrResponseDto);
+        } catch (StringIndexOutOfBoundsException e) {
+            return ResponseDto.fail(new CustomResponseBody(ErrorCode.NOT_FOUND_TEXT));
         }
     }
 }
