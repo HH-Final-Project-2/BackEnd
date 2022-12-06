@@ -20,7 +20,7 @@ public class CommentController {
 
   private final CommentService commentService;
 
-  //댓글 작성
+  //==========댓글 작성==========
   @SwaggerAnnotation
   @PostMapping(value = "/comment/{postingId}")
   public ResponseDto<?> createComment(@PathVariable Long postingId, @RequestBody CommentRequestDto requestDto,
@@ -28,13 +28,13 @@ public class CommentController {
     return commentService.createComment(postingId, requestDto, request);
   }
 
-  //특정 게시글의 댓글 전체조회
+  //==========특정 게시글의 댓글 전체조회==========
   @GetMapping(value = "/comment/{postingId}")
   public ResponseDto<?> getAllComment(@PathVariable Long postingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
     return commentService.getAllCommentByPost(postingId, userDetails);
   }
 
-  //댓글 수정
+  //==========댓글 수정==========
   @SwaggerAnnotation
   @PutMapping(value = "/comment/{postingId}/{commentId}")
   public ResponseDto<?> updateComment(@PathVariable Long postingId,@PathVariable Long commentId, @RequestBody CommentRequestDto requestDto,
@@ -42,7 +42,7 @@ public class CommentController {
     return commentService.updateComment(postingId, commentId, requestDto, request);
   }
 
-  //댓글 삭제
+  //==========댓글 삭제==========
   @SwaggerAnnotation
   @DeleteMapping(value = "/comment/{postingId}/{commentId}")
   public ResponseDto<?> deleteComment(@PathVariable Long postingId,@PathVariable Long commentId,

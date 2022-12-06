@@ -23,7 +23,7 @@ public class PostController {
 
   private final PostService postService;
 
-  //게시글 작성 (파일 업로드 포함)
+  //==========게시글 작성 (파일 업로드 포함)==========
   @SwaggerAnnotation
   @PostMapping(value = "/posting", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json")
   public ResponseDto<?> createPost(@RequestPart(value = "postDto") PostRequestDto requestDto,
@@ -32,23 +32,19 @@ public class PostController {
     return postService.createPost(requestDto, image, request);
   }
 
-  //==============특정 게시글 조회=========
+  //==========특정 게시글 상세 조회=========
   @GetMapping(value = "/posting/{postingId}")
   public ResponseDto<?> getPost(@PathVariable Long postingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
     return postService.getPost(postingId, userDetails);
   }
 
-  //==============게시글 전체 조회=============
+  //===========게시글 전체 조회==========
   @GetMapping(value = "/posting")
   public ResponseDto<?> getAllPosts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
     return postService.getAllPost(userDetails);
   }
-//  @GetMapping(value = "/posting/list/{page}")
-//  public ResponseDto<?> getAllPosts(@PathVariable int page) {
-//    return postService.getAllPost(page);
-//  }
 
-  //게시글 수정
+  //==========게시글 수정==========
   @SwaggerAnnotation
   @PutMapping(value = "/posting/{postingId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json")
   public ResponseDto<?> updatePost(@PathVariable Long postingId,
@@ -58,7 +54,7 @@ public class PostController {
     return postService.updatePost(postingId, requestDto, image, request);
   }
 
-  //게시글 삭제
+  //==========게시글 삭제==========
   @SwaggerAnnotation
   @DeleteMapping(value = "/posting/{postingId}")
   public ResponseDto<?> deletePost(@PathVariable Long postingId,
@@ -72,26 +68,34 @@ public class PostController {
 //    return postService.getPostByTop(pageable);
 //  }
   @GetMapping(value = "/posting/five")
-  public ResponseDto<?> getPostByTop() {
-    return postService.getPostByTop();
+  public ResponseDto<?> getPostByTop(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return postService.getPostByTop(userDetails);
   }
 
   //=============게시글 좋아요순 전체 조회=============
+//  @GetMapping(value = "/posting/hearts")
+//  public ResponseDto<?> getPostByHeart(@PageableDefault(size = 20, direction = Sort.Direction.DESC) Pageable pageable) {
+//    return postService.getPostByHeart(pageable);
+//  }
   @GetMapping(value = "/posting/hearts")
-  public ResponseDto<?> getPostByHeart(@PageableDefault(size = 20, direction = Sort.Direction.DESC) Pageable pageable) {
-    return postService.getPostByHeart(pageable);
+  public ResponseDto<?> getPostByHeart(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return postService.getPostByHeart(userDetails);
   }
 
   //=============게시글 조회순 전체 조회==============
+//  @GetMapping(value = "/posting/hits")
+//  public ResponseDto<?> getPostByHits(@PageableDefault(size = 20, direction = Sort.Direction.DESC) Pageable pageable) {
+//    return postService.getPostByHits(pageable);
+//  }
   @GetMapping(value = "/posting/hits")
-  public ResponseDto<?> getPostByHits(@PageableDefault(size = 20, direction = Sort.Direction.DESC) Pageable pageable) {
-    return postService.getPostByHits(pageable);
+  public ResponseDto<?> getPostByHits(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return postService.getPostByHits(userDetails);
   }
 
   //===============게시글 검색=================
   @GetMapping("/posting/search")
-  public ResponseDto<?> search(@RequestParam(value = "keyword") String keyword){
-    return postService.searchPost(keyword);
+  public ResponseDto<?> search(@RequestParam(value = "keyword") String keyword, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    return postService.searchPost(keyword, userDetails);
   }
 }
 

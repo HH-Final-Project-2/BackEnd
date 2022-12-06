@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class MyCardResponseDto {
   private Long id; //cardId
   private String cardName;
-  private String engName;
   private String email;
   private String phoneNum;
   private String company;

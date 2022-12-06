@@ -111,7 +111,7 @@ public class MyCalendarService {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
-        List<MyCalendar> myCalendarList = myCalendarRepository.findAllByOrderByStartDateTimeAscCreatedAtAsc();
+        List<MyCalendar> myCalendarList = myCalendarRepository.findAllByMemberOrderByStartDateTimeAscCreatedAtAsc(member);
         List<MyCalendarResponseDto> calendarAllList = new ArrayList<>();
 
         for (MyCalendar myCalendar : myCalendarList) {
@@ -132,6 +132,39 @@ public class MyCalendarService {
         }
         return ResponseDto.success(calendarAllList);
     }
+    
+    // 내일정 상세조회
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getCalendarDetail(Long calendarId, HttpServletRequest request) {
+        // 1. 로그인 확인
+        commonService.loginCheck(request);
+
+        // 2. Token validation => member 생성
+        Member member = commonService.validateMember(request);
+        if (member == null) {
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
+
+        MyCalendar myCalendar = isPresentCalendar(calendarId);
+        if(myCalendar == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_CALNFO);
+        }
+
+        MyCalendarResponseDto calendarInfo = MyCalendarResponseDto.builder()
+                .id(myCalendar.getId())
+                .startDate(myCalendar.getStartDate())
+                .startTime(myCalendar.getStartTime())
+                .endDate(myCalendar.getEndDate())
+                .endTime(myCalendar.getEndTime())
+                .filteredDate(myCalendar.getFilteredDate())
+                .title(myCalendar.getTitle())
+                .todo(myCalendar.getTodo())
+                .createdAt(myCalendar.getCreatedAt())
+                .modifiedAt(myCalendar.getModifiedAt())
+                .build();
+
+        return ResponseDto.success(calendarInfo);
+    }
 
     @Transactional(readOnly = true)
     public MyCalendar isPresentCalendar(Long calendarId) {
@@ -151,4 +184,5 @@ public class MyCalendarService {
         }
         return dateTime;
     }
+    
 }

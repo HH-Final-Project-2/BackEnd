@@ -37,4 +37,10 @@ public class MyCalendarController {
     public ResponseDto<?> getAllCalendar(HttpServletRequest request) {
         return myCalendarService.getAllCalendar(request);
     }
+
+    // 내일정 상세조회
+    @GetMapping(value = "/calendar/{calendarId}")
+    public ResponseDto<?> getCalendarDetail(@PathVariable Long calendarId, HttpServletRequest request) {
+        return myCalendarService.getCalendarDetail(calendarId, request);
+    }
 }

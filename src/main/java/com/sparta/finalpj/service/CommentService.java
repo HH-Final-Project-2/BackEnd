@@ -27,11 +27,10 @@ public class CommentService {
 
   private final CommentRepository commentRepository;
   private final CommentHeartRepository commentHeartRepository;
-
   private final TokenProvider tokenProvider;
   private final PostService postService;
 
-  //댓글 작성
+  //==========댓글 작성==========
   @Transactional
   public ResponseDto<?> createComment(Long postingId, CommentRequestDto requestDto, HttpServletRequest request) {
     if (null == request.getHeader("Refresh-Token")) {
@@ -62,6 +61,7 @@ public class CommentService {
         CommentResponseDto.builder()
             .id(comment.getId())
             .author(comment.getMember().getNickname())
+            .authorId(comment.getMember().getId()) //댓글 수정, 삭제 시 필요한 권한을 부여하기 위한 식별자
             .content(comment.getContent())
             .createdAt(comment.getCreatedAt())
             .modifiedAt(comment.getModifiedAt())
@@ -69,6 +69,7 @@ public class CommentService {
     );
   }
 
+  //==========사용자별 댓글 좋아요 체크==========
   @Transactional
   public boolean commentHeartCheck(Comment comment, UserDetailsImpl userDetails) {
     if(userDetails == null){
@@ -93,9 +94,10 @@ public class CommentService {
           CommentResponseDto.builder()
               .id(comment.getId())
               .commentHeartYn(commentHeartCheck(comment, userDetails))
-              .author(comment.getMember().getNickname())
+              .author(comment.getMember().getNickname()) //작성자
+              .authorId(comment.getMember().getId()) //댓글 수정, 삭제 시 필요한 권한을 부여하기 위한 식별자
               .content(comment.getContent())
-              .CommentHeartCnt(commentHeartCnt)
+              .CommentHeartCnt(commentHeartCnt) //댓글 좋아요
               .createdAt(comment.getCreatedAt())
               .modifiedAt(comment.getModifiedAt())
               .build()
@@ -104,7 +106,7 @@ public class CommentService {
     return ResponseDto.success(commentResponseDtoList);
   }
 
-  //댓글 수정
+  //==========댓글 수정==========
   @Transactional
   public ResponseDto<?> updateComment(Long postingId, Long commentId, CommentRequestDto requestDto, HttpServletRequest request) {
     if (null == request.getHeader("Refresh-Token")) {
@@ -138,7 +140,8 @@ public class CommentService {
     return ResponseDto.success(
         CommentResponseDto.builder()
             .id(comment.getId())
-            .author(comment.getMember().getNickname())
+            .author(comment.getMember().getNickname()) //작성자
+            .authorId(comment.getMember().getId()) //댓글 수정, 삭제 시 필요한 권한을 부여하기 위한 식별자
             .content(comment.getContent())
             .createdAt(comment.getCreatedAt())
             .modifiedAt(comment.getModifiedAt())
@@ -146,7 +149,7 @@ public class CommentService {
     );
   }
 
-  //댓글 삭제
+  //==========댓글 삭제==========
   @Transactional
   public ResponseDto<?> deleteComment(Long postingId, Long commentId, HttpServletRequest request) {
     if (null == request.getHeader("Refresh-Token")) {
@@ -189,11 +192,10 @@ public class CommentService {
   @Transactional
   public Member validateMember(HttpServletRequest request) {
     if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
-//      tokenProvider.validateToken(request.getHeader("Refresh-Token"
 //      => HttpServletRequest에서 "Refresh-Token"이라는 이름의 값을 Header에서 get해서
 //      tokenProvider에 있는 validateToken method의 매개변수로 쏴준다.
       return null; //=> 유효성 검사 통과x
-    }//=> 통과되면 tokenProvider.getMemberFromAuthentication으로 go!
+    }  //=> 통과되면 tokenProvider.getMemberFromAuthentication으로 go!
     return tokenProvider.getMemberFromAuthentication();
   }
 }

@@ -8,22 +8,19 @@ import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.jwt.TokenProvider;
 import com.sparta.finalpj.jwt.UserDetailsImpl;
-import com.sparta.finalpj.repository.CommentHeartRepository;
 import com.sparta.finalpj.repository.CommentRepository;
 import com.sparta.finalpj.repository.PostHeartRepository;
 import com.sparta.finalpj.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +29,6 @@ public class PostService {
   private final PostRepository postRepository;
   private final CommentRepository commentRepository;
   private final PostHeartRepository postHeartRepository;
-  private final CommentHeartRepository commentHeartRepository;
   private final TokenProvider tokenProvider;
   private final GoogleCloudUploadService googleCloudUploadService;
 
@@ -49,11 +45,13 @@ public class PostService {
 
     String imageUrl = "";
 
-    if (!image.isEmpty()) {
-      //===이미지 파일 처리===
-      imageUrl = googleCloudUploadService.upload("community", image, request);
-    }
-
+    if (image == null) {
+      imageUrl = "";
+    }else {
+      UUID uuid = UUID.randomUUID();
+      String fileName = uuid.toString() + "_" + image.getOriginalFilename();
+        imageUrl = googleCloudUploadService.upload("community", image, fileName);
+      }
       Post post = Post.builder()
               .title(requestDto.getTitle())
               .content(requestDto.getContent())
@@ -82,7 +80,6 @@ public class PostService {
 
   }
 
-
   //=============게시글 상세 조회=============
   @Transactional(readOnly = false)
   public ResponseDto<?> getPost(Long postingId, UserDetailsImpl userDetails) {
@@ -99,14 +96,15 @@ public class PostService {
             .id(post.getId())
             .postHeartYn(postHeartCheck(post, userDetails))
             .title(post.getTitle())
-            .author(post.getMember().getNickname())
-            .jobGroup(post.getJobGroup())
-            .content(post.getContent())
             .image(post.getImage())
-            .postHeartCnt((long) postHeartCnt.size())
-            .hit(updateHit(postingId))
-            .hit(post.getHit()+1) // 조회수
-            .commentCnt(commentCnt) // 댓글 갯수
+            .author(post.getMember().getNickname()) //작성자
+            .authorId(post.getMember().getId()) //게시글 수정, 삭제 시 필요한 권한을 부여하기 위한 식별자
+            .jobGroup(post.getJobGroup()) //관심 직군
+            .content(post.getContent())
+            .postHeartCnt((long) postHeartCnt.size()) //게시글 좋아요
+            .hit(updateHit(postingId)) //조회수 카운트
+            .hit(post.getHit()+1) //조회수
+            .commentCnt(commentCnt) //댓글 갯수
             .createdAt(post.getCreatedAt())
             .modifiedAt(post.getModifiedAt())
             .build();
@@ -114,12 +112,13 @@ public class PostService {
     return ResponseDto.success(postDetailList);
   }
 
-  //=====조회수 증가 =====
+  //=====조회수 증가=====
   @Transactional
   public int updateHit(Long postId) {
     return postRepository.updateHit(postId);
   }
 
+  //=====사용자별 게시글 좋아요 체크=====
   @Transactional
   public boolean postHeartCheck(Post post, UserDetailsImpl userDetails) {
     if(userDetails == null){
@@ -131,36 +130,24 @@ public class PostService {
   //======================게시글 전체 조회=====================
   @Transactional(readOnly = true)
   public ResponseDto<?> getAllPost(UserDetailsImpl userDetails) {
-//    Member member = userDetails.getMember();
-//    boolean postHeartYn = false;
 
-    List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
+    List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
     List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
 
-//    Optional<PostHeart> postHeartInfo = postHeartRepository.findByMemberAndPost(member, post);
-
-//    if(postHeartInfo.isPresent()) {
-//      postHeartYn = true;
-//    }
     for (Post post : postList) {
-//      if(userDetails == null){
-//        postHeartYn = false;
-//      }else {
-//        postHeartYn = postHeartRepository.existsByMemberAndPost(userDetails.getMember(), post);
-//      }
       long comment = commentRepository.countAllByPost(post);
       long postHeartCnt = postHeartRepository.findAllByPost(post).size();
       postListResponseDtoList.add(
               PostResponseDto.builder()
                       .id(post.getId())
-                      .postHeartYn(postHeartCheck(post, userDetails))
+                      .postHeartYn(postHeartCheck(post, userDetails)) //게시글 좋아요 상태 체크
                       .title(post.getTitle())
                       .image(post.getImage())
                       .content(post.getContent())
-                      .author(post.getMember().getNickname())
-                      .jobGroup(post.getJobGroup()) // 관심 직군
+                      .author(post.getMember().getNickname()) //작성자
+                      .jobGroup(post.getJobGroup()) //관심 직군
                       .postHeartCnt(postHeartCnt) //게시글 좋아요
-                      .commentCnt(comment) // 댓글 갯수
+                      .commentCnt(comment) //댓글 갯수
                       .hit(post.getHit()) //조회수
                       .createdAt(post.getCreatedAt())
                       .modifiedAt(post.getModifiedAt())
@@ -170,39 +157,9 @@ public class PostService {
     return ResponseDto.success(postListResponseDtoList);
   }
 
-//  @Transactional(readOnly = true)
-//  public ResponseDto<?> getAllPost(int page) {
-//    //페이징 처리 -> 요청한 페이지 값(0부터 시작), 20개씩 보여주기, 작성 시간을 기준으로 내림차순 정렬
-//    Pageable pageable = PageRequest.of(page-1,20, Sort.by("createdAt").descending());
-//
-//    Page<Post> postList = postRepository.findAllByOrderByCreatedAtDesc(pageable);
-//
-//    List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
-//    for (Post post : postList) {
-//      long comment = commentRepository.countAllByPost(post);
-//      long postHeartCnt = postHeartRepository.findAllByPost(post).size();
-//      postListResponseDtoList.add(
-//              PostResponseDto.builder()
-//                      .id(post.getId())
-//                      .title(post.getTitle())
-//                      .image(post.getImage())
-//                      .content(post.getContent())
-//                      .author(post.getMember().getNickname())
-//                      .jobGroup(post.getJobGroup())
-//                      .postHeartCnt(postHeartCnt) //게시글 좋아요
-//                      .commentCnt(comment) // 댓글 갯수
-//                      .hit(post.getHit()) //조회수
-//                      .createdAt(post.getCreatedAt())
-//                      .modifiedAt(post.getModifiedAt())
-//                      .build()
-//      );
-//    }
-//    return ResponseDto.success(postListResponseDtoList);
-//  }
-
   //=================게시글 검색=================
   @Transactional
-    public ResponseDto<?> searchPost(String keyword) {
+    public ResponseDto<?> searchPost(String keyword, UserDetailsImpl userDetails) {
     List<Post> postList = postRepository.search(keyword);
     // 검색된 항목 담아줄 리스트 생성
     List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
@@ -213,11 +170,12 @@ public class PostService {
       postListResponseDtoList.add(
               PostResponseDto.builder()
                       .id(post.getId())
+                      .postHeartYn(postHeartCheck(post, userDetails)) //게시글 좋아요 상태 체크
                       .title(post.getTitle())
                       .image(post.getImage())
                       .content(post.getContent())
-                      .author(post.getMember().getNickname())
-                      .jobGroup(post.getJobGroup())
+                      .author(post.getMember().getNickname()) //작성자
+                      .jobGroup(post.getJobGroup()) // 관심 직군
                       .postHeartCnt(postHeartCnt) //게시글 좋아요
                       .commentCnt(comment) // 댓글 갯수
                       .hit(post.getHit()) //조회수
@@ -247,10 +205,15 @@ public class PostService {
 
     String imageUrl = "";
 
-    if (!image.isEmpty()) {
-      //===이미지 파일 처리===
-      imageUrl = googleCloudUploadService.upload("community", image, request);
-    }
+    if(image == null && requestDto.isImageDelete()) {
+      imageUrl = "";
+    } else if(image == null && !requestDto.isImageDelete()) {
+      imageUrl = post.getImage();
+    }else {
+      UUID uuid = UUID.randomUUID();
+      String fileName = uuid.toString() + "_" + image.getOriginalFilename();
+      imageUrl = googleCloudUploadService.upload("community", image, fileName);
+          }
 
     List<PostHeart> postHeartCnt = postHeartRepository.findByPost(post);
     Long commentCnt = commentRepository.countByPost(post);
@@ -260,13 +223,13 @@ public class PostService {
             PostResponseDto.builder()
                     .id(post.getId())
                     .title(post.getTitle())
-                    .author(post.getMember().getNickname())
-                    .jobGroup(post.getJobGroup())
-                    .content(post.getContent())
                     .image(post.getImage())
-                    .postHeartCnt((long) postHeartCnt.size())
-                    .commentCnt(commentCnt)
-                    .hit(post.getHit())
+                    .author(post.getMember().getNickname()) //작성자
+                    .jobGroup(post.getJobGroup()) // 관심 직군
+                    .content(post.getContent())
+                    .postHeartCnt((long) postHeartCnt.size()) // 게시글 좋아요
+                    .commentCnt(commentCnt) // 댓글 갯수
+                    .hit(post.getHit()) // 조회수
                     .createdAt(post.getCreatedAt())
                     .modifiedAt(post.getModifiedAt())
                     .build()
@@ -298,7 +261,7 @@ public class PostService {
 
   //==================조회수TOP5 게시글 조회===================
   @Transactional
-  public ResponseDto<?> getPostByTop() {
+  public ResponseDto<?> getPostByTop(UserDetailsImpl userDetails) {
 
       List<Post> postList = postRepository.findTop5ByOrderByHitDesc();
       List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
@@ -310,9 +273,11 @@ public class PostService {
 
       postListResponseDtoList.add(PostResponseDto.builder()
                       .id(post.getId())
+                      .postHeartYn(postHeartCheck(post, userDetails)) //게시글 좋아요 상태 체크
                       .title(post.getTitle())
+                      .image(post.getImage())
                       .content(post.getContent())
-                      .author(post.getMember().getNickname())
+                      .author(post.getMember().getNickname()) //작성자
                       .jobGroup(post.getJobGroup()) // 관심 직군
                       .postHeartCnt(postHeartCnt) //게시글 좋아요
                       .commentCnt(comment) // 댓글 갯수
@@ -326,10 +291,11 @@ public class PostService {
     return ResponseDto.success(postListResponseDtoList);
   }
 
-  //==================좋야요순 게시글 전체 조회====================
+  //==================좋아요순 게시글 전체 조회====================
   @Transactional
-  public ResponseDto<?> getPostByHeart(Pageable pageable) {
-    Page<Post> postList = postRepository.findAll(pageable);
+  public ResponseDto<?> getPostByHeart(UserDetailsImpl userDetails) {
+
+    List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
     List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
 
     for (Post post : postList) {
@@ -339,9 +305,11 @@ public class PostService {
 
       postListResponseDtoList.add(PostResponseDto.builder()
               .id(post.getId())
+              .postHeartYn(postHeartCheck(post, userDetails)) //게시글 좋아요 상태 체크
               .title(post.getTitle())
+              .image(post.getImage())
               .content(post.getContent())
-              .author(post.getMember().getNickname())
+              .author(post.getMember().getNickname()) //작성자
               .jobGroup(post.getJobGroup()) // 관심 직군
               .postHeartCnt(postHeartCnt) //게시글 좋아요
               .commentCnt(comment) // 댓글 갯수
@@ -357,8 +325,9 @@ public class PostService {
 
   //==================조회순 게시글 전체 조회===================
   @Transactional
-  public ResponseDto<?> getPostByHits(Pageable pageable) {
-    Page<Post> postList = postRepository.findAll(pageable);
+  public ResponseDto<?> getPostByHits(UserDetailsImpl userDetails) {
+
+    List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
     List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
 
     for (Post post : postList) {
@@ -368,12 +337,14 @@ public class PostService {
 
       postListResponseDtoList.add(PostResponseDto.builder()
               .id(post.getId())
+              .postHeartYn(postHeartCheck(post, userDetails)) //게시글 좋아요 상태 체크
               .title(post.getTitle())
+              .image(post.getImage())
               .content(post.getContent())
-              .author(post.getMember().getNickname())
-              .jobGroup(post.getJobGroup()) // 관심 직군
+              .author(post.getMember().getNickname()) //작성자
+              .jobGroup(post.getJobGroup()) //관심 직군
               .postHeartCnt(postHeartCnt) //게시글 좋아요
-              .commentCnt(comment) // 댓글 갯수
+              .commentCnt(comment) //댓글 갯수
               .hit(post.getHit()) //조회수
               .createdAt(post.getCreatedAt())
               .modifiedAt(post.getModifiedAt())
@@ -382,12 +353,6 @@ public class PostService {
       postListResponseDtoList.sort((o1, o2) -> (o2.getHit() - o1.getHit()));
     }
     return ResponseDto.success(postListResponseDtoList);
-  }
-
-  @Transactional(readOnly = true)
-  public int commentHeartCnt(Comment comment) {
-    List<CommentHeart> commentLikeList = commentHeartRepository.findAllByComment(comment);
-    return commentLikeList.size();
   }
 
   @Transactional(readOnly = true)

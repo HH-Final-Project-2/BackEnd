@@ -45,8 +45,8 @@ public enum ErrorCode {
     SIGNUP_MEMBER_ID_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M020", "memberId 형식을 맞춰주세요"),
     SIGNUP_MEMBER_ID_DUPLICATE_ERROR(HttpStatus.BAD_REQUEST.value(), "M021", "memberId 가 중복됩니다"),
     NICKNAME_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M022", "nickname 형식을 맞춰주세요"),
-    SIGNUP_PASSWORD_CHECK_ERROR(HttpStatus.BAD_REQUEST.value(), "M023", "password 와 passwordCheck 가 다릅니다"),
-    SIGNUP_PASSWORD_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M024", "password 형식을 맞춰주세요"),
+    SIGNUP_PASSWORD_CHECK_ERROR(HttpStatus.BAD_REQUEST.value(), "M023", "비밀번호 확인란을 체크해주세요"),
+    SIGNUP_PASSWORD_FORM_ERROR(HttpStatus.BAD_REQUEST.value(), "M024", "비밀번호 형식을 맞춰주세요"),
     AWS_S3_UPLOAD_FAIL(HttpStatus.BAD_REQUEST.value(), "M024", "S3 사진 업로드 실패"),
     NOT_FOUND_CARD(HttpStatus.BAD_REQUEST.value(), "M025", "존재하지 않는 명함입니다."),
 
@@ -58,13 +58,20 @@ public enum ErrorCode {
     CARDINFO_UPDATE_FAIL(HttpStatus.BAD_REQUEST.value(), "M30", "명함정보 등록을 실패했습니다."),
     NOT_FOUND_CARDINFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M031", "명함정보 등록을 실패했습니다."),
     NOT_FOUND_CALNFO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M032", "캘린더 정보가 없습니다."),
+
+    EMAIL_NULL_INPUT_ERROR(HttpStatus.BAD_REQUEST.value(), "M033", "이메일을 입력해주세요."),
+    EMAIL_INPUT_ERROR(HttpStatus.BAD_REQUEST.value(), "M034", "올바른 이메일이 아닙니다."),
+    INVALID_EMAIL_ERROR(HttpStatus.BAD_REQUEST.value(), "M035", "이메일을 다시 확인해주세요."),
+    AUTH_CODE_NOT_ISSUE(HttpStatus.PRECONDITION_FAILED.value(),"M036","먼저 인증번호를 받아주세요."),
+    AUTH_CODE_NOT_CORRECT(HttpStatus.NOT_ACCEPTABLE.value(),"M037","인증번호가 틀렸습니다."),
+    PASSWORD_NULL_INPUT_ERROR(HttpStatus.BAD_REQUEST.value(), "M038", "비밀번호를 입력해주세요"),
+    NOT_FOUND_TEXT(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M039", "해당 이미지는 지원이 되지 않습니다."),
     NOT_EXIST_CHATROOM(HttpStatus.NOT_FOUND.value(), "M033", "채팅방이 존재하지 않습니다."),
     NOT_FOUND_CHATROOM(HttpStatus.NOT_FOUND.value(), "M034", "채팅방을 찾을 수 없습니다."),
     NOT_FOUND_MESSAGE(HttpStatus.NOT_FOUND.value(), "M035", "메세지를 확인할 수 없습니다."),
     CANT_CHAT_TO_ME(HttpStatus.BAD_REQUEST.value(), "M036", "자기자신에게 채팅을 신청할 수 없습니다"),
     NOT_FOUND_PARTNER(HttpStatus.NOT_FOUND.value(), "M037", "상대방을 찾을 수 없습니다."),
     NOT_ALLOWED_CHATROOM(HttpStatus.FORBIDDEN.value(), "M038", "접근할 수 없는 채팅방입니다.")
-
 
     ;
 

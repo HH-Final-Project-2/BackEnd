@@ -6,7 +6,6 @@ import com.sparta.finalpj.controller.response.card.CardResponseDto;
 import com.sparta.finalpj.domain.*;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
-import com.sparta.finalpj.repository.CardImageRepository;
 import com.sparta.finalpj.repository.CardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,6 @@ import java.util.Optional;
 public class CardService {
     private final CommonService commonService;
     private final CardRepository cardRepository;
-    private final CardImageRepository cardImageRepository;
 
     // 자사&타사 명함 등록
     @Transactional
@@ -124,7 +122,6 @@ public class CardService {
         CardResponseDto cardDetailList = CardResponseDto.builder()
                 .id(card.getId())
                 .cardName(card.getCardName())
-                .engName(card.getEngName())
                 .email(card.getEmail())
                 .phoneNum(card.getPhoneNum())
                 .company(card.getCompany())
@@ -166,7 +163,6 @@ public class CardService {
                     CardResponseDto.builder()
                             .id(card.getId())
                             .cardName(card.getCardName())
-                            .engName(card.getEngName())
                             .email(card.getEmail())
                             .phoneNum(card.getPhoneNum())
                             .company(card.getCompany())
@@ -197,7 +193,7 @@ public class CardService {
         }
 
         // Card => CardResponseDto 타입으로 변환
-        List<Card> cardList = cardRepository.searchCard(keyword);
+        List<Card> cardList = cardRepository.searchCard(member, keyword);
         List<CardResponseDto> cardResponseDtoList = new ArrayList<>();
 
         for (Card card : cardList) {
@@ -205,7 +201,6 @@ public class CardService {
                     CardResponseDto.builder()
                             .id(card.getId())
                             .cardName(card.getCardName())
-                            .engName(card.getEngName())
                             .email(card.getEmail())
                             .phoneNum(card.getPhoneNum())
                             .company(card.getCompany())
@@ -228,11 +223,4 @@ public class CardService {
         Optional<Card> optionalCard = cardRepository.findById(cardId);
         return optionalCard.orElse(null);
     }
-
-    @Transactional(readOnly = true)
-    public CardImage isPresentCardImg(Member member) {
-        Optional<CardImage> optionalCardImage = cardImageRepository.findByMemberAndCard(member, null);
-        return optionalCardImage.orElse(null);
-    }
-
 }
