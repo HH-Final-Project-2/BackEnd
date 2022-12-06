@@ -47,7 +47,7 @@ public class KakaoMemberService {
     private String redirectUri;
 
     // 카카오 로그인 과정
-    public Member kakaoLogin(String code , HttpServletResponse httpServletResponse) throws JsonProcessingException {
+    public ResponseDto<?> kakaoLogin(String code , HttpServletResponse httpServletResponse) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
 
@@ -60,7 +60,15 @@ public class KakaoMemberService {
         // 4. 강제 로그인 처리
         forceLogin(kakaoMember,httpServletResponse);
 
-        return kakaoMember;
+        return ResponseDto.success(
+                SignupResponseDto.builder()
+                        .id(kakaoMember.getId())
+                        .email(kakaoMember.getEmail())
+                        .username(kakaoMember.getUsername())
+                        .nickname(kakaoMember.getNickname())
+                        .createdAt(kakaoMember.getCreatedAt())
+                        .build()
+        );
     }
 
     //AccessToken 요청
