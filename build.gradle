@@ -54,7 +54,8 @@ dependencies {
     implementation 'io.springfox:springfox-swagger-ui:3.0.0'
     //email
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.7.1'
-
+    // ouath 소셜로그인
+    implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.6.3'
 }
 
 //tasks.named('test') {
