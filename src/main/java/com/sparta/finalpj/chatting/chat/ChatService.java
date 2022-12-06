@@ -60,6 +60,7 @@ public class ChatService {
         chatMessageDto.setUserId(member.getId());
 
         log.info(chatMessageDto.getMessage()); //=> test : 메세지 로그 찍어보기
+        log.info(chatMessageDto.getCreatedAt()); //=> test : 메세지 로그 찍어보기
 
         ChatMessage chatMessage = new ChatMessage(member, chatMessageDto, chatRoom);
         chatMessageRepository.save(chatMessage);
@@ -77,19 +78,23 @@ public class ChatService {
     }
 
     //안읽은 메세지 업데이트
-    public void updateUnReadMessageCount(ChatMessageDto requestChatMessageDto) {
-        Long otherUserId = requestChatMessageDto.getOtherMemberId();
+    public void updateUnReadMessageCount(ChatMessageDto requestChatMessageDto,Member member) {
+        ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(requestChatMessageDto.getRoomId()).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_EXIST_CHATROOM)
+        );
+        List<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findAllByMemberNotAndChatRoom(member, chatRoom);
+        Long otherUserId = chatRoomUser.get(0).getMember().getId();
         String roomId = requestChatMessageDto.getRoomId();
         // 상대방이 채팅방에 들어가 있지 않거나 들어가 있어도 나와 같은 대화방이 아닌 경우 안 읽은 메세지 처리를 할 것이다.
         if (!redisRepository.existChatRoomUserInfo(otherUserId) || !redisRepository.getUserEnterRoomId(otherUserId).equals(roomId)) {
         // || : 하나라도 true인 경우 true 반환
             redisRepository.addChatRoomMessageCount(roomId, otherUserId);
-            int unReadMessageCount = redisRepository
-                .getChatRoomMessageCount(roomId, otherUserId);
-            String topic = channelTopic.getTopic();
-
-            ChatMessageDto responseChatMessageDto = new ChatMessageDto(requestChatMessageDto, unReadMessageCount);
-
+//            int unReadMessageCount = redisRepository
+//                .getChatRoomMessageCount(roomId, otherUserId);
+//            String topic = channelTopic.getTopic();
+////
+//            ChatMessageDto responseChatMessageDto = new ChatMessageDto(requestChatMessageDto, unReadMessageCount);
+//
 //            redisTemplate.convertAndSend(topic, responseChatMessageDto);
         }
     }

@@ -15,7 +15,7 @@ public class ChatMessageTestDto {
     private Long userId;
     private String nickname;
     private String message;
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd a hh:mm")
     private LocalDateTime createdAt;
 
     public ChatMessageTestDto(ChatMessage chatMessage) {

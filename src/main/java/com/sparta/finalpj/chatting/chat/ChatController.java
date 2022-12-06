@@ -42,7 +42,7 @@ public class ChatController {
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
         );
         chatService.sendMessage(chatMessageDto, member);
-        chatService.updateUnReadMessageCount(chatMessageDto);
+        chatService.updateUnReadMessageCount(chatMessageDto, member);
     }
 
 }
