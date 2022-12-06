@@ -188,8 +188,8 @@ public class MemberService {
             throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
         }
         member.updateProfile(memberRequestDto);
-//        // 저장
-//        memberRepository.save(member);
+        // 저장
+        memberRepository.save(member);
 
         return ResponseDto.success(
                 SignupResponseDto.builder()
