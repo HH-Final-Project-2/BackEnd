@@ -64,6 +64,7 @@ public enum ErrorCode {
     AUTH_CODE_NOT_ISSUE(HttpStatus.PRECONDITION_FAILED.value(),"M036","먼저 인증번호를 받아주세요."),
     AUTH_CODE_NOT_CORRECT(HttpStatus.NOT_ACCEPTABLE.value(),"M037","인증번호가 틀렸습니다."),
     PASSWORD_NULL_INPUT_ERROR(HttpStatus.BAD_REQUEST.value(), "M038", "비밀번호를 입력해주세요"),
+    NOT_FOUND_TEXT(HttpStatus.INTERNAL_SERVER_ERROR.value(), "M039", "해당 이미지는 지원이 되지 않습니다."),
 
 
     ;
