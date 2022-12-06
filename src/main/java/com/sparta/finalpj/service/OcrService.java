@@ -114,31 +114,35 @@ public class OcrService {
                         String phoneStr = text.substring(text.indexOf("Mobile.")).replace("Mobile.", "").trim();
                         phoneNum = phoneStr.substring(0, phoneStr.indexOf("-", 5) + 5);
 
-                    // ex) Mobile 010-0000-0000
+                        // ex) Mobile 010-0000-0000
                     } else if (text.contains("Mobile")) {
                         String phoneStr = text.substring(text.indexOf("Mobile")).replace("Mobile", "").trim();
                         phoneNum = phoneStr.substring(0, phoneStr.indexOf("-", 5) + 5);
 
-                    // ex) M. 010-0000-0000
-                    } else if (text.contains("M.") ) {
+                        // ex) M. 010-0000-0000
+                    } else if (text.contains("M.")) {
                         String phoneStr1 = text.substring(text.indexOf("M.")).replace("M.", "").trim();
                         String phoneStr2 = phoneStr1.substring(0, phoneStr1.indexOf("-", 5) + 5);
                         if (phoneStr2.length() < 15) {
                             phoneNum = phoneStr2;
                         }
 
-                    // ex) M 010-0000-0000
-                    } else if (text.contains("M")) {
+                        // ex) M 010-0000-0000
+                    } else if (text.contains("M ")) {
                         String phoneStr1 = text.substring(text.indexOf("M")).replace("M", "").trim();
                         String phoneStr2 = phoneStr1.substring(0, phoneStr1.indexOf("-", 5) + 5);
                         if (phoneStr2.length() < 15) {
                             phoneNum = phoneStr2;
                         }
                     } else {
-                        phoneNum = text.trim();
+                        if (text.contains(" ")) {
+                            phoneNum = text.replace(" ", "-").trim();
+                        } else {
+                            phoneNum = text.trim();
+                        }
                     }
 
-                // 1. 휴대폰 번호
+                    // 1. 휴대폰 번호
                 } else if (text.contains(" ") && text.contains("010") || text.contains("82") || text.contains("+82")) {
 
                     // ex) Mobile. 010 0000 0000
@@ -146,12 +150,12 @@ public class OcrService {
                         String phoneStr = text.substring(text.indexOf("Mobile.")).replace("Mobile.", "").trim();
                         phoneNum = phoneStr.substring(0, phoneStr.indexOf(" ", 5) + 5).replace(" ", "-");
 
-                    // ex) Mobile 010 0000 0000
+                        // ex) Mobile 010 0000 0000
                     } else if (text.contains("Mobile")) {
                         String phoneStr = text.substring(text.indexOf("Mobile")).replace("Mobile", "").trim();
                         phoneNum = phoneStr.substring(0, phoneStr.indexOf(" ", 5) + 5).replace(" ", "-");
 
-                    // ex) M. 010 0000 0000
+                        // ex) M. 010 0000 0000
                     } else if (text.contains("M.")) {
                         String phoneStr1 = text.substring(text.indexOf("M.")).replace("M.", "").trim();
                         String phoneStr2 = phoneStr1.substring(0, phoneStr1.indexOf(" ", 5) + 5).replace(" ", "-");
@@ -159,16 +163,20 @@ public class OcrService {
                             phoneNum = phoneStr2;
                         }
 
-                    // ex) M 010 0000 0000
-                    } else if (text.contains("M")) {
+                        // ex) M 010 0000 0000
+                    } else if (text.contains("M ")) {
                         String phoneStr1 = text.substring(text.indexOf("M")).replace("M", "").trim();
                         String phoneStr2 = phoneStr1.substring(0, phoneStr1.indexOf(" ", 5) + 5).replace(" ", "-");
                         if (phoneStr2.length() < 15) {
                             phoneNum = phoneStr2;
                         }
-                        
+
                     } else {
-                        phoneNum = text.trim();
+                        if (text.contains(" ")) {
+                            phoneNum = text.replace(" ", "-").trim();
+                        } else {
+                            phoneNum = text.trim();
+                        }
                     }
                 }
 
@@ -184,7 +192,7 @@ public class OcrService {
                             tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
                         }
 
-                    // ex) TEL. 070-0000-0000 / TEL. 070 0000 0000
+                        // ex) TEL. 070-0000-0000 / TEL. 070 0000 0000
                     } else if (text.contains("TEL.") && (text.contains("-") || text.contains(" "))) {
                         String telStr = text.substring(text.indexOf("TEL.")).replace("TEL.", "").trim();
                         if (text.contains("-")) {
@@ -193,8 +201,8 @@ public class OcrService {
                             tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
                         }
 
-                    // ex) Tel 070-0000-0000 / Tel 070 0000 0000
-                    }  else if (text.contains("Tel") && (text.contains("-") || text.contains(" "))) {
+                        // ex) Tel 070-0000-0000 / Tel 070 0000 0000
+                    } else if (text.contains("Tel") && (text.contains("-") || text.contains(" "))) {
                         String telStr = text.substring(text.indexOf("Tel")).replace("Tel", "").trim();
                         if (text.contains("-")) {
                             tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
@@ -202,7 +210,7 @@ public class OcrService {
                             tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
                         }
 
-                    // ex) TEL 070-0000-0000 / TEL 070 0000 0000
+                        // ex) TEL 070-0000-0000 / TEL 070 0000 0000
                     } else if (text.contains("TEL") && (text.contains("-") || text.contains(" "))) {
                         String telStr = text.substring(text.indexOf("TEL")).replace("TEL", "").trim();
                         if (text.contains("-") && telStr.contains("0")) {
@@ -212,28 +220,30 @@ public class OcrService {
                             tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
                         }
 
-                    // ex) T. 070-0000-0000 / T. 070 0000 0000
+                        // ex) T. 070-0000-0000 / T. 070 0000 0000
                     } else if (text.contains("T.") && (text.contains("-") || text.contains(" "))) {
                         String telStr = text.substring(text.indexOf("T.")).replace("T.", "").trim();
                         if (telStr.contains("-") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
                         } else if (telStr.contains(" ") && telStr.contains("0")) {
-                            tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");;
+                            tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
+                            ;
                         }
 
-                    // ex) T 070-0000-0000 / T 070 0000 0000
-                    } else {
+                        // ex) T 070-0000-0000 / T 070 0000 0000
+                    } else if (text.contains("T ")) {
                         String telStr = text.substring(text.indexOf("T")).replace("T", "").trim();
                         if (text.contains("-") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
                         } else if (telStr.contains(" ") && telStr.contains("0")) {
-                            tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");;
+                            tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
+                            ;
                         }
                     }
                 }
 
                 // 3. 팩스(fax)
-                 if (text.contains("F ") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
+                if (text.contains("F") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
 
                     if (text.contains("Fax.") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
                         String faxStr = text.substring(text.indexOf("Fax.")).replace("Fax.", "").trim();
@@ -305,7 +315,7 @@ public class OcrService {
                             fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
                         }
 
-                    } else {
+                    } else if (text.contains("F ")) {
                         String faxStr = text.substring(text.indexOf("F")).replace("F", "").trim();
                         if (faxStr.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
@@ -318,7 +328,7 @@ public class OcrService {
                 }
 
                 // 4. 이메일
-                if (text.contains("@") && text.contains("E") ) {
+                if (text.contains("@") && text.contains("E")) {
                     String emailStr = text.substring(text.indexOf("E"));
                     if (emailStr.contains(".com") && (emailStr.contains("E-mail.") || emailStr.contains("E-mail "))) {
                         email = emailStr.contains("E-mail.")
@@ -356,7 +366,7 @@ public class OcrService {
                                 : emailStr.substring(emailStr.indexOf("E"), emailStr.indexOf(".kr") + 3).replace("E", " ").trim();
 
                     }
-                } else if(text.contains("@") && (text.contains(".com") || text.contains(".kr"))) {
+                } else if (text.contains("@") && (text.contains(".com") || text.contains(".kr"))) {
                     email = text.contains(".com")
                             ? text.substring(0, text.indexOf(".com") + 4).trim()
                             : text.substring(0, text.indexOf(".kr") + 3).trim();
