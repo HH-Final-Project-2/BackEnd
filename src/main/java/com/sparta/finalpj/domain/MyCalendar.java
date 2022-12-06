@@ -20,31 +20,31 @@ public class MyCalendar extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String startDate;
 
-    @Column
+    @Column(nullable = false)
     private String startTime;
 
     @Column
     private Date startDateTime;
 
-    @Column
+    @Column(nullable = false)
     private String endDate;
 
-    @Column
+    @Column(nullable = false)
     private String endTime;
 
     @Column
     private Date endDateTime;
 
-    @Column
+    @Column(nullable = false)
     private String filteredDate;
 
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column
     private String todo;
 
     @JoinColumn(name = "memberId", nullable = false)
