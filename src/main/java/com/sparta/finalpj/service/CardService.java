@@ -158,15 +158,28 @@ public class CardService {
             return ResponseDto.success("명함을 등록해주세요");
         }
 
+
+
         for (Card card : cardList) {
+            String companyStr = card.getCompany();
+            String company = "";
+            if(companyStr.contains("주식회사")) {
+                company = companyStr.replace("주식회사", " ").trim();
+
+            } else if (companyStr.contains("(주)")) {
+                company = companyStr.replace("(주)", " ").trim();
+            } else {
+                company = companyStr;
+            }
+
             cardResponseDtoList.add(
                     CardResponseDto.builder()
                             .id(card.getId())
                             .cardName(card.getCardName())
                             .email(card.getEmail())
                             .phoneNum(card.getPhoneNum())
-                            .company(card.getCompany())
-                            .department(card.getCompany())
+                            .company(company)
+                            .department(card.getDepartment())
                             .position(card.getPosition())
                             .companyAddress(card.getCompanyAddress())
                             .tel(card.getTel())
