@@ -13,10 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -41,25 +38,32 @@ public class ChatService {
     /**
      *채팅 메세지보내기
      */
+    @Transactional(readOnly = true)
+    public ChatRoomUser isPresentChatRoomUser(Long memberId, Long otherId) {
+        Optional<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findByMemberIdAndChatRoomId(memberId,otherId);
+        return chatRoomUser.orElse(null);
+    }
 
     @Transactional
     public void sendMessage(ChatMessageDto chatMessageDto, Member member) {
         ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(chatMessageDto.getRoomId()).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_EXIST_CHATROOM)
         );
-        //상대방 ChatRoomUser
-        List<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findAllByMemberNotAndChatRoom(member, chatRoom);
         //내 ChatRoomUser
-        List<ChatRoomUser> mychatRoomUser = chatRoomUserRepository.findAllByMemberAndChatRoom(member, chatRoom);
+        ChatRoomUser mychatRoomUser = isPresentChatRoomUser(member.getId(), chatRoom.getId());
+//        Optional<ChatRoomUser> mychatRoomUser = chatRoomUserRepository.findByMemberIdAndChatRoomId(member.getId(), chatRoom.getId());
+        //상대방 ChatRoomUser
+        ChatRoomUser chatRoomUser = isPresentChatRoomUser(mychatRoomUser.getOtherMember().getId(), chatRoom.getId());
+//        Optional<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findByMemberIdAndChatRoomId(mychatRoomUser.get().getOtherMember().getId(), chatRoom.getId());
         //상대방이 채팅방 삭제를 했다면, 생성해서 상대방 채팅방 리스트에 추가해줌
         if (chatRoomUser == null){
-            chatRoomService.existRoom(chatRoom.getRoomHashCode(), member, mychatRoomUser.get(0).getOtherMember());
+            chatRoomService.existRoom(chatRoom.getRoomHashCode(), member, mychatRoomUser.getOtherMember());
         }
 
         String topic = channelTopic.getTopic();
         String createdAt = getCurrentTime();
         chatMessageDto.setCreatedAt(createdAt);
-        chatMessageDto.setOtherMemberId(chatRoomUser.get(0).getMember().getId());
+        chatMessageDto.setOtherMemberId(mychatRoomUser.getOtherMember().getId());
         chatMessageDto.setType(ChatMessageDto.MessageType.TALK);
         // front에서 요청해서 진행한 작업 나의 userId 넣어주기
         chatMessageDto.setUserId(member.getId());
