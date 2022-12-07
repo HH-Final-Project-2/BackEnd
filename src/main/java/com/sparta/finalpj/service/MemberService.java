@@ -12,6 +12,7 @@ import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.jwt.*;
 import com.sparta.finalpj.repository.MailRepository;
 import com.sparta.finalpj.repository.MemberRepository;
+import com.sparta.finalpj.repository.MyCardRepository;
 import com.sparta.finalpj.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import java.util.*;
 @Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final MyCardRepository myCardRepository;
     private final MailService mailService;
     private final MailRepository mailRepository;
     private final PasswordEncoder passwordEncoder;
@@ -110,6 +112,8 @@ public class MemberService {
         if (null == member) {
             throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
         }
+        // 회원 명함 삭제
+        myCardRepository.deleteByMemberId(member.getId());
         //해당 member의 RefreshToken 제거
         tokenProvider.deleteRefreshToken(member);
         //Member 제거
