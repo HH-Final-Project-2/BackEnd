@@ -141,7 +141,7 @@ public class ChatRoomService {
     }
 
     public ChatRoomResponseDto createChatRoomDto(ChatRoomUser chatRoomUser, int totalCnt) {
-        String roomName = chatRoomUser.getName();
+        String roomName = chatRoomUser.getOtherMember().getNickname();
         String roomUuid = chatRoomUser.getChatRoom().getChatRoomUuid();
         String lastMessage;
         LocalDateTime lastTime;
