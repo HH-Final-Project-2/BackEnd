@@ -182,14 +182,19 @@ public class OcrService {
 
                 // 2. 회사번호
                 if (text.contains("T") && (text.contains("-") || text.contains(" "))) {
-
                     // ex) Tel. 070-0000-0000 / Tel. 070 0000 0000
                     if (text.contains("Tel.") && (text.contains("-") || text.contains(" "))) {
                         String telStr = text.substring(text.indexOf("Tel.")).replace("Tel.", "").trim();
-                        if (text.contains("-")) {
+                        if (telStr.contains("-")) {
                             tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
+                            if (tel.substring(0, tel.indexOf("-")).length() > 3) {
+                                tel = telStr.substring(0, telStr.indexOf("-") + 5);
+                            }
                         } else if (telStr.contains(" ") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
+                            if (tel.substring(0, tel.indexOf(" ")).length() > 3) {
+                                tel = telStr.substring(0, telStr.indexOf(" ") + 5).replace(" ", "-");
+                            }
                         }
 
                         // ex) TEL. 070-0000-0000 / TEL. 070 0000 0000
@@ -197,8 +202,14 @@ public class OcrService {
                         String telStr = text.substring(text.indexOf("TEL.")).replace("TEL.", "").trim();
                         if (text.contains("-")) {
                             tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
+                            if (tel.substring(0, tel.indexOf("-")).length() > 3) {
+                                tel = telStr.substring(0, telStr.indexOf("-") + 5);
+                            }
                         } else if (telStr.contains(" ") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
+                            if (tel.substring(0, tel.indexOf(" ")).length() > 3) {
+                                tel = telStr.substring(0, telStr.indexOf(" ") + 5).replace(" ","-");
+                            }
                         }
 
                         // ex) Tel 070-0000-0000 / Tel 070 0000 0000
@@ -206,8 +217,14 @@ public class OcrService {
                         String telStr = text.substring(text.indexOf("Tel")).replace("Tel", "").trim();
                         if (text.contains("-")) {
                             tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
+                            if (tel.substring(0, tel.indexOf("-")).length() > 3) {
+                                tel = telStr.substring(0, telStr.indexOf("-") + 5);
+                            }
                         } else if (telStr.contains(" ") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
+                            if (tel.substring(0, tel.indexOf(" ")).length() > 3) {
+                                tel = telStr.substring(0, telStr.indexOf(" ") + 5).replace(" ","-");
+                            }
                         }
 
                         // ex) TEL 070-0000-0000 / TEL 070 0000 0000
@@ -215,9 +232,14 @@ public class OcrService {
                         String telStr = text.substring(text.indexOf("TEL")).replace("TEL", "").trim();
                         if (text.contains("-") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
-
+                            if (tel.substring(0, tel.indexOf("-")).length() > 3) {
+                                tel = telStr.substring(0, telStr.indexOf("-") + 5);
+                            }
                         } else if (telStr.contains(" ") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
+                            if (tel.substring(0, tel.indexOf(" ")).length() > 3) {
+                                tel = telStr.substring(0, telStr.indexOf(" ") + 5).replace(" ","-");
+                            }
                         }
 
                         // ex) T. 070-0000-0000 / T. 070 0000 0000
@@ -225,9 +247,14 @@ public class OcrService {
                         String telStr = text.substring(text.indexOf("T.")).replace("T.", "").trim();
                         if (telStr.contains("-") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
+                            if (tel.substring(0, tel.indexOf("-")).length() > 3) {
+                                tel = telStr.substring(0, telStr.indexOf("-") + 5);
+                            }
                         } else if (telStr.contains(" ") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
-                            ;
+                            if (tel.substring(0, tel.indexOf(" ")).length() > 3) {
+                                tel = telStr.substring(0, telStr.indexOf(" ") + 5).replace(" ","-");
+                            }
                         }
 
                         // ex) T 070-0000-0000 / T 070 0000 0000
@@ -235,9 +262,14 @@ public class OcrService {
                         String telStr = text.substring(text.indexOf("T")).replace("T", "").trim();
                         if (text.contains("-") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf("-", 5) + 5);
+                            if (tel.substring(0, tel.indexOf("-")).length() > 3) {
+                                tel = telStr.substring(0, telStr.indexOf("-") + 5);
+                            }
                         } else if (telStr.contains(" ") && telStr.contains("0")) {
                             tel = telStr.substring(0, telStr.indexOf(" ", 5) + 5).replace(" ", "-");
-                            ;
+                            if (tel.substring(0, tel.indexOf(" ")).length() > 3) {
+                                tel = telStr.substring(0, telStr.indexOf(" ") + 5).replace(" "," ");
+                            }
                         }
                     }
                 }
@@ -249,40 +281,76 @@ public class OcrService {
                         String faxStr = text.substring(text.indexOf("Fax.")).replace("Fax.", "").trim();
                         if (faxStr.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                            if (fax.substring(0, fax.indexOf("-")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf("-") + 5);
+                            }
                         } else if (faxStr.contains(" ") && faxStr.contains("0")) {
-                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5).replace(" ","-");
+                            if (fax.substring(0, fax.indexOf(" ")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf(" ") + 5).replace(" ","-");
+                            }
                         } else if (faxStr.contains(".")) {
-                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5).replace(".","-");
+                            if (fax.substring(0, fax.indexOf(".")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf(".") + 5).replace(".","-");
+                            }
                         }
 
                     } else if (text.contains("Fax,") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
                         String faxStr = text.substring(text.indexOf("Fax,")).replace("Fax,", "").trim();
                         if (faxStr.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                            if (fax.substring(0, fax.indexOf("-")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf("-") + 5);
+                            }
                         } else if (faxStr.contains(" ") && faxStr.contains("0")) {
-                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5).replace(" ","-");
+                            if (fax.substring(0, fax.indexOf(" ")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf(" ") + 5).replace(" ","-");
+                            }
                         } else if (faxStr.contains(".")) {
                             fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                            if (fax.substring(0, fax.indexOf(".")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf(".") + 5).replace(".","-");
+                            }
                         }
 
                     } else if (text.contains("Fax") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
                         String faxStr = text.substring(text.indexOf("Fax")).replace("Fax", "").trim();
                         if (faxStr.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                            if (fax.substring(0, fax.indexOf("-")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf("-") + 5);
+                            }
                         } else if (faxStr.contains(" ") && faxStr.contains("0")) {
-                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5).replace(" ", "-");
+                            if (fax.substring(0, fax.indexOf(" ")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf(" ") + 5).replace(" ","-");
+                            }
                         } else if (faxStr.contains(".")) {
-                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5).replace(".","-");
+                            if (fax.substring(0, fax.indexOf(".")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf(".") + 5).replace(".","-");
+                            }
                         }
 
                     } else if (text.contains("FAX") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
                         String faxStr = text.substring(text.indexOf("FAX")).replace("FAX", "").trim();
                         if (faxStr.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                            if (fax.substring(0, fax.indexOf("-")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf("-") + 5);
+                            }
                         } else if (faxStr.contains(" ") && faxStr.contains("0")) {
-                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5).replace(" ","-");
+                            if (fax.substring(0, fax.indexOf(" ")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf(" ") + 5).replace(" ","-");
+                            }
                         } else if (faxStr.contains(".")) {
-                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5).replace(".","-");
+                            if (fax.substring(0, fax.indexOf(".")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf(".") + 5).replace(".","-");
+                            }
                         }
 
                     } else if (text.contains("FAX.") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
@@ -299,30 +367,57 @@ public class OcrService {
                         String faxStr = text.substring(text.indexOf("F.")).replace("F.", "").trim();
                         if (text.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                            if (fax.substring(0, fax.indexOf("-")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf("-") + 5);
+                            }
                         } else if (faxStr.contains(" ") && faxStr.contains("0")) {
-                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5).replace(" ","-");
+                            if (fax.substring(0, fax.indexOf(" ")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf(" ") + 5).replace(" ","-");
+                            }
                         } else if (faxStr.contains(".")) {
-                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5).replace(".","-");
+                            if (fax.substring(0, fax.indexOf(".")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf(".") + 5).replace(".","-");
+                            }
                         }
 
                     } else if (text.contains("F,") && (text.contains("-") || text.contains(" ") || text.contains("."))) {
                         String faxStr = text.substring(text.indexOf("F,")).replace("F,", "").trim();
                         if (text.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                            if (fax.substring(0, fax.indexOf("-")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf("-") + 5);
+                            }
                         } else if (faxStr.contains(" ") && faxStr.contains("0")) {
-                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5).replace(" ","-");
+                            if (fax.substring(0, fax.indexOf(" ")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf(" ") + 5).replace(" ","-");
+                            }
                         } else if (faxStr.contains(".")) {
-                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                            fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5).replace(".","-");
+                            if (fax.substring(0, fax.indexOf(".")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf(".") + 5).replace(".","-");
+                            }
                         }
 
                     } else if (text.contains("F ")) {
                         String faxStr = text.substring(text.indexOf("F")).replace("F", "").trim();
                         if (faxStr.contains("-") && faxStr.contains("0")) {
                             fax = faxStr.substring(0, faxStr.indexOf("-", 5) + 5);
+                            if (fax.substring(0, fax.indexOf("-")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf("-") + 5);
+                            }
                         } else if (faxStr.contains(" ") && faxStr.contains("0")) {
-                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5);
+                            fax = faxStr.substring(0, faxStr.indexOf(" ", 5) + 5).replace(" ","-");
+                            if (fax.substring(0, fax.indexOf(" ")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf(" ") + 5).replace(" ","-");
+                            }
                         } else if (faxStr.contains(".")) {
                             fax = faxStr.substring(0, faxStr.indexOf(".", 5) + 5);
+                            if (fax.substring(0, fax.indexOf(".")).length() > 3) {
+                                fax = faxStr.substring(0, faxStr.indexOf(".") + 5).replace(".","-");
+                            }
                         }
                     }
                 }
@@ -385,5 +480,14 @@ public class OcrService {
         } catch (StringIndexOutOfBoundsException e) {
             return ResponseDto.fail(new CustomResponseBody(ErrorCode.NOT_FOUND_TEXT));
         }
+    }
+    public int countChar(String str) {
+        int count = 0;
+        for (int i = 0; i < str.length(); i++) {
+            if(str.contains("-")) {
+                count++;
+            }
+        }
+        return count;
     }
 }
