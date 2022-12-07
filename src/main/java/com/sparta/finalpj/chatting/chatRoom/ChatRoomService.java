@@ -53,7 +53,7 @@ public class ChatRoomService {
         int roomHashCode = createRoomHashCode(userDetails, anotherUser);
 
         //방 존재 확인 함수
-        if(existRoom(roomHashCode, userDetails, anotherUser)){
+        if(existRoom(roomHashCode, userDetails.getMember() , anotherUser)){
             ChatRoom existChatRoom = chatRoomRepository.findByRoomHashCode(roomHashCode).orElseThrow(
                     ()-> new CustomException(ErrorCode.NOT_FOUND_CHATROOM)
             );
@@ -91,7 +91,7 @@ public class ChatRoomService {
     @Transactional
     public boolean existRoom(
             int roomHashCode,
-            UserDetailsImpl userDetails,
+            Member member,
             Member anotherUser) {
 
         ChatRoom chatRoom = chatRoomRepository.findByRoomHashCode(roomHashCode).orElse(null);
@@ -102,12 +102,12 @@ public class ChatRoomService {
 
             if (chatRoomUser.size() == 1) {
                 //나만 있을 때
-                if (chatRoomUser.get(0).getMember().getId().equals(userDetails.getMember().getId())) {
-                    ChatRoomUser user = new ChatRoomUser(anotherUser, userDetails.getMember(), chatRoom);
+                if (chatRoomUser.get(0).getMember().getId().equals(member.getId())) {
+                    ChatRoomUser user = new ChatRoomUser(anotherUser, member, chatRoom);
                     chatRoomUserRepository.save(user);
                 } else {
                     //상대방만 있을 때
-                    ChatRoomUser user = new ChatRoomUser(userDetails.getMember(), anotherUser, chatRoom);
+                    ChatRoomUser user = new ChatRoomUser(member, anotherUser, chatRoom);
                     chatRoomUserRepository.save(user);
                 }
             }

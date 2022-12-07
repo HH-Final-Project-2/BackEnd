@@ -1,10 +1,7 @@
 package com.sparta.finalpj.chatting.chat;
 
 import com.sparta.finalpj.chatting.chat.requestDto.ChatMessageDto;
-import com.sparta.finalpj.chatting.chatRoom.ChatRoom;
-import com.sparta.finalpj.chatting.chatRoom.ChatRoomRepository;
-import com.sparta.finalpj.chatting.chatRoom.ChatRoomUser;
-import com.sparta.finalpj.chatting.chatRoom.ChatRoomUserRepository;
+import com.sparta.finalpj.chatting.chatRoom.*;
 import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
@@ -32,6 +29,7 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomService chatRoomService;
 
     public void enter(Long memberId, String roomId) {
         // 채팅방 입장 정보 저장
@@ -49,8 +47,15 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(chatMessageDto.getRoomId()).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_EXIST_CHATROOM)
         );
-
+        //상대방 ChatRoomUser
         List<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findAllByMemberNotAndChatRoom(member, chatRoom);
+        //내 ChatRoomUser
+        List<ChatRoomUser> mychatRoomUser = chatRoomUserRepository.findAllByMemberAndChatRoom(member, chatRoom);
+        //상대방이 채팅방 삭제를 했다면, 생성해서 상대방 채팅방 리스트에 추가해줌
+        if (chatRoomUser == null){
+            chatRoomService.existRoom(chatRoom.getRoomHashCode(), member, mychatRoomUser.get(0).getOtherMember());
+        }
+
         String topic = channelTopic.getTopic();
         String createdAt = getCurrentTime();
         chatMessageDto.setCreatedAt(createdAt);
