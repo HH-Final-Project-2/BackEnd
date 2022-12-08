@@ -191,6 +191,9 @@ public class MemberService {
         if (null == member) {
             throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
         }
+        if (!validation.isValidNickname(memberRequestDto.getNickname())) {
+            throw new CustomException(ErrorCode.NICKNAME_FORM_ERROR);
+        }
         member.updateProfile(memberRequestDto);
         // 저장
         memberRepository.save(member);

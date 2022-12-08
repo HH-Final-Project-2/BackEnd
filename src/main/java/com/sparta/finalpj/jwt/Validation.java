@@ -32,6 +32,10 @@ public class Validation {
         if (!isValidUsername(signupRequestDto.getUsername())) {
             throw new CustomException(ErrorCode.SIGNUP_USERNAME_FORM_ERROR);
         }
+        //2~10자 이내 , 한글,영어,숫자
+        if (!isValidNickname(signupRequestDto.getNickname())) {
+            throw new CustomException(ErrorCode.NICKNAME_FORM_ERROR);
+        }
         //이메일형식 유효성 검사
         if (!isValidEmail(signupRequestDto.getEmail())) {
             throw new CustomException(ErrorCode.SIGNUP_EMAIL_FORM_ERROR);
@@ -108,6 +112,11 @@ public class Validation {
         //2~5자 이내 , 한글
         String pattern = "^[가-힣]{2,5}$";
         return Pattern.matches(pattern, username);
+    }
+    public boolean isValidNickname(String nickname) {
+        //2~10자 이내 , 한글,영어,숫자
+        String pattern = "^[가-힣][A-Za-z0-9]{2,10}$";
+        return Pattern.matches(pattern, nickname);
     }
 
     public void checkAccessToken (HttpServletRequest request, Member member){
