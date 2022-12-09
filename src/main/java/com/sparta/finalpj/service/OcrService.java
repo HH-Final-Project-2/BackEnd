@@ -942,6 +942,8 @@ public class OcrService {
                     .imgUrl(imgUrl)
                     .build();
             return ResponseDto.success(ocrResponseDto);
+        } catch (StringIndexOutOfBoundsException e) {
+            return ResponseDto.fail(new CustomResponseBody(ErrorCode.NOT_FOUND_TEXT));
         }
     }
 }
