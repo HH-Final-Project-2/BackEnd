@@ -1,5 +1,6 @@
 package com.sparta.finalpj.controller;
 
+import com.sparta.finalpj.configuration.SwaggerAnnotation;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.service.GoogleCloudUploadService;
 import com.sparta.finalpj.service.OcrService;
@@ -17,7 +18,7 @@ import java.io.IOException;
 public class OcrController {
     //    private final GoogleCloudUploadService googleCloudUploadService;
     private final OcrService ocrService;
-
+    @SwaggerAnnotation
     @PostMapping(value = "/upload/img", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseDto<?> scanCard(@RequestPart(value = "cardImg", required = false)
                                    MultipartFile cardImg, HttpServletRequest request) throws IOException {

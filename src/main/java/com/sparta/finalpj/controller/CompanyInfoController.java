@@ -1,5 +1,6 @@
 package com.sparta.finalpj.controller;
 
+import com.sparta.finalpj.configuration.SwaggerAnnotation;
 import com.sparta.finalpj.controller.request.card.CardInfoRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.controller.response.company.CompanyInfoResponseDto;
@@ -16,6 +17,7 @@ public class CompanyInfoController {
 
     private final CompanyInfoService companyInfoService;
 
+    @SwaggerAnnotation
     @PostMapping(value = "/cardInfo")
     public CardInfoRequestDto cardInfo(@RequestBody CardInfoRequestDto requestDto){
 
@@ -25,6 +27,7 @@ public class CompanyInfoController {
     /**
      * 명함등록 시 기업 검색
      */
+    @SwaggerAnnotation
     @PostMapping(value = "/companySearch")
     public ResponseDto<?> companySearch(@RequestParam("keyword")String keyword, HttpServletRequest request) {
         

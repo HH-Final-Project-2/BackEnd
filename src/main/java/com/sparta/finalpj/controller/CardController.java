@@ -1,5 +1,6 @@
 package com.sparta.finalpj.controller;
 
+import com.sparta.finalpj.configuration.SwaggerAnnotation;
 import com.sparta.finalpj.controller.request.card.CardRequestDto;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.service.CardService;
@@ -16,35 +17,41 @@ public class CardController {
     private final CardService cardService;
 
     // 자사&타사 명함 등록
+    @SwaggerAnnotation
     @PostMapping(value = "/businessCards")
     public ResponseDto<?> createCard(@RequestBody CardRequestDto requestDto, HttpServletRequest request) {
         return cardService.createCard(requestDto, request);
     }
 
     // 자사&타사 명함 수정
+    @SwaggerAnnotation
     @PutMapping(value = "/businessCards/{cardId}")
     public ResponseDto<?> updateCard(@PathVariable Long cardId, @RequestBody CardRequestDto requestDto, HttpServletRequest request) {
         return cardService.updateCard(cardId, requestDto, request);
     }
 
     // 자사&타사 명함 삭제
+    @SwaggerAnnotation
     @DeleteMapping(value = "/businessCards/{cardId}")
     public ResponseDto<?> deleteCard(@PathVariable Long cardId, HttpServletRequest request) {
         return cardService.deleteCard(cardId, request);
     }
     // 자사&타사 명함 상세조회
+    @SwaggerAnnotation
     @GetMapping(value = "/businessCards/{cardId}")
     public ResponseDto<?> getDetailCard(@PathVariable Long cardId, HttpServletRequest request) {
         return cardService.getDetailCard(cardId, request);
     }
 
     // 자사&타사 명함 전체조회
+    @SwaggerAnnotation
     @GetMapping(value = "/businessCards")
     public ResponseDto<?> getAllCardsList(HttpServletRequest request) {
         return cardService.getAllCardsList(request);
     }
 
     // 자사&타사 명함 검색
+    @SwaggerAnnotation
     @GetMapping("/search/businessCards")
     public ResponseDto<?> searchCard(@RequestParam("keyword")String keyword, HttpServletRequest request){
         return cardService.searchCard(keyword, request);
