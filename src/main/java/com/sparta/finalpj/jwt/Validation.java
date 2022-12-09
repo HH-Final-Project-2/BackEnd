@@ -115,7 +115,7 @@ public class Validation {
     }
     public boolean isValidNickname(String nickname) {
         //2~10자 이내 , 한글,영어,숫자
-        String pattern = "^[가-힣][A-Za-z0-9]{2,10}$";
+        String pattern = "^[가-힣A-Za-z0-9]{2,10}$";
         return Pattern.matches(pattern, nickname);
     }
 
