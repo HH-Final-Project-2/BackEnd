@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface CompanyInfoRepository extends JpaRepository<CompanyInfo, Long> {
     @Query(value = "select * from company_info where company_name like %:keyword%", nativeQuery = true)
+//    @Query(value = "SELECT * FROM company_info WHERE MATCH (company_name) AGAINST ('':keyword'*' in boolean mode)", nativeQuery = true)
     List<CompanyInfo> searchCompany(@Param("keyword") String keyword);
 }
