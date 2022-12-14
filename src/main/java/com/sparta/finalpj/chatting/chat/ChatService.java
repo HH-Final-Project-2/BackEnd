@@ -51,10 +51,8 @@ public class ChatService {
         );
         //내 ChatRoomUser
         ChatRoomUser mychatRoomUser = isPresentChatRoomUser(member.getId(), chatRoom.getId());
-//        Optional<ChatRoomUser> mychatRoomUser = chatRoomUserRepository.findByMemberIdAndChatRoomId(member.getId(), chatRoom.getId());
         //상대방 ChatRoomUser
         ChatRoomUser chatRoomUser = isPresentChatRoomUser(mychatRoomUser.getOtherMember().getId(), chatRoom.getId());
-//        Optional<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findByMemberIdAndChatRoomId(mychatRoomUser.get().getOtherMember().getId(), chatRoom.getId());
         //상대방이 채팅방 삭제를 했다면, 생성해서 상대방 채팅방 리스트에 추가해줌
         if (chatRoomUser == null){
             chatRoomService.existRoom(chatRoom.getRoomHashCode(), member, mychatRoomUser.getOtherMember());

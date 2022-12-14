@@ -2,6 +2,12 @@ package com.sparta.finalpj.service;
 
 
 
+import com.sparta.finalpj.chatting.chat.ChatMessage;
+import com.sparta.finalpj.chatting.chat.ChatMessageRepository;
+import com.sparta.finalpj.chatting.chatRoom.ChatRoomRepository;
+import com.sparta.finalpj.chatting.chatRoom.ChatRoomService;
+import com.sparta.finalpj.chatting.chatRoom.ChatRoomUser;
+import com.sparta.finalpj.chatting.chatRoom.ChatRoomUserRepository;
 import com.sparta.finalpj.controller.request.member.*;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.controller.response.member.SignupResponseDto;
@@ -19,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.iotanalytics.model.Message;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +37,10 @@ import java.util.*;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final MyCardRepository myCardRepository;
+    private final ChatRoomUserRepository chatRoomUserRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final ChatRoomService chatRoomService;
     private final MailService mailService;
     private final MailRepository mailRepository;
     private final PasswordEncoder passwordEncoder;
@@ -112,6 +123,22 @@ public class MemberService {
         if (null == member) {
             throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
         }
+
+        //내가 채팅 상대인 ChatRoomUser 찾기(OtherMember가 '나'인 ChatRoomUser)
+        List<ChatRoomUser> otherChatRoomUsers = chatRoomUserRepository.findAllByOtherMember(member);
+
+        for(ChatRoomUser otherChatRoomUser : otherChatRoomUsers) {
+            //내 채팅방 모두 나가기
+            chatRoomService.deleteChatRoom(otherChatRoomUser.getChatRoom(),member);
+            //ChatRoomUser중, 나를 OtherMember로 참조하는 것들과 관계 끊어주기
+            otherChatRoomUser.setOtherMember(null);
+
+            List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoom(otherChatRoomUser.getChatRoom());
+            for(ChatMessage chatMessage : chatMessages){
+                //ChatMessage 중 나를 참조하는 것들과 관계 끊어주기
+                chatMessage.setMember(null);
+            }
+    }
         // 회원 명함 삭제
         myCardRepository.deleteByMemberId(member.getId());
         //해당 member의 RefreshToken 제거

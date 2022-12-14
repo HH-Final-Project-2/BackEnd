@@ -4,10 +4,12 @@ import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.domain.Timestamped;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 public class ChatRoomUser extends Timestamped {

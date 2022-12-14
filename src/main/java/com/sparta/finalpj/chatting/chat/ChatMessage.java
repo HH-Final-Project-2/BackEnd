@@ -7,11 +7,13 @@ import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.domain.Timestamped;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 public class ChatMessage extends Timestamped {
