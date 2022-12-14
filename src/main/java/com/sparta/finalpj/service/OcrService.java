@@ -92,6 +92,11 @@ public class OcrService {
                 }
             }
 
+            //IndexOutOfBoundsException 예외처리
+            if(originList.size() == 0) {
+                return ResponseDto.fail(new CustomResponseBody(ErrorCode.NOT_FOUND_TEXT));
+            }
+
             // 배열의 0번째 값에 모든 데이터들이 text형식으로 담긴다
             String[] txt = originList.get(0).toString().split("\\n");
 
