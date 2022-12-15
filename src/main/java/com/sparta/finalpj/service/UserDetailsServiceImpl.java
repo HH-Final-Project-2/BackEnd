@@ -1,6 +1,5 @@
 package com.sparta.finalpj.service;
 
-
 import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.jwt.UserDetailsImpl;
 import com.sparta.finalpj.repository.MemberRepository;
@@ -17,10 +16,10 @@ import java.util.Optional;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
 
-// UserDetails 가 사용자의 정보를 담았다면 UserDetailsService 는 DB 에서 유저 정보를 불러온다.
-// 이 메서드가 loadUserByUsername() 이다.
-// 다시 말하자면 DB 에서 유저정보를 가지고와서 return 해주는 작업이다.
-// @Service 를 해줘야 IoC 로 등록이 되고 그래야 loadUserByUsername() 오버라이드 사용가능
+    // UserDetails 가 사용자의 정보를 담았다면 UserDetailsService 는 DB 에서 유저 정보를 불러온다.
+    // 이 메서드가 loadUserByUsername() 이다.
+    // 다시 말하자면 DB 에서 유저정보를 가지고와서 return 해주는 작업이다.
+    // @Service 를 해줘야 IoC 로 등록이 되고 그래야 loadUserByUsername() 오버라이드 사용가능
     private final MemberRepository memberRepository;
 
 

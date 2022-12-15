@@ -36,11 +36,11 @@ public class ChatService {
     }
 
     /**
-     *채팅 메세지보내기
+     * 채팅 메세지보내기
      */
     @Transactional(readOnly = true)
     public ChatRoomUser isPresentChatRoomUser(Long memberId, Long otherId) {
-        Optional<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findByMemberIdAndChatRoomId(memberId,otherId);
+        Optional<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findByMemberIdAndChatRoomId(memberId, otherId);
         return chatRoomUser.orElse(null);
     }
 
@@ -54,7 +54,7 @@ public class ChatService {
         //상대방 ChatRoomUser
         ChatRoomUser chatRoomUser = isPresentChatRoomUser(mychatRoomUser.getOtherMember().getId(), chatRoom.getId());
         //상대방이 채팅방 삭제를 했다면, 생성해서 상대방 채팅방 리스트에 추가해줌
-        if (chatRoomUser == null){
+        if (chatRoomUser == null) {
             chatRoomService.existRoom(chatRoom.getRoomHashCode(), member, mychatRoomUser.getOtherMember());
         }
 
@@ -85,7 +85,7 @@ public class ChatService {
     }
 
     //안읽은 메세지 업데이트
-    public void updateUnReadMessageCount(ChatMessageDto requestChatMessageDto,Member member) {
+    public void updateUnReadMessageCount(ChatMessageDto requestChatMessageDto, Member member) {
         ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(requestChatMessageDto.getRoomId()).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_EXIST_CHATROOM)
         );
@@ -94,7 +94,7 @@ public class ChatService {
         String roomId = requestChatMessageDto.getRoomId();
         // 상대방이 채팅방에 들어가 있지 않거나 들어가 있어도 나와 같은 대화방이 아닌 경우 안 읽은 메세지 처리를 할 것이다.
         if (!redisRepository.existChatRoomUserInfo(otherUserId) || !redisRepository.getUserEnterRoomId(otherUserId).equals(roomId)) {
-        // || : 하나라도 true인 경우 true 반환
+            // || : 하나라도 true인 경우 true 반환
             redisRepository.addChatRoomMessageCount(roomId, otherUserId);
 //            int unReadMessageCount = redisRepository
 //                .getChatRoomMessageCount(roomId, otherUserId);

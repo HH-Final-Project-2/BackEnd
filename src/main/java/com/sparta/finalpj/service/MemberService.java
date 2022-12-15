@@ -1,7 +1,5 @@
 package com.sparta.finalpj.service;
 
-
-
 import com.sparta.finalpj.chatting.chat.ChatMessage;
 import com.sparta.finalpj.chatting.chat.ChatMessageRepository;
 import com.sparta.finalpj.chatting.chatRoom.ChatRoomRepository;
@@ -25,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import software.amazon.awssdk.services.iotanalytics.model.Message;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,7 +64,7 @@ public class MemberService {
         memberRepository.save(member);
         //인증코드 제거
         Mail mail = mailService.isPresentMail(requestDto.getEmail());
-        if(mail != null){
+        if (mail != null) {
             mailRepository.delete(mail);
         }
         return ResponseDto.success(
@@ -115,6 +112,7 @@ public class MemberService {
                         .build()
         );
     }
+
     //============ 회원탈퇴 기능
     @Transactional
     public ResponseDto<?> withdrawMember(HttpServletRequest request) {
@@ -127,18 +125,18 @@ public class MemberService {
         //내가 채팅 상대인 ChatRoomUser 찾기(OtherMember가 '나'인 ChatRoomUser)
         List<ChatRoomUser> otherChatRoomUsers = chatRoomUserRepository.findAllByOtherMember(member);
 
-        for(ChatRoomUser otherChatRoomUser : otherChatRoomUsers) {
+        for (ChatRoomUser otherChatRoomUser : otherChatRoomUsers) {
             //내 채팅방 모두 나가기
-            chatRoomService.deleteChatRoom(otherChatRoomUser.getChatRoom(),member);
+            chatRoomService.deleteChatRoom(otherChatRoomUser.getChatRoom(), member);
             //ChatRoomUser중, 나를 OtherMember로 참조하는 것들과 관계 끊어주기
             otherChatRoomUser.setOtherMember(null);
 
             List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoom(otherChatRoomUser.getChatRoom());
-            for(ChatMessage chatMessage : chatMessages){
+            for (ChatMessage chatMessage : chatMessages) {
                 //ChatMessage 중 나를 참조하는 것들과 관계 끊어주기
                 chatMessage.setMember(null);
             }
-    }
+        }
         // 회원 명함 삭제
         myCardRepository.deleteByMemberId(member.getId());
         //해당 member의 RefreshToken 제거
@@ -213,7 +211,7 @@ public class MemberService {
 
     // 닉네임 수정
     @Transactional
-    public ResponseDto<?> updateMember(MemberUpdateRequestDto memberRequestDto, HttpServletRequest request){
+    public ResponseDto<?> updateMember(MemberUpdateRequestDto memberRequestDto, HttpServletRequest request) {
         Member member = validation.validateMemberToAccess(request);
         if (null == member) {
             throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
@@ -235,13 +233,14 @@ public class MemberService {
                         .build()
         );
     }
+
     @Transactional
     public ResponseDto<?> updatePassword(PasswordFindDto passwordFindDto) {
         if (passwordFindDto.getPassword() == null || passwordFindDto.getPasswordCheck() == null) {
             throw new CustomException(ErrorCode.PASSWORD_NULL_INPUT_ERROR);
         }
         //비밀번호 유효성 검사
-        validation.validatePasswordInput(passwordFindDto.getPassword(),passwordFindDto.getPasswordCheck());
+        validation.validatePasswordInput(passwordFindDto.getPassword(), passwordFindDto.getPasswordCheck());
         //해당 이메일이 있는지 조회
         validation.emailCheck(passwordFindDto.getEmail());
         //해당 member email로 조회

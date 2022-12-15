@@ -1,6 +1,5 @@
 package com.sparta.finalpj.chatting.chat;
 
-
 import com.sparta.finalpj.chatting.chat.requestDto.ChatMessageDto;
 import com.sparta.finalpj.chatting.chatRoom.ChatRoom;
 import com.sparta.finalpj.domain.Member;

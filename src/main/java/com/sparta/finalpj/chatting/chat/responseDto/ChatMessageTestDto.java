@@ -20,14 +20,14 @@ public class ChatMessageTestDto {
 
     public ChatMessageTestDto(ChatMessage chatMessage) {
 
-        if(chatMessage.getMember() == null){
+        if (chatMessage.getMember() == null) {
             this.userId = null;
-        }else{
+        } else {
             this.userId = chatMessage.getMember().getId();
         }
-        if(chatMessage.getMember() == null){
+        if (chatMessage.getMember() == null) {
             this.nickname = "탈퇴한 계정입니다.";
-        }else{
+        } else {
             this.nickname = chatMessage.getMember().getNickname();
         }
 

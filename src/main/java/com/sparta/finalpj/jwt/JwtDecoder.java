@@ -1,6 +1,5 @@
 package com.sparta.finalpj.jwt;
 
-
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -16,10 +15,12 @@ import java.security.Key;
 @Component
 public class JwtDecoder {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     public JwtDecoder(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
+
     private static Key key;
 
     public String decodeEmail(String token) {
@@ -39,6 +40,7 @@ public class JwtDecoder {
         }
         return email;
     }
+
     private String resolveToken(String token) {
         // 접두사 분리
         if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {// 값이 있고 && 앞 철자가 Bearer 일때 true

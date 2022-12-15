@@ -15,7 +15,6 @@ public class MessageResponseDto {
     private Long userId;
 
     public MessageResponseDto(ChatMessageDto roomMessage) {
-
         this.roomId = roomMessage.getRoomId();
         this.message = roomMessage.getMessage();
         this.createdAt = roomMessage.getCreatedAt();

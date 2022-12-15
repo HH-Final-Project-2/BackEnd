@@ -39,7 +39,6 @@ public class MyCardService {
             MyCard myCard = MyCard.builder()
                     .member(member)
                     .cardName(requestDto.getCardName())
-                    .engName(requestDto.getEngName())
                     .email(requestDto.getEmail())
                     .phoneNum(requestDto.getPhoneNum())
                     .company(requestDto.getCompany())
@@ -187,6 +186,7 @@ public class MyCardService {
         return ResponseDto.success(mycardInfo);
     }
 
+    // 내명함 존재여부 확인
     @Transactional(readOnly = true)
     public MyCard isPresentMyCard(Long myCardId) {
         Optional<MyCard> optionalMyCard = myCardRepository.findById(myCardId);

@@ -33,7 +33,7 @@ public class SecurityConfig {
 
     // 암호화 알고리즘 빈 등록
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -53,7 +53,7 @@ public class SecurityConfig {
 
         configuration.setAllowCredentials(true);
 
-        configuration.setExposedHeaders(Arrays.asList("Authorization", "Refresh-Token" , "Access_Control-Allow-Origin"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Refresh-Token", "Access_Control-Allow-Origin"));
 
         // Todo :: Security Config -> 허용할 포트만 열어두기!!
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -70,7 +70,7 @@ public class SecurityConfig {
         http
                 .httpBasic().disable()
                 .csrf().disable()
-                .addFilterBefore(new JwtFilter(SECRET_KEY,tokenProvider,userDetailsService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(SECRET_KEY, tokenProvider, userDetailsService), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
 
         http
@@ -80,9 +80,9 @@ public class SecurityConfig {
                 .authorizeRequests() // URL 별 권한 관리를 설정하는 옵션의 시작점이다.
                 // authorizeRequests 가 선언되어야만 antMatchers 옵션을 사용할 수 있다.
 
-                .antMatchers("/css/**", "/images/**", "/js/**", "/h2-console/**","/login/**","/favicon.ico").permitAll()
-                .antMatchers("/v2/**","/v2/api-docs", "/swagger-resources/**",
-                        "/swagger-ui.html/**","/swagger-ui/**","/swagger*/**","/v3/api-docs").permitAll()
+                .antMatchers("/css/**", "/images/**", "/js/**", "/h2-console/**", "/login/**", "/favicon.ico").permitAll()
+                .antMatchers("/v2/**", "/v2/api-docs", "/swagger-resources/**",
+                        "/swagger-ui.html/**", "/swagger-ui/**", "/swagger*/**", "/v3/api-docs").permitAll()
                 .antMatchers("/webjars/**").permitAll()
                 .antMatchers("/kakao").permitAll()
                 .antMatchers("/oauth/**").permitAll()
@@ -99,7 +99,6 @@ public class SecurityConfig {
                 // POST 메소드이면서 "/api/v1/**" 주소를 가진 API 는 USER 권한을 가진 사람만 가능하도록 했다.
 
                 .antMatchers("/api/**").permitAll()
-
 
                 .anyRequest().authenticated(); // 설정된 값들 이외 나머지 URL 들을 나타낸다. (인증된 사용자들만)
 

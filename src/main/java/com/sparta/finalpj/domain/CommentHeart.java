@@ -17,11 +17,11 @@ public class CommentHeart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "memberId")
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @JoinColumn(name = "comment_id")
+    @JoinColumn(name = "commentId")
     @ManyToOne(fetch = FetchType.LAZY)
     private Comment comment;
 }

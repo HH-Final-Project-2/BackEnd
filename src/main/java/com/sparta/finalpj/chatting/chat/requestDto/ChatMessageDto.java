@@ -25,7 +25,7 @@ public class ChatMessageDto implements Serializable {
     private Long otherMemberId; // 상대방
 
     @NotBlank
-    @Size(max=2000)
+    @Size(max = 2000)
     private String message; // 메시지
 
     private String createdAt;
