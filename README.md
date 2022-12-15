@@ -59,10 +59,11 @@
 ### ✔ Back-end
 | **기술 스택** | **사용이유** |
 |:---:|:---:|
-|||
-|||
-|||
-|||
+|Google Vision API OCR||
+|Google Cloud  Storage||
+|Spring Batch|기업명, 기업주소는 텍스트로 추출이 불가하여 명함 등록 시 기업 검색 기능을 구현하기로 하였다. 기업정보 오픈 API를 사용 시 한번에 많은 요청이 가는 것을 방지하기 위해 데이터를 DB에 내재화 해두었으며, 오픈API의 정보가 update될 때 DB도 update 될 수 있도록 Spring Batch를 통해 버전관리를 하였다.|
+|STOMP||
+|Redis||
 
 
 <br>
