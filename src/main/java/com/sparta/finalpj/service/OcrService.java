@@ -9,7 +9,6 @@ import com.sparta.finalpj.exception.CustomResponseBody;
 import com.sparta.finalpj.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -93,7 +92,7 @@ public class OcrService {
             }
 
             //IndexOutOfBoundsException 예외처리
-            if(originList.size() == 0) {
+            if (originList.size() == 0) {
                 return ResponseDto.fail(new CustomResponseBody(ErrorCode.NOT_FOUND_TEXT));
             }
 
@@ -870,7 +869,6 @@ public class OcrService {
 
 
                 // 4. 이메일
-//                if (text.contains("@") && (text.contains(".com") || text.contains(".kr") || text.contains(".net"))) {
                 if (text.contains("@")) {
 
                     if (text.contains(".com") && (text.contains("E-mail.") || text.contains("E-mail "))) {
@@ -946,7 +944,9 @@ public class OcrService {
                     .fax(fax)
                     .imgUrl(imgUrl)
                     .build();
+
             return ResponseDto.success(ocrResponseDto);
+
         } catch (StringIndexOutOfBoundsException e) {
             return ResponseDto.fail(new CustomResponseBody(ErrorCode.NOT_FOUND_TEXT));
         }

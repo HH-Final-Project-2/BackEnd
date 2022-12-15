@@ -37,6 +37,7 @@ public class SwaggerConfig {
                 .apiInfo(apiInfo())
                 ;
     }
+
     private Set<String> getConsumeContentTypes() {
         Set<String> consumes = new HashSet<>();
         consumes.add("application/json;charset=UTF-8");
@@ -44,6 +45,7 @@ public class SwaggerConfig {
         consumes.add("application/x-www-form-urlencoded");
         return consumes;
     }
+
     //.apis(): API 문서를 만들어줄 범위를 지정한다.
     // 만약 apis(RequestHandlerSelectors.basePackage("com.example.demo"))에서는 com.example.demo 하위 구조를 탐색하여 문서를 생성해준다.
     //.paths(): API 의 URL 경로를 지정할 수 있다. .paths(PathSelectors.ant("api/v1/**")) 와 같이 하면 http://localhost/api/v1/ 하위 경로를 가지는 API에 대해 문서를 생성해준다.

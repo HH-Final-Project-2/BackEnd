@@ -27,11 +27,6 @@ public class CompanyInfoService {
 
     private CardInfoRequestDto cardResponseDto;
 
-    public CardInfoRequestDto cardInfo(CardInfoRequestDto requestDto) {
-        cardResponseDto = requestDto;
-        return requestDto;
-    }
-
     // 명함등록 시 기업 검색
     public ResponseDto<?> companySearch(String keyword, HttpServletRequest request) {
         // 1. 로그인 확인
@@ -73,5 +68,11 @@ public class CompanyInfoService {
                 .build();
 
         return ResponseDto.success(responseDto);
+    }
+
+    // 기업정보
+    public CardInfoRequestDto cardInfo(CardInfoRequestDto requestDto) {
+        cardResponseDto = requestDto;
+        return requestDto;
     }
 }

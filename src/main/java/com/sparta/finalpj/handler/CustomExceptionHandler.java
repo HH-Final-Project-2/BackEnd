@@ -22,14 +22,14 @@ public class CustomExceptionHandler {
 //    return ResponseDto.fail("BAD_REQUEST", errorMessage);
 //  }
 
-//  @ExceptionHandler({CustomException.class})
+    //  @ExceptionHandler({CustomException.class})
 //  public ResponseDto<?> customExceptionHandler() {
 //    return ResponseDto.fail(
 //            customException.get()
 //            );
 //  }
-      @ExceptionHandler({CustomException.class})
-      public ResponseDto<?> customExceptionHandler(CustomException e) {
+    @ExceptionHandler({CustomException.class})
+    public ResponseDto<?> customExceptionHandler(CustomException e) {
         int errHttpStatus = e.get().getHttpStatus();
         String errCode = e.get().getCode();
         String errMessage = e.get().getMessage();
@@ -37,9 +37,9 @@ public class CustomExceptionHandler {
         customResponseBody.setHttpStatus(errHttpStatus);
         customResponseBody.setCode(errCode);
         customResponseBody.setMessage(errMessage);
-           return ResponseDto.fail(
-                   customResponseBody
-      );
-}
+        return ResponseDto.fail(
+                customResponseBody
+        );
+    }
 
 }

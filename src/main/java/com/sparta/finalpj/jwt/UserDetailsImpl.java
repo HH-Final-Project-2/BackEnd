@@ -1,6 +1,5 @@
 package com.sparta.finalpj.jwt;
 
-
 import com.sparta.finalpj.domain.Member;
 import com.sparta.finalpj.shared.Authority;
 import lombok.AllArgsConstructor;
@@ -30,32 +29,32 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     @Override
-    public String getPassword(){
+    public String getPassword() {
         return member.getPassword();
     }
 
     @Override
-    public String getUsername(){
+    public String getUsername() {
         return member.getEmail();
     }
 
     @Override
-    public boolean isAccountNonExpired(){
+    public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
-    public boolean isAccountNonLocked(){
+    public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
-    public boolean isCredentialsNonExpired(){
+    public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
-    public boolean isEnabled(){
+    public boolean isEnabled() {
         return true;
     }
 }

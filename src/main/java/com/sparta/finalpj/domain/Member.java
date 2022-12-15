@@ -24,39 +24,31 @@ public class Member extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String username;
+
     @Column(unique = true)
     private String email;
+
     @Column(nullable = false)
     private String nickname;
-    @Column
-    private String phoneNum;//개인연락처
-    @Column
-    private String company;//회사
-    @Column
-    private String position;//직책
-    @Column
-    private String department;//소속부서
-    @Column
-    private String companyAddress;//회사주소
-    @Column
-    private String tel;//회사 유선전화
-    @Column
-    private String fax;//팩스
+
     @Column(unique = true)
     private Long kakaoId;//카카오 ID
+
     @Column(nullable = false)
     @JsonIgnore
     private String password;
+
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MyCalendar> myCalendar;
+
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Post> post;
+
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Card> card;
-//    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private MyCard myCard;
 
     public Member(String email, String username, String nickname, String encodedPassword, Long kakaoId) {
         this.email = email;

@@ -38,26 +38,25 @@ public class CardService {
 
         // 3-1. 명함정보 저장 [ companyType="own"(자사) / companyType="other"(타사) ]
         // 3-2. 명함이미지 정보 업데이트 => cardId
-            try {
-                Card card = Card.builder()
-                        .member(member)
-                        .cardName(requestDto.getCardName())
-                        .engName(requestDto.getEngName())
-                        .email(requestDto.getEmail())
-                        .phoneNum(requestDto.getPhoneNum())
-                        .company(requestDto.getCompany())
-                        .department(requestDto.getDepartment())
-                        .position(requestDto.getPosition())
-                        .companyAddress(requestDto.getCompanyAddress())
-                        .tel(requestDto.getTel())
-                        .fax(requestDto.getFax())
-                        .companyType(requestDto.getCompanyType())
-                        .build();
-                cardRepository.save(card);
+        try {
+            Card card = Card.builder()
+                    .member(member)
+                    .cardName(requestDto.getCardName())
+                    .email(requestDto.getEmail())
+                    .phoneNum(requestDto.getPhoneNum())
+                    .company(requestDto.getCompany())
+                    .department(requestDto.getDepartment())
+                    .position(requestDto.getPosition())
+                    .companyAddress(requestDto.getCompanyAddress())
+                    .tel(requestDto.getTel())
+                    .fax(requestDto.getFax())
+                    .companyType(requestDto.getCompanyType())
+                    .build();
+            cardRepository.save(card);
 
-            } catch (IllegalArgumentException e) {
-                throw new CustomException(ErrorCode.CARDINFO_UPDATE_FAIL);
-            }
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(ErrorCode.CARDINFO_UPDATE_FAIL);
+        }
         return ResponseDto.success("등록 성공");
     }
 
@@ -92,7 +91,7 @@ public class CardService {
         if (member == null) {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
-
+        // 3. 카드 존재여부 확인
         Card card = isPresentCard(cardId);
         if (card == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_CARD);
@@ -101,7 +100,7 @@ public class CardService {
         cardRepository.delete(card);
         return ResponseDto.success("삭제 완료");
     }
-    
+
     // 자사&타사 명함 상세조회
     @Transactional(readOnly = true)
     public ResponseDto<?> getDetailCard(Long cardId, HttpServletRequest request) {
@@ -136,7 +135,7 @@ public class CardService {
                 .build();
         return ResponseDto.success(cardDetailList);
     }
-    
+
     // 자사&타사 명함 전체조회
     @Transactional(readOnly = true)
     public ResponseDto<?> getAllCardsList(HttpServletRequest request) {
@@ -152,18 +151,17 @@ public class CardService {
         // Card => CardResponseDto 타입으로 변환
         List<Card> cardList = cardRepository.findAllByMemberOrderByCreatedAtDesc(member);
         List<CardResponseDto> cardResponseDtoList = new ArrayList<>();
-       
+
         // 자사&타사 명함정보가 없을 경우
-        if(cardList.isEmpty()) {
+        if (cardList.isEmpty()) {
             return ResponseDto.success("명함을 등록해주세요");
         }
 
-
-
+        // 명함 전체조회시, 기업명 [ 주식회사, (주) ] 잘라서 보여주기
         for (Card card : cardList) {
             String companyStr = card.getCompany();
             String company = "";
-            if(companyStr.contains("주식회사")) {
+            if (companyStr.contains("주식회사")) {
                 company = companyStr.replace("주식회사", " ").trim();
 
             } else if (companyStr.contains("(주)")) {

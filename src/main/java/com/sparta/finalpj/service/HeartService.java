@@ -5,7 +5,6 @@ import com.sparta.finalpj.domain.*;
 import com.sparta.finalpj.jwt.UserDetailsImpl;
 import com.sparta.finalpj.repository.CommentHeartRepository;
 import com.sparta.finalpj.repository.PostHeartRepository;
-import com.sparta.finalpj.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

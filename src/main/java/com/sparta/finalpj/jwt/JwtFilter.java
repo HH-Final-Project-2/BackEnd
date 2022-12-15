@@ -78,7 +78,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         new ObjectMapper().writeValueAsString(
 //                                ResponseDto.fail("BAD_REQUEST", "Token이 유효하지 않습니다.")
                                 ResponseDto.fail(new CustomResponseBody(ErrorCode.INVALID_TOKEN))
-                                )
+                        )
                 );
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }

@@ -50,6 +50,7 @@ public class MyCalendarService {
                 .todo(requestDto.getTodo())
                 .member(member)
                 .build();
+
         myCalendarRepository.save(myCalendar);
 
         return ResponseDto.success("생성 완료!");
@@ -68,13 +69,14 @@ public class MyCalendarService {
         }
 
         MyCalendar myCalendar = isPresentCalendar(calendarId);
-        if(myCalendar == null) {
+        if (myCalendar == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_CALNFO);
         }
 
         String startDateTime = requestDto.getStartDate() + " " + requestDto.getStartTime();
         String endDateTime = requestDto.getEndDate() + " " + requestDto.getEndTime();
         myCalendar.update(requestDto, dateFormat(startDateTime), dateFormat(endDateTime));
+
         return ResponseDto.success("수정 완료");
     }
 
@@ -91,11 +93,12 @@ public class MyCalendarService {
         }
 
         MyCalendar myCalendar = isPresentCalendar(calendarId);
-        if(myCalendar == null) {
+        if (myCalendar == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_CALNFO);
         }
 
         myCalendarRepository.deleteById(calendarId);
+
         return ResponseDto.success("삭제 완료");
     }
 
@@ -132,7 +135,7 @@ public class MyCalendarService {
         }
         return ResponseDto.success(calendarAllList);
     }
-    
+
     // 내일정 상세조회
     @Transactional(readOnly = true)
     public ResponseDto<?> getCalendarDetail(Long calendarId, HttpServletRequest request) {
@@ -146,7 +149,7 @@ public class MyCalendarService {
         }
 
         MyCalendar myCalendar = isPresentCalendar(calendarId);
-        if(myCalendar == null) {
+        if (myCalendar == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_CALNFO);
         }
 
@@ -166,9 +169,11 @@ public class MyCalendarService {
         return ResponseDto.success(calendarInfo);
     }
 
+    // 일정 존재유무 확인
     @Transactional(readOnly = true)
     public MyCalendar isPresentCalendar(Long calendarId) {
         Optional<MyCalendar> optionalCard = myCalendarRepository.findById(calendarId);
+        
         return optionalCard.orElse(null);
     }
 
@@ -184,5 +189,5 @@ public class MyCalendarService {
         }
         return dateTime;
     }
-    
+
 }
