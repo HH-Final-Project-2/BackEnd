@@ -58,12 +58,12 @@
 |sockJs/Stomp|채팅기능에 적합한 브라우저와 웹 서버 사이에 짧은 지연시간, 그리고 크로스 브라우징을 지원하는 API인 Sock.js와 HTTP에서 모델링 되는 Frame 기반 프로토콜 Stomp는 여러개의 채팅방을 개설하는 상황에 적합한 Stomp프로토콜을 사용했다.|
 ### ✔ Back-end
 | **기술 스택** | **사용이유** |
-|:---:|:---:|
-|Google Vision API OCR||
-|Google Cloud  Storage||
+|:---:|---|
+|Google Vision API OCR|명함이미지 내 텍스트를 추출해 해당 값이 입력하기 위해서는 OCR 엔진이 필요하였다. 그래서 Google Vision API (OCR)와 Tesseract OCR의 두 가지 선택지 중에 Google Vision API에서 제공해주는 OCR엔진이 Tesseract OCR 보다 한글의 인식률 및 정확도가 높고 이미지 전처리 과정이 필요없어 적합하다고 판단하여 사용하였다.|
+|Google Cloud  Storage|명함첩 및 게시글에 업로드 할 이미지를 저장할 저장소가 필요하였다. OCR 기능 구현에 있어서 Storage에 업로드 된 이미지를 읽어오는 과정을 처리하기 위해서는 외부 호스팅 이미지에 의존하면 안되는 상황이었다. 즉, GCS만을 지원하기에 AWS S3와 Google Cloud  Storage 두 가지 선택지중 GCS를 선택하였다.|
 |Spring Batch|기업명, 기업주소는 텍스트로 추출이 불가하여 명함 등록 시 기업 검색 기능을 구현하기로 하였다. 기업정보 오픈 API를 사용 시 한번에 많은 요청이 가는 것을 방지하기 위해 데이터를 DB에 내재화 해두었으며, 오픈API의 정보가 update될 때 DB도 update 될 수 있도록 Spring Batch를 통해 버전관리를 하였다.|
-|STOMP||
-|Redis||
+|STOMP|메시징 방식만 잘 정의한다면 WebSocket 만으로 좋은 Server/Client 소켓 서버를 완성할 수 있으나, STOMP 프로토콜을 이용, 클라이언트와 서버가 전송할 메세지의 유형, 형식, 내용들을 정의하여 개발의 편의성을 높이고 메시지 헤더에 값을 세팅할 수 있어 인증 처리 구현이 가능했다.|
+|Redis|만약 프로젝트의 사용자가 어느정도 확보되면 서버의 갯수가 늘어남에 따라 확장성을 고려하여 메세지 송/수신하는 브로커를 외부로 따로 빼는 것이 맞다고 판단했다. 이벤트 데이터(채팅)를 DB에 저장하기 때문에 미들웨어에는 저장될 필요가 없고 캐시성 데이터면 충분하기 때문에 RabbitMQ, Kafka가 아닌, Redis를 외부브로커로 사용했다. 사용자의 입장 정보, Unread Message Count 등에 대해서 DB로부터 잦은 조회가 일어나는 부분에 대해서는 Buffer(임시 저장 공간)로도 사용했다.|
 
 
 <br>
