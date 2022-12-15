@@ -16,14 +16,13 @@ import java.io.IOException;
 @RestController
 @RequestMapping(value = "/api")
 public class OcrController {
-    //    private final GoogleCloudUploadService googleCloudUploadService;
     private final OcrService ocrService;
+
+    // 명함 이미지 업로드
     @SwaggerAnnotation
     @PostMapping(value = "/upload/img", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseDto<?> scanCard(@RequestPart(value = "cardImg", required = false)
                                    MultipartFile cardImg, HttpServletRequest request) throws IOException {
-
-//    return googleCloudUploadService.upload(path, cardImg, request);
         return ocrService.readFileInfo(cardImg, request);
     }
 }

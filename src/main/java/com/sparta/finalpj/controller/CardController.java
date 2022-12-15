@@ -36,6 +36,7 @@ public class CardController {
     public ResponseDto<?> deleteCard(@PathVariable Long cardId, HttpServletRequest request) {
         return cardService.deleteCard(cardId, request);
     }
+
     // 자사&타사 명함 상세조회
     @SwaggerAnnotation
     @GetMapping(value = "/businessCards/{cardId}")
