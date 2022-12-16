@@ -82,7 +82,7 @@
 | :---: | :---: | :---: |
 | <img src="https://user-images.githubusercontent.com/80233565/208013678-0c8a444a-28da-4d3d-a4fd-9a8378d5a4b4.gif" width="235" height="552" /> | <img src ="https://user-images.githubusercontent.com/80233565/208013730-702eb264-26e8-46d3-ace0-a15f49ae6170.gif" width="235" height="552" /> | <img src ="https://user-images.githubusercontent.com/80233565/208013756-c616903a-2e9b-424a-964b-2dc7773a19f6.gif" width="235" height="552" />
 | **일정 관리** | **게시글 작성** | **실시간 채팅** |
-| <img src ="https://user-images.githubusercontent.com/80233565/208013733-1584488b-d94c-4ac0-b1fe-f7b98fc7ceb4.gif" width="235" height="552" /> | <img src ="https://user-images.githubusercontent.com/80233565/208013748-76d91bde-569a-4b99-9a5e-46c08861ac99.gif" width="235" height="552" /> | <img src ="https://user-images.githubusercontent.com/113837393/207935180-851260d6-a6a0-49a8-b2da-300aded5f642.gif" width="235" height="552" /> |
+| <img src ="https://user-images.githubusercontent.com/80233565/208013733-1584488b-d94c-4ac0-b1fe-f7b98fc7ceb4.gif" width="235" height="552" /> | <img src ="https://user-images.githubusercontent.com/80233565/208016562-d8680f5a-6517-416f-8959-0fd3aea1050e.gif" width="235" height="552" /> | <img src ="https://user-images.githubusercontent.com/80233565/208016573-daa22ad3-c785-4083-b067-a1c657603d14.gif" width="235" height="552" /> |
 
 <br>
 
