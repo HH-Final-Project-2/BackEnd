@@ -80,9 +80,9 @@
 
 | **소셜로그인** | **OCR(명함등록)** | **명함 내보내기** |
 | :---: | :---: | :---: |
-| <img src="" width="235" height="552" /> | <img src ="https://user-images.githubusercontent.com/108118743/207920769-21161eb1-ec76-4ee1-a285-299d4b4bfaa4.gif" width="235" height="552" /> | <img src ="https://user-images.githubusercontent.com/108118743/207920813-7f34f6ae-2a90-4ccf-9152-c19634afa87c.gif" width="235" height="552" />
+| <img src="https://user-images.githubusercontent.com/80233565/208013678-0c8a444a-28da-4d3d-a4fd-9a8378d5a4b4.gif" width="235" height="552" /> | <img src ="https://user-images.githubusercontent.com/80233565/208013730-702eb264-26e8-46d3-ace0-a15f49ae6170.gif" width="235" height="552" /> | <img src ="https://user-images.githubusercontent.com/80233565/208013756-c616903a-2e9b-424a-964b-2dc7773a19f6.gif" width="235" height="552" />
 | **일정 관리** | **게시글 작성** | **실시간 채팅** |
-| <img src ="https://user-images.githubusercontent.com/108118743/207920856-2f4c59e6-5b80-4455-b639-f6f46a7988f8.gif" width="235" height="552" /> | <img src ="https://user-images.githubusercontent.com/108118743/207922603-412bcb5f-066f-4a4d-b69c-49fef24ec968.gif" width="235" height="552" /> | <img src ="https://user-images.githubusercontent.com/108118743/207922675-a10284c9-c647-4992-9bb0-a792beac87ed.gif" width="235" height="552" /> |
+| <img src ="https://user-images.githubusercontent.com/80233565/208013733-1584488b-d94c-4ac0-b1fe-f7b98fc7ceb4.gif" width="235" height="552" /> | <img src ="https://user-images.githubusercontent.com/80233565/208013748-76d91bde-569a-4b99-9a5e-46c08861ac99.gif" width="235" height="552" /> | <img src ="https://user-images.githubusercontent.com/113837393/207935180-851260d6-a6a0-49a8-b2da-300aded5f642.gif" width="235" height="552" /> |
 
 <br>
 
