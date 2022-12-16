@@ -141,7 +141,12 @@ public class ChatRoomService {
     }
 
     public ChatRoomResponseDto createChatRoomDto(ChatRoomUser chatRoomUser, int totalCnt) {
-        String roomName = chatRoomUser.getOtherMember().getNickname();
+        String roomName;
+        if(chatRoomUser.getOtherMember()==null){
+            roomName = "탈퇴한 회원입니다.";
+        }else {
+            roomName = chatRoomUser.getOtherMember().getNickname();
+        }
         String roomUuid = chatRoomUser.getChatRoom().getChatRoomUuid();
         String lastMessage;
         LocalDateTime lastTime;

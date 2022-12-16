@@ -37,6 +37,7 @@ public class MailService {
     public enum EmailType {
         SIGNUP, FINDPW
     }
+
     // 회원가입 인증 메일 내용 작성
     public MimeMessage createMessage(String to, EmailType emailType) throws MessagingException, UnsupportedEncodingException {
 //		System.out.println("보내는 대상 : " + to);
@@ -45,7 +46,7 @@ public class MailService {
         String Authname = "";
         if (emailType == EmailType.SIGNUP) {
             Authname = "회원가입";
-        }else if(emailType == EmailType.FINDPW) {
+        } else if (emailType == EmailType.FINDPW) {
             Authname = "비밀번호 확인";
         }
         MimeMessage message = emailsender.createMimeMessage();
@@ -58,12 +59,12 @@ public class MailService {
         msgg += "<h1> 안녕하세요</h1>";
         msgg += "<h1> Businus 입니다</h1>";
         msgg += "<br>";
-        msgg += "<p>아래 코드를 "+ Authname +" 창으로 돌아가 입력해주세요<p>";
+        msgg += "<p>아래 코드를 " + Authname + " 창으로 돌아가 입력해주세요<p>";
         msgg += "<br>";
         msgg += "<p>감사합니다!<p>";
         msgg += "<br>";
         msgg += "<div align='center' style='border:1px solid black; font-family:verdana';>";
-        msgg += "<h3 style='color:blue;'>"+ Authname + " 인증 코드입니다.</h3>";
+        msgg += "<h3 style='color:blue;'>" + Authname + " 인증 코드입니다.</h3>";
         msgg += "<div style='font-size:130%'>";
         msgg += "CODE : <strong>";
         msgg += ePw + "</strong><div><br/> "; // 메일에 인증번호 넣기
@@ -154,17 +155,17 @@ public class MailService {
         Mail mail = isPresentMail(to); //이전에 인증했던 메일인지 DB조회
         if (null == mail) {
             //(메일-인증번호) 객체 생성
-            mail = Mail.of(to,ePw);
+            mail = Mail.of(to, ePw);
             //저장
             mailRepository.save(mail);
             return ResponseDto.success("인증코드 발송 완료"); // 메일로 보냈던 인증 코드를 서버로 반환
         }
-            //이전에 코드를 보냈던 메일이면, 인증번호 갱신
-            mail.update(ePw);
+        //이전에 코드를 보냈던 메일이면, 인증번호 갱신
+        mail.update(ePw);
         return ResponseDto.success("인증코드 재발송 완료"); // 메일로 보냈던 인증 코드를 서버로 반환
     }
 
-    public ResponseDto<?> mailConfirm(EmailAuthRequestDto requestDto){
+    public ResponseDto<?> mailConfirm(EmailAuthRequestDto requestDto) {
         Mail mail = isPresentMail(requestDto.getEmail()); //DB조회
         if (null == mail) {
             throw new CustomException(ErrorCode.AUTH_CODE_NOT_ISSUE);

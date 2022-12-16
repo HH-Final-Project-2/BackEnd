@@ -19,8 +19,18 @@ public class ChatMessageTestDto {
     private LocalDateTime createdAt;
 
     public ChatMessageTestDto(ChatMessage chatMessage) {
-        this.userId = chatMessage.getMember().getId();
-        this.nickname = chatMessage.getMember().getNickname();
+
+        if (chatMessage.getMember() == null) {
+            this.userId = null;
+        } else {
+            this.userId = chatMessage.getMember().getId();
+        }
+        if (chatMessage.getMember() == null) {
+            this.nickname = "탈퇴한 계정입니다.";
+        } else {
+            this.nickname = chatMessage.getMember().getNickname();
+        }
+
         this.message = chatMessage.getMessage();
         this.createdAt = chatMessage.getCreatedAt();
     }

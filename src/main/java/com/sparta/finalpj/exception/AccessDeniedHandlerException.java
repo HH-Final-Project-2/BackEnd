@@ -1,6 +1,5 @@
 package com.sparta.finalpj.exception;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import org.springframework.security.access.AccessDeniedException;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
 
 @Component
 public class AccessDeniedHandlerException implements AccessDeniedHandler {

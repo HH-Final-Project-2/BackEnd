@@ -1,18 +1,21 @@
 package com.sparta.finalpj.service;
 
-
-
+import com.sparta.finalpj.chatting.chat.ChatMessage;
+import com.sparta.finalpj.chatting.chat.ChatMessageRepository;
+import com.sparta.finalpj.chatting.chatRoom.ChatRoomRepository;
+import com.sparta.finalpj.chatting.chatRoom.ChatRoomService;
+import com.sparta.finalpj.chatting.chatRoom.ChatRoomUser;
+import com.sparta.finalpj.chatting.chatRoom.ChatRoomUserRepository;
 import com.sparta.finalpj.controller.request.member.*;
 import com.sparta.finalpj.controller.response.ResponseDto;
 import com.sparta.finalpj.controller.response.member.SignupResponseDto;
 import com.sparta.finalpj.domain.Mail;
 import com.sparta.finalpj.domain.Member;
+import com.sparta.finalpj.domain.PostHeart;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.jwt.*;
-import com.sparta.finalpj.repository.MailRepository;
-import com.sparta.finalpj.repository.MemberRepository;
-import com.sparta.finalpj.repository.RefreshTokenRepository;
+import com.sparta.finalpj.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +31,12 @@ import java.util.*;
 @Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final MyCardRepository myCardRepository;
+    private final ChatRoomUserRepository chatRoomUserRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final PostHeartRepository postHeartRepository;
+    private final ChatRoomService chatRoomService;
     private final MailService mailService;
     private final MailRepository mailRepository;
     private final PasswordEncoder passwordEncoder;
@@ -54,7 +63,7 @@ public class MemberService {
         memberRepository.save(member);
         //인증코드 제거
         Mail mail = mailService.isPresentMail(requestDto.getEmail());
-        if(mail != null){
+        if (mail != null) {
             mailRepository.delete(mail);
         }
         return ResponseDto.success(
@@ -102,6 +111,7 @@ public class MemberService {
                         .build()
         );
     }
+
     //============ 회원탈퇴 기능
     @Transactional
     public ResponseDto<?> withdrawMember(HttpServletRequest request) {
@@ -110,6 +120,30 @@ public class MemberService {
         if (null == member) {
             throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
         }
+
+        //내가 채팅 상대인 ChatRoomUser 찾기(OtherMember가 '나'인 ChatRoomUser)
+        List<ChatRoomUser> otherChatRoomUsers = chatRoomUserRepository.findAllByOtherMember(member);
+
+        for (ChatRoomUser otherChatRoomUser : otherChatRoomUsers) {
+            //내 채팅방 모두 나가기
+            chatRoomService.deleteChatRoom(otherChatRoomUser.getChatRoom(), member);
+            //ChatRoomUser중, 나를 OtherMember로 참조하는 것들과 관계 끊어주기
+            otherChatRoomUser.setOtherMember(null);
+
+            List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoom(otherChatRoomUser.getChatRoom());
+            for (ChatMessage chatMessage : chatMessages) {
+                //ChatMessage 중 나를 참조하는 것들과 관계 끊어주기
+                chatMessage.setMember(null);
+            }
+        }
+        //내가 누른 게시글 좋아요 다 불러오기
+        List<PostHeart> postHearts = postHeartRepository.findAllbyMember(member);
+        for (PostHeart postHeart : postHearts){
+            //PostHeart 중, 나를 참조하는 것들과 관계 끊어주기
+            postHeart.setMember(null);
+        }
+        // 회원 명함 삭제
+        myCardRepository.deleteByMemberId(member.getId());
         //해당 member의 RefreshToken 제거
         tokenProvider.deleteRefreshToken(member);
         //Member 제거
@@ -182,10 +216,13 @@ public class MemberService {
 
     // 닉네임 수정
     @Transactional
-    public ResponseDto<?> updateMember(MemberUpdateRequestDto memberRequestDto, HttpServletRequest request){
+    public ResponseDto<?> updateMember(MemberUpdateRequestDto memberRequestDto, HttpServletRequest request) {
         Member member = validation.validateMemberToAccess(request);
         if (null == member) {
             throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
+        }
+        if (!validation.isValidNickname(memberRequestDto.getNickname())) {
+            throw new CustomException(ErrorCode.NICKNAME_FORM_ERROR);
         }
         member.updateProfile(memberRequestDto);
         // 저장
@@ -201,13 +238,14 @@ public class MemberService {
                         .build()
         );
     }
+
     @Transactional
     public ResponseDto<?> updatePassword(PasswordFindDto passwordFindDto) {
         if (passwordFindDto.getPassword() == null || passwordFindDto.getPasswordCheck() == null) {
             throw new CustomException(ErrorCode.PASSWORD_NULL_INPUT_ERROR);
         }
         //비밀번호 유효성 검사
-        validation.validatePasswordInput(passwordFindDto.getPassword(),passwordFindDto.getPasswordCheck());
+        validation.validatePasswordInput(passwordFindDto.getPassword(), passwordFindDto.getPasswordCheck());
         //해당 이메일이 있는지 조회
         validation.emailCheck(passwordFindDto.getEmail());
         //해당 member email로 조회

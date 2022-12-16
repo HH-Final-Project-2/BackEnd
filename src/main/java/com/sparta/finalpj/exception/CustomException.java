@@ -1,7 +1,5 @@
 package com.sparta.finalpj.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.util.function.Supplier;

@@ -1,6 +1,5 @@
 package com.sparta.finalpj.domain;
 
-import com.sparta.finalpj.controller.request.card.CardRequestDto;
 import com.sparta.finalpj.controller.request.card.MyCardRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,9 +20,6 @@ public class MyCard extends Timestamped {
 
   @Column(nullable = false)
   private String cardName;
-
-  @Column
-  private String engName;
 
   @Column(nullable = false)
   private String email;
@@ -55,7 +51,6 @@ public class MyCard extends Timestamped {
 
   public void update(MyCardRequestDto myCardRequestDto) {
     this.cardName = myCardRequestDto.getCardName();
-    this.engName = myCardRequestDto.getEngName();
     this.email = myCardRequestDto.getEmail();
     this.company = myCardRequestDto.getCompany();
     this.phoneNum = myCardRequestDto.getPhoneNum();

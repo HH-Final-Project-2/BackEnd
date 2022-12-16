@@ -26,11 +26,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PostService {
 
-  private final PostRepository postRepository;
-  private final CommentRepository commentRepository;
-  private final PostHeartRepository postHeartRepository;
-  private final TokenProvider tokenProvider;
-  private final GoogleCloudUploadService googleCloudUploadService;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final PostHeartRepository postHeartRepository;
+    private final TokenProvider tokenProvider;
+    private final GoogleCloudUploadService googleCloudUploadService;
 
 
   //게시글 작성
@@ -154,38 +154,40 @@ public class PostService {
                       .build()
       );
     }
-    return ResponseDto.success(postListResponseDtoList);
-  }
+        return ResponseDto.success(postListResponseDtoList);
+    }
+
 
   //게시글 검색
   @Transactional
     public ResponseDto<?> searchPost(String keyword, UserDetailsImpl userDetails) {
-    List<Post> postList = postRepository.search(keyword);
-    // 검색된 항목 담아줄 리스트 생성
-    List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
-    //for문을 통해서 List에 담아주기
-    for (Post post : postList) {
-      long comment = commentRepository.countAllByPost(post);
-      long postHeartCnt = postHeartRepository.findAllByPost(post).size();
-      postListResponseDtoList.add(
-              PostResponseDto.builder()
-                      .id(post.getId())
-                      .postHeartYn(postHeartCheck(post, userDetails)) //게시글 좋아요 상태 체크
-                      .title(post.getTitle())
-                      .image(post.getImage())
-                      .content(post.getContent())
-                      .author(post.getMember().getNickname()) //작성자
-                      .jobGroup(post.getJobGroup()) // 관심 직군
-                      .postHeartCnt(postHeartCnt) //게시글 좋아요
-                      .commentCnt(comment) // 댓글 갯수
-                      .hit(post.getHit()) //조회수
-                      .createdAt(post.getCreatedAt())
-                      .modifiedAt(post.getModifiedAt())
-                      .build()
-      );
+        List<Post> postList = postRepository.search(keyword);
+        // 검색된 항목 담아줄 리스트 생성
+        List<PostResponseDto> postListResponseDtoList = new ArrayList<>();
+        //for문을 통해서 List에 담아주기
+        for (Post post : postList) {
+            long comment = commentRepository.countAllByPost(post);
+            long postHeartCnt = postHeartRepository.findAllByPost(post).size();
+            postListResponseDtoList.add(
+                    PostResponseDto.builder()
+                            .id(post.getId())
+                            .postHeartYn(postHeartCheck(post, userDetails)) //게시글 좋아요 상태 체크
+                            .title(post.getTitle())
+                            .image(post.getImage())
+                            .content(post.getContent())
+                            .author(post.getMember().getNickname()) //작성자
+                            .jobGroup(post.getJobGroup()) // 관심 직군
+                            .postHeartCnt(postHeartCnt) //게시글 좋아요
+                            .commentCnt(comment) // 댓글 갯수
+                            .hit(post.getHit()) //조회수
+                            .createdAt(post.getCreatedAt())
+                            .modifiedAt(post.getModifiedAt())
+                            .build()
+            );
+        }
+        return ResponseDto.success(postListResponseDtoList);
     }
-    return ResponseDto.success(postListResponseDtoList);
-  }
+
 
   //게시글 수정
   @Transactional
@@ -198,66 +200,65 @@ public class PostService {
     Post post = isPresentPost(id);
     if (null == post) {
       throw new CustomException(ErrorCode.POST_NOT_FOUND);
-    }
-    if (post.validateMember(member)) {
-      throw new CustomException(ErrorCode.NOT_AUTHOR);
-    }
 
-    String imageUrl = "";
+        if (post.validateMember(member)) {
+            throw new CustomException(ErrorCode.NOT_AUTHOR);
+        }
 
-    if(image == null && requestDto.isImageDelete()) {
-      imageUrl = "";
-    } else if(image == null && !requestDto.isImageDelete()) {
-      imageUrl = post.getImage();
-    }else {
-      UUID uuid = UUID.randomUUID();
-      String fileName = uuid.toString() + "_" + image.getOriginalFilename();
-      imageUrl = googleCloudUploadService.upload("community", image, fileName);
-          }
+        String imageUrl = "";
 
-    List<PostHeart> postHeartCnt = postHeartRepository.findByPost(post);
-    Long commentCnt = commentRepository.countByPost(post);
+        if (image == null && requestDto.isImageDelete()) {
+            imageUrl = "";
+        } else if (image == null && !requestDto.isImageDelete()) {
+            imageUrl = post.getImage();
+        } else {
+            UUID uuid = UUID.randomUUID();
+            String fileName = uuid.toString() + "_" + image.getOriginalFilename();
+            imageUrl = googleCloudUploadService.upload("community", image, fileName);
+        }
 
-    post.update(requestDto, imageUrl);
-    return ResponseDto.success(
-            PostResponseDto.builder()
-                    .id(post.getId())
-                    .title(post.getTitle())
-                    .image(post.getImage())
-                    .author(post.getMember().getNickname()) //작성자
-                    .jobGroup(post.getJobGroup()) // 관심 직군
-                    .content(post.getContent())
-                    .postHeartCnt((long) postHeartCnt.size()) // 게시글 좋아요
-                    .commentCnt(commentCnt) // 댓글 갯수
-                    .hit(post.getHit()) // 조회수
-                    .createdAt(post.getCreatedAt())
-                    .modifiedAt(post.getModifiedAt())
-                    .build()
-    );
-  }
+        List<PostHeart> postHeartCnt = postHeartRepository.findByPost(post);
+        Long commentCnt = commentRepository.countByPost(post);
 
-  //게시글 삭제
-  @Transactional
-  public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
-
-    Member member = validateMember(request);
-    if (null == member) {
-      throw new CustomException(ErrorCode.INVALID_TOKEN);
+        post.update(requestDto, imageUrl);
+        return ResponseDto.success(
+                PostResponseDto.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
+                        .image(post.getImage())
+                        .author(post.getMember().getNickname()) //작성자
+                        .jobGroup(post.getJobGroup()) // 관심 직군
+                        .content(post.getContent())
+                        .postHeartCnt((long) postHeartCnt.size()) // 게시글 좋아요
+                        .commentCnt(commentCnt) // 댓글 갯수
+                        .hit(post.getHit()) // 조회수
+                        .createdAt(post.getCreatedAt())
+                        .modifiedAt(post.getModifiedAt())
+                        .build()
+        );
     }
 
-    Post post = isPresentPost(id);
-    if (null == post) {
-      throw new CustomException(ErrorCode.POST_NOT_FOUND);
+    //게시글 삭제
+    @Transactional
+    public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
+
+        Member member = validateMember(request);
+        if (null == member) {
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
+
+        Post post = isPresentPost(id);
+        if (null == post) {
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
+        }
+
+        if (post.validateMember(member)) {
+            throw new CustomException(ErrorCode.NOT_AUTHOR);
+        }
+
+        postRepository.delete(post);
+        return ResponseDto.success("delete success");
     }
-
-    if (post.validateMember(member)) {
-      throw new CustomException(ErrorCode.NOT_AUTHOR);
-    }
-
-    postRepository.delete(post);
-    return ResponseDto.success("delete success");
-  }
-
 
   //조회수TOP5 게시글 조회
   @Transactional
@@ -351,21 +352,24 @@ public class PostService {
               .build()
       );
       postListResponseDtoList.sort((o1, o2) -> (o2.getHit() - o1.getHit()));
+      
+        }
+        return ResponseDto.success(postListResponseDtoList);
     }
-    return ResponseDto.success(postListResponseDtoList);
-  }
 
-  @Transactional(readOnly = true)
-  public Post isPresentPost(Long id) {
-    Optional<Post> optionalPost = postRepository.findById(id);
-    return optionalPost.orElse(null);
-  }
 
-  @Transactional
-  public Member validateMember(HttpServletRequest request) {
-    if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
-      return null;
+    @Transactional(readOnly = true)
+    public Post isPresentPost(Long id) {
+        Optional<Post> optionalPost = postRepository.findById(id);
+        return optionalPost.orElse(null);
+
     }
-    return tokenProvider.getMemberFromAuthentication();
-  }
+
+    @Transactional
+    public Member validateMember(HttpServletRequest request) {
+        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+            return null;
+        }
+        return tokenProvider.getMemberFromAuthentication();
+    }
 }

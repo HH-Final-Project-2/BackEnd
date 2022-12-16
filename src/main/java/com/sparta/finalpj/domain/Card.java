@@ -21,9 +21,6 @@ public class Card extends Timestamped {
   @Column(nullable = false)
   private String cardName;
 
-  @Column
-  private String engName;
-
   @Column(nullable = false)
   private String email;
 
@@ -57,7 +54,6 @@ public class Card extends Timestamped {
 
   public void update(CardRequestDto cardRequestDto) {
     this.cardName = cardRequestDto.getCardName();
-    this.engName = cardRequestDto.getEngName();
     this.email = cardRequestDto.getEmail();
     this.company = cardRequestDto.getCompany();
     this.phoneNum = cardRequestDto.getPhoneNum();

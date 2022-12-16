@@ -13,10 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -39,27 +36,32 @@ public class ChatService {
     }
 
     /**
-     *채팅 메세지보내기
+     * 채팅 메세지보내기
      */
+    @Transactional(readOnly = true)
+    public ChatRoomUser isPresentChatRoomUser(Long memberId, Long otherId) {
+        Optional<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findByMemberIdAndChatRoomId(memberId, otherId);
+        return chatRoomUser.orElse(null);
+    }
 
     @Transactional
     public void sendMessage(ChatMessageDto chatMessageDto, Member member) {
         ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(chatMessageDto.getRoomId()).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_EXIST_CHATROOM)
         );
-        //상대방 ChatRoomUser
-        List<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findAllByMemberNotAndChatRoom(member, chatRoom);
         //내 ChatRoomUser
-        List<ChatRoomUser> mychatRoomUser = chatRoomUserRepository.findAllByMemberAndChatRoom(member, chatRoom);
+        ChatRoomUser mychatRoomUser = isPresentChatRoomUser(member.getId(), chatRoom.getId());
+        //상대방 ChatRoomUser
+        ChatRoomUser chatRoomUser = isPresentChatRoomUser(mychatRoomUser.getOtherMember().getId(), chatRoom.getId());
         //상대방이 채팅방 삭제를 했다면, 생성해서 상대방 채팅방 리스트에 추가해줌
-        if (chatRoomUser == null){
-            chatRoomService.existRoom(chatRoom.getRoomHashCode(), member, mychatRoomUser.get(0).getOtherMember());
+        if (chatRoomUser == null) {
+            chatRoomService.existRoom(chatRoom.getRoomHashCode(), member, mychatRoomUser.getOtherMember());
         }
 
         String topic = channelTopic.getTopic();
         String createdAt = getCurrentTime();
         chatMessageDto.setCreatedAt(createdAt);
-        chatMessageDto.setOtherMemberId(chatRoomUser.get(0).getMember().getId());
+        chatMessageDto.setOtherMemberId(mychatRoomUser.getOtherMember().getId());
         chatMessageDto.setType(ChatMessageDto.MessageType.TALK);
         // front에서 요청해서 진행한 작업 나의 userId 넣어주기
         chatMessageDto.setUserId(member.getId());
@@ -83,7 +85,7 @@ public class ChatService {
     }
 
     //안읽은 메세지 업데이트
-    public void updateUnReadMessageCount(ChatMessageDto requestChatMessageDto,Member member) {
+    public void updateUnReadMessageCount(ChatMessageDto requestChatMessageDto, Member member) {
         ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(requestChatMessageDto.getRoomId()).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_EXIST_CHATROOM)
         );
@@ -92,7 +94,7 @@ public class ChatService {
         String roomId = requestChatMessageDto.getRoomId();
         // 상대방이 채팅방에 들어가 있지 않거나 들어가 있어도 나와 같은 대화방이 아닌 경우 안 읽은 메세지 처리를 할 것이다.
         if (!redisRepository.existChatRoomUserInfo(otherUserId) || !redisRepository.getUserEnterRoomId(otherUserId).equals(roomId)) {
-        // || : 하나라도 true인 경우 true 반환
+            // || : 하나라도 true인 경우 true 반환
             redisRepository.addChatRoomMessageCount(roomId, otherUserId);
 //            int unReadMessageCount = redisRepository
 //                .getChatRoomMessageCount(roomId, otherUserId);

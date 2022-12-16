@@ -3,6 +3,7 @@ package com.sparta.finalpj.chatting.chatRoom;
 import com.sparta.finalpj.chatting.chat.ChatMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 public class ChatRoom {

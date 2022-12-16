@@ -37,7 +37,7 @@ public class Post extends Timestamped {
   @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<PostHeart> postHeart;
 
-  @JoinColumn(name = "member_id", nullable = false)
+  @JoinColumn(name = "memberId", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private Member member;
 
