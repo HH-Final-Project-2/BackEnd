@@ -43,7 +43,7 @@
 
 ## ⛏ 기술스택
 |Part🗂|Tech⚒️|
-|:---:|:---:|
+|:---:|---|
 |🌅Front|<img  src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black"/><img  src="https://img.shields.io/badge/React%20Hook%20Form-%23EC5990.svg?style=for-the-badge&logo=reacthookform&logoColor=white"/><img  src="https://img.shields.io/badge/Redux Toolkit-764ABC?style=for-the-badge&logo=Redux&logoColor=white"/><img  src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white"/><img  src="https://img.shields.io/badge/styled-components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white"><img  src="https://img.shields.io/badge/React Router-CA4245?style=for-the-badge&logo=React Router&logoColor=white"><img  src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=black"><img  src="https://img.shields.io/badge/KAKAO DEVELOPERS-FFCD00?style=for-the-badge&logo=KAKAO&logoColor=black"><img  src="https://img.shields.io/badge/STOMP-blue?style=for-the-badge&logo=StompJs&logoColor=white"><img  src="https://img.shields.io/badge/SOCKJS-navy?style=for-the-badge&logo=sockJS&logoColor=white"><img  src="https://img.shields.io/badge/AWS Amplify-FF9900?style=for-the-badge&logo=AWS Amplify&logoColor=white">|
 |⚙️Back|<img  src="https://img.shields.io/badge/Amazon EC2-FF9900?style=for-the-badge&logo=Amazon EC2&logoColor=white"><img  src="https://img.shields.io/badge/Route53-FF9900?style=for-the-badge&logo=Route53&logoColor=white"><img  src="https://img.shields.io/badge/SSL-006600?style=for-the-badge&logo=white"><img  src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=Spring&logoColor=white"><img  src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white"><img  src="https://img.shields.io/badge/Spring Batch-6DB33F?style=for-the-badge&logo=white"><img  src="https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=Spring-Security&logoColor=white"><img  src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=Swagger&logoColor=white"><img  src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white"><img  src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white"><img  src="https://img.shields.io/badge/OCR-099DFD?style=for-the-badge&logo=S&logoColor=white"><img  src="https://img.shields.io/badge/Cloud Vision API-4285F4?style=for-the-badge&logo=S&logoColor=white"><img  src="https://img.shields.io/badge/Google Storage-4285F4?style=for-the-badge&logo=Google&logoColor=white"><img  src="https://img.shields.io/badge/JPA-0ABF53?style=for-the-badge&logo=S&logoColor=white"><img  src="https://img.shields.io/badge/AWS Rds-527FFF?style=for-the-badge&logo=Amazon RDS&logoColor=white"><img  src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white"><img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white"><img src="https://img.shields.io/badge/SockJS-010101?style=for-the-badge&logoColor=white"><img src="https://img.shields.io/badge/STOMP-4479A1?style=for-the-badge&logo=stomp&logoColor=white"><img src="https://img.shields.io/badge/Socket-010101?style=for-the-badge&logo=Socket.io&logoColor=white">|
 |⚒️Tool|<img src="https://img.shields.io/badge/VSCODE-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white"/><img src="https://img.shields.io/badge/FileZilla-BF0000?style=for-the-badge&logo=filezilla&logoColor=white"/><img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white"/><img src="https://img.shields.io/badge/Github-181717?style=for-the-badge&logo=github&logoColor=white"/><img src="https://img.shields.io/badge/IntelliJ IDEA-000000?style=for-the-badge&logo=IntelliJ IDEA&logoColor=white">|
@@ -137,7 +137,7 @@
 1.웹소켓 커넥션 상태를 이용해 웹소켓의 상태가 1일 경우 즉 연결이 성립되고 통신중인 상태일 때 subscribe가 실행되도 구독이 되도록 해보았지만 변함은 없었다.</br>
 2.페이지 이동후 마운트 될 때 connect보다 subscirbe가 나중에 진행되도록 setTimeout을 설정하여 해결</br>
 (navigate를 먼저 할당하여 해결이 가능하지만 안정적인 작동을 위해 setTimeout 지정)</br>
-  
+
 ![트러블3](https://user-images.githubusercontent.com/80233565/207860453-e387c826-75c7-4ac6-b19c-5d445b8ca162.JPG)
 
 
@@ -155,14 +155,14 @@
 <summary>기업 검색 시 Full-text Index</summary>
 <div markdown="1"></br>
 <span style="color:Red"> <b>🐞이슈 사항</b></span></br>
-1. 기업 검색 쿼리문을 Like절을 사용하여 작성 ⇒ JMeter로 성능테스트를 해보니 TPS가 현전히 낮음 ⇒ 개선이 필요하다고 판단
+1. 기업 검색 쿼리문을 Like절을 사용하여 작성 ⇒ JMeter로 성능테스트를 해보니 TPS가 현전히 낮음 ⇒ 개선이 필요하다고 판단</br>
 </br></br>
 <span style="color:Red"> <b>🙌문제 해결</b></span></br>
 1. LIKE절을 사용했을 때는 테이블을 full scan 하기 때문에 여러 사용자가 동시다발적으로 요청한다면 느려질 수 밖에 없다고 판단</br>
 
 2. FULL TEXT INDEX문으로 대체</br>
 
-3.테스트 결과
+3. 테스트 결과
 
 📌동시다발적으로 기업 검색 시
 
