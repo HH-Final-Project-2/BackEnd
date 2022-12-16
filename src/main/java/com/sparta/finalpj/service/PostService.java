@@ -33,7 +33,7 @@ public class PostService {
   private final GoogleCloudUploadService googleCloudUploadService;
 
 
-  //===============게시글 작성================
+  //게시글 작성
   @Transactional
   public ResponseDto<?> createPost(PostRequestDto requestDto, MultipartFile image,
                                    HttpServletRequest request) {
@@ -80,7 +80,7 @@ public class PostService {
 
   }
 
-  //=============게시글 상세 조회=============
+  //게시글 상세 조회
   @Transactional(readOnly = false)
   public ResponseDto<?> getPost(Long postingId, UserDetailsImpl userDetails) {
     Post post = isPresentPost(postingId);
@@ -112,13 +112,13 @@ public class PostService {
     return ResponseDto.success(postDetailList);
   }
 
-  //=====조회수 증가=====
+  //조회수 증가
   @Transactional
-  public int updateHit(Long postId) {
-    return postRepository.updateHit(postId);
+  public int updateHit(Long postingId) {
+    return postRepository.updateHit(postingId);
   }
 
-  //=====사용자별 게시글 좋아요 체크=====
+  //사용자별 게시글 좋아요 체크
   @Transactional
   public boolean postHeartCheck(Post post, UserDetailsImpl userDetails) {
     if(userDetails == null){
@@ -127,7 +127,7 @@ public class PostService {
     return postHeartRepository.existsByMemberAndPost(userDetails.getMember(), post);
   }
 
-  //======================게시글 전체 조회=====================
+  //게시글 전체 조회
   @Transactional(readOnly = true)
   public ResponseDto<?> getAllPost(UserDetailsImpl userDetails) {
 
@@ -157,7 +157,7 @@ public class PostService {
     return ResponseDto.success(postListResponseDtoList);
   }
 
-  //=================게시글 검색=================
+  //게시글 검색
   @Transactional
     public ResponseDto<?> searchPost(String keyword, UserDetailsImpl userDetails) {
     List<Post> postList = postRepository.search(keyword);
@@ -187,7 +187,7 @@ public class PostService {
     return ResponseDto.success(postListResponseDtoList);
   }
 
-  //===============게시글 수정=================
+  //게시글 수정
   @Transactional
   public ResponseDto<?> updatePost(Long id, PostRequestDto requestDto, MultipartFile image, HttpServletRequest request) {
 
@@ -236,7 +236,7 @@ public class PostService {
     );
   }
 
-  //===================게시글 삭제======================
+  //게시글 삭제
   @Transactional
   public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
 
@@ -259,7 +259,7 @@ public class PostService {
   }
 
 
-  //==================조회수TOP5 게시글 조회===================
+  //조회수TOP5 게시글 조회
   @Transactional
   public ResponseDto<?> getPostByTop(UserDetailsImpl userDetails) {
 
@@ -291,7 +291,7 @@ public class PostService {
     return ResponseDto.success(postListResponseDtoList);
   }
 
-  //==================좋아요순 게시글 전체 조회====================
+  //좋아요순 게시글 전체 조회
   @Transactional
   public ResponseDto<?> getPostByHeart(UserDetailsImpl userDetails) {
 
@@ -323,7 +323,7 @@ public class PostService {
     return ResponseDto.success(postListResponseDtoList);
   }
 
-  //==================조회순 게시글 전체 조회===================
+  //조회순 게시글 전체 조회
   @Transactional
   public ResponseDto<?> getPostByHits(UserDetailsImpl userDetails) {
 

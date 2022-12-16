@@ -23,11 +23,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
   @Query("update Post q set q.hit = q.hit + 1 where q.id = :id")
   int updateHit(@Param("id") Long id);
 
-  //==========게시글 검색(제목, 내용, 직군, 닉네임)============
+  //게시글 검색(제목, 내용, 직군, 닉네임)
   @Query(value = "SELECT p FROM Post p WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword% " +
-          "OR p.jobGroup LIKE %:keyword% OR p.member.nickname LIKE %:keyword% ORDER BY p.createdAt desc")
+          "OR p.jobGroup LIKE %:keyword% OR p.author LIKE %:keyword% ORDER BY p.createdAt desc")
   List <Post> search(@Param("keyword") String keyword);
 
-//  @Query(value = "SELECT p FROM Post p WHERE MATCH(title, content, job_group) AGAINST('+:keyword*' IN BOOLEAN MODE) ORDER BY p.createdAt desc", nativeQuery = true)
+  //  @Query(value = "SELECT p FROM Post p WHERE MATCH(title, content, job_group) AGAINST('+:keyword*' IN BOOLEAN MODE) ORDER BY p.createdAt desc", nativeQuery = true)
 //  List <Post> search(@Param("keyword") String keyword);
 }
