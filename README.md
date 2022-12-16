@@ -137,7 +137,7 @@
 1.웹소켓 커넥션 상태를 이용해 웹소켓의 상태가 1일 경우 즉 연결이 성립되고 통신중인 상태일 때 subscribe가 실행되도 구독이 되도록 해보았지만 변함은 없었다.</br>
 2.페이지 이동후 마운트 될 때 connect보다 subscirbe가 나중에 진행되도록 setTimeout을 설정하여 해결</br>
 (navigate를 먼저 할당하여 해결이 가능하지만 안정적인 작동을 위해 setTimeout 지정)</br>
-  
+
 ![트러블3](https://user-images.githubusercontent.com/80233565/207860453-e387c826-75c7-4ac6-b19c-5d445b8ca162.JPG)
 
 
@@ -155,7 +155,7 @@
 <summary>기업 검색 시 Full-text Index</summary>
 <div markdown="1"></br>
 <span style="color:Red"> <b>🐞이슈 사항</b></span></br>
-1. 기업 검색 쿼리문을 Like절을 사용하여 작성 ⇒ JMeter로 성능테스트를 해보니 TPS가 현전히 낮음 ⇒ 개선이 필요하다고 판단
+1. 기업 검색 쿼리문을 Like절을 사용하여 작성 ⇒ JMeter로 성능테스트를 해보니 TPS가 현전히 낮음 ⇒ 개선이 필요하다고 판단</br>
 </br></br>
 <span style="color:Red"> <b>🙌문제 해결</b></span></br>
 1. LIKE절을 사용했을 때는 테이블을 full scan 하기 때문에 여러 사용자가 동시다발적으로 요청한다면 느려질 수 밖에 없다고 판단</br>
