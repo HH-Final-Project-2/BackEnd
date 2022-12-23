@@ -17,5 +17,5 @@ public interface PostHeartRepository extends JpaRepository<PostHeart, Long> {
 
     boolean existsByMemberAndPost(Member member, Post post);
 
-    List<PostHeart> findAllbyMember(Member member);
+    List<PostHeart> findAllByMember(Member member);
 }

@@ -137,7 +137,7 @@ public class MemberService {
             }
         }
         //내가 누른 게시글 좋아요 다 불러오기
-        List<PostHeart> postHearts = postHeartRepository.findAllbyMember(member);
+        List<PostHeart> postHearts = postHeartRepository.findAllByMember(member);
         for (PostHeart postHeart : postHearts){
             //PostHeart 중, 나를 참조하는 것들과 관계 끊어주기
             postHeart.setMember(null);
