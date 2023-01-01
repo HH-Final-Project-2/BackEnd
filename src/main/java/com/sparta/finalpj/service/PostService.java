@@ -58,6 +58,7 @@ public class PostService {
                 .jobGroup(requestDto.getJobGroup())
                 .member(member)
                 .image(imageUrl)
+                .author(member.getNickname())
                 .hit(0)
                 .build();
 
