@@ -15,6 +15,7 @@ import com.sparta.finalpj.domain.Mail;
 import com.sparta.finalpj.exception.CustomException;
 import com.sparta.finalpj.exception.ErrorCode;
 import com.sparta.finalpj.repository.MailRepository;
+import com.sparta.finalpj.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
@@ -30,6 +31,7 @@ public class MailService {
     @Autowired
     JavaMailSender emailsender; // Bean 등록해둔 MailConfig 를 emailsender 라는 이름으로 autowired
 
+    private final RedisUtil redisUtil;
     private String ePw; // 인증번호
 
     private final MailRepository mailRepository;
@@ -76,36 +78,6 @@ public class MailService {
         return message;
     }
 
-//    public MimeMessage createFindpwMessage(String to) throws MessagingException, UnsupportedEncodingException {
-////		System.out.println("보내는 대상 : " + to);
-////		System.out.println("인증 번호 : " + ePw);
-//
-//        MimeMessage message = emailsender.createMimeMessage();
-//
-//        message.addRecipients(RecipientType.TO, to);// 보내는 대상
-//        message.setSubject("Businus 비밀번호 찾기 이메일 인증");// 제목
-//
-//        String msgg = "";
-//        msgg += "<div style='margin:100px;'>";
-//        msgg += "<h1> 안녕하세요</h1>";
-//        msgg += "<h1> Businus 입니다</h1>";
-//        msgg += "<br>";
-//        msgg += "<p>아래 코드를 비밀번호 찾기 창으로 돌아가 입력해주세요<p>";
-//        msgg += "<br>";
-//        msgg += "<p>감사합니다!<p>";
-//        msgg += "<br>";
-//        msgg += "<div align='center' style='border:1px solid black; font-family:verdana';>";
-//        msgg += "<h3 style='color:blue;'>비밀번호 찾기 인증 코드입니다.</h3>";
-//        msgg += "<div style='font-size:130%'>";
-//        msgg += "CODE : <strong>";
-//        msgg += ePw + "</strong><div><br/> "; // 메일에 인증번호 넣기
-//        msgg += "</div>";
-//        message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
-//        // 보내는 사람의 이메일 주소, 보내는 사람 이름
-//        message.setFrom(new InternetAddress("bum4321@naver.com", "Businus 관리자"));// 보내는 사람
-//
-//        return message;
-//    }
 
     // 랜덤 인증 코드 전송
     public String createKey() {
@@ -151,27 +123,28 @@ public class MailService {
             es.printStackTrace();
             throw new CustomException(ErrorCode.INVALID_EMAIL_ERROR);
         }
+        String authkey = redisUtil.getData(to);
+        if (null == authkey) { //인증코드 최초 발송
+            // 유효 시간(10분)동안 {email, authKey} 저장
+            redisUtil.setDataExpire(to, ePw, 60 * 10L);
 
-        Mail mail = isPresentMail(to); //이전에 인증했던 메일인지 DB조회
-        if (null == mail) {
-            //(메일-인증번호) 객체 생성
-            mail = Mail.of(to, ePw);
-            //저장
-            mailRepository.save(mail);
             return ResponseDto.success("인증코드 발송 완료"); // 메일로 보냈던 인증 코드를 서버로 반환
         }
         //이전에 코드를 보냈던 메일이면, 인증번호 갱신
-        mail.update(ePw);
+        redisUtil.deleteData(to);
+        redisUtil.setDataExpire(to, ePw, 60 * 10L);
+
         return ResponseDto.success("인증코드 재발송 완료"); // 메일로 보냈던 인증 코드를 서버로 반환
-    }
+        }
 
     public ResponseDto<?> mailConfirm(EmailAuthRequestDto requestDto) {
-        Mail mail = isPresentMail(requestDto.getEmail()); //DB조회
-        if (null == mail) {
+//        Mail mail = isPresentMail(requestDto.getEmail()); //DB조회
+        String authkey = redisUtil.getData(requestDto.getEmail());
+        if (null == authkey) {
             throw new CustomException(ErrorCode.AUTH_CODE_NOT_ISSUE);
         }
 
-        if (!mail.getCode().equals(requestDto.getCode())) {
+        if (!authkey.equals(requestDto.getCode())) {
             throw new CustomException(ErrorCode.AUTH_CODE_NOT_CORRECT);
         }
         return ResponseDto.success("인증 완료");
