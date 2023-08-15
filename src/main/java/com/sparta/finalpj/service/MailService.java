@@ -40,6 +40,15 @@ public class MailService {
         SIGNUP, FINDPW
     }
 
+
+//    MIME 이란?
+//
+//    전자우편을 위한 인터넷 표준 포맷. 전자우편은 7비트 아스키 문자를 사용하여 전송되기 때문에, 8비트 이상의 코드를 사용하는 문자나 이진 파일들은 MIME 포맷으로 변환되어 SMTP로 전송된다.
+
+//    *MimeMessage 대신 SimpleMailMessage를 사용할 수도 있습니다.
+//    둘의 차이점은 MimeMessage의 경우 멀티파트 데이터를 처리 할 수 있고 SimpleMailMessage는 단순한 텍스트 데이터만 전송이 가능합니다.
+
+
     // 회원가입 인증 메일 내용 작성
     public MimeMessage createMessage(String to, EmailType emailType) throws MessagingException, UnsupportedEncodingException {
 //		System.out.println("보내는 대상 : " + to);
@@ -77,6 +86,13 @@ public class MailService {
 
         return message;
     }
+
+
+//    String 클래스의 인스턴스는 한 번 생성되면 그 값을 읽기만 할 수 있고, 변경할 수는 없습니다.
+//    하지만 StringBuffer 클래스의 인스턴스는 그 값을 변경할 수도 있고, 추가할 수도 있습니다.
+//
+//    이를 위해 StringBuffer 클래스는 내부적으로 버퍼(buffer)라고 하는 독립적인 공간을 가집니다.
+//    버퍼 크기의 기본값은 16개의 문자를 저장할 수 있는 크기이며, 생성자를 통해 그 크기를 별도로 설정할 수도 있습니다.
 
 
     // 랜덤 인증 코드 전송

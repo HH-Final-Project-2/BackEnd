@@ -82,18 +82,18 @@ public class JwtFilter extends OncePerRequestFilter {
                 );
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
-            // 토큰의 Email 추출
-            String subject = claims.getSubject();
-            Collection<? extends GrantedAuthority> authorities =
-                    Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                            .map(SimpleGrantedAuthority::new)
-                            .collect(Collectors.toList());
-            // loadUserByUsername 매서드에 매개변수로 Email을 보내서, Member 객체 가져오기
-            UserDetails principal = userDetailsService.loadUserByUsername(subject);
-            // 액세스 토큰으로부터 Authentication 객체 얻어오기
-            Authentication authentication = new UsernamePasswordAuthenticationToken(principal, jwt, authorities);
-            // 받아온 Authentication 객체 SecurityContextHolder 에 저장
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+//            // 토큰의 Email 추출
+//            String subject = claims.getSubject();
+//            Collection<? extends GrantedAuthority> authorities =
+//                    Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+//                            .map(SimpleGrantedAuthority::new)
+//                            .collect(Collectors.toList());
+//            // loadUserByUsername 매서드에 매개변수로 Email을 보내서, UserDetails 객체 가져오기
+//            UserDetails principal = userDetailsService.loadUserByUsername(subject);
+//            // 액세스 토큰으로부터 Authentication 객체 얻어오기
+//            Authentication authentication = new UsernamePasswordAuthenticationToken(principal, jwt, authorities);
+//            // 받아온 Authentication 객체 SecurityContextHolder 에 저장
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
 
         }
 
